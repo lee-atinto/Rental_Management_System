@@ -210,7 +210,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
         {
             DataTable dt = GetProperties();
             flowLayoutPanelRightSideBar.Controls.Clear();
-            flowLayoutPanelRightSideBar.Controls.Add(panel1);
             flowLayoutPanelRightSideBar.FlowDirection = FlowDirection.LeftToRight;
             flowLayoutPanelRightSideBar.WrapContents = true;
             flowLayoutPanelRightSideBar.AutoScroll = true;
