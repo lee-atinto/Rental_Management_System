@@ -1,17 +1,18 @@
 ﻿using Rental_Management_System;
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-using System.Collections.Generic;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants;
 using WindowsFormsApp1.Login_ResetPassword;
-using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 
 namespace WindowsFormsApp1.Super_Admin_Account
 {
@@ -351,7 +352,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
         private void btnDashBoard_Click_1(object sender, EventArgs e)
         {
             DashBoard dashboard = new DashBoard(Username, UserRole);
-            dashboard.ShowDialog();
+            dashboard.Show();
             this.Hide();
         }
 
@@ -359,7 +360,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
         private void btnAdminAcc_Click_1(object sender, EventArgs e)
         {
             SuperAdmin_AdminAccounts AdminAccounts = new SuperAdmin_AdminAccounts(Username, UserRole);
-            AdminAccounts.ShowDialog();
+            AdminAccounts.Show();
             this.Hide();
         }
 
@@ -367,7 +368,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
         private void btnProperties_Click(object sender, EventArgs e)
         {
             ProperTies properties = new ProperTies(Username, UserRole);
-            properties.ShowDialog();
+            properties.Show();
             this.Hide();
         }
 
@@ -375,7 +376,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
         private void btnPaymentRec_Click(object sender, EventArgs e)
         {
             Payment_Records payment = new Payment_Records(Username, UserRole);
-            payment.ShowDialog();
+            payment.Show();
             this.Hide();
         }
 

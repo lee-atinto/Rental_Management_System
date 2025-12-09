@@ -34,23 +34,18 @@
             this.panelStrengthBar = new System.Windows.Forms.Panel();
             this.TbConfirmPassword = new System.Windows.Forms.TextBox();
             this.TbEmail = new System.Windows.Forms.TextBox();
-            this.TbNewPassword = new System.Windows.Forms.TextBox();
             this.BtnLogin = new System.Windows.Forms.Button();
             this.LinkSignIn = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.pbPasswordIcon = new System.Windows.Forms.PictureBox();
-            this.pbUsernameIcon = new System.Windows.Forms.PictureBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.TbNewPassword = new System.Windows.Forms.TextBox();
+            this.ShowPassword = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbPasswordIcon)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbUsernameIcon)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -93,6 +88,7 @@
             this.TbConfirmPassword.Name = "TbConfirmPassword";
             this.TbConfirmPassword.Size = new System.Drawing.Size(249, 30);
             this.TbConfirmPassword.TabIndex = 3;
+            this.TbConfirmPassword.UseSystemPasswordChar = true;
             this.TbConfirmPassword.TextChanged += new System.EventHandler(this.TbConfirmPassword_TextChanged);
             // 
             // TbEmail
@@ -105,21 +101,10 @@
             this.TbEmail.Size = new System.Drawing.Size(249, 30);
             this.TbEmail.TabIndex = 1;
             // 
-            // TbNewPassword
-            // 
-            this.TbNewPassword.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TbNewPassword.ForeColor = System.Drawing.Color.Black;
-            this.TbNewPassword.Location = new System.Drawing.Point(514, 287);
-            this.TbNewPassword.Margin = new System.Windows.Forms.Padding(2);
-            this.TbNewPassword.Name = "TbNewPassword";
-            this.TbNewPassword.Size = new System.Drawing.Size(249, 30);
-            this.TbNewPassword.TabIndex = 2;
-            this.TbNewPassword.TextChanged += new System.EventHandler(this.TbNewPassword_TextChanged);
-            // 
             // BtnLogin
             // 
             this.BtnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnLogin.Location = new System.Drawing.Point(526, 456);
+            this.BtnLogin.Location = new System.Drawing.Point(527, 468);
             this.BtnLogin.Margin = new System.Windows.Forms.Padding(2);
             this.BtnLogin.Name = "BtnLogin";
             this.BtnLogin.Size = new System.Drawing.Size(219, 38);
@@ -135,7 +120,7 @@
             this.LinkSignIn.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LinkSignIn.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.LinkSignIn.LinkColor = System.Drawing.Color.DarkGray;
-            this.LinkSignIn.Location = new System.Drawing.Point(612, 514);
+            this.LinkSignIn.Location = new System.Drawing.Point(613, 526);
             this.LinkSignIn.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.LinkSignIn.Name = "LinkSignIn";
             this.LinkSignIn.Size = new System.Drawing.Size(52, 19);
@@ -167,17 +152,6 @@
             this.pictureBox3.TabIndex = 53;
             this.pictureBox3.TabStop = false;
             // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(482, 373);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(28, 29);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 52;
-            this.pictureBox2.TabStop = false;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -188,28 +162,6 @@
             this.label1.Size = new System.Drawing.Size(212, 37);
             this.label1.TabIndex = 51;
             this.label1.Text = "Reset Password";
-            // 
-            // pbPasswordIcon
-            // 
-            this.pbPasswordIcon.Image = ((System.Drawing.Image)(resources.GetObject("pbPasswordIcon.Image")));
-            this.pbPasswordIcon.Location = new System.Drawing.Point(482, 287);
-            this.pbPasswordIcon.Margin = new System.Windows.Forms.Padding(2);
-            this.pbPasswordIcon.Name = "pbPasswordIcon";
-            this.pbPasswordIcon.Size = new System.Drawing.Size(28, 29);
-            this.pbPasswordIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbPasswordIcon.TabIndex = 50;
-            this.pbPasswordIcon.TabStop = false;
-            // 
-            // pbUsernameIcon
-            // 
-            this.pbUsernameIcon.Image = ((System.Drawing.Image)(resources.GetObject("pbUsernameIcon.Image")));
-            this.pbUsernameIcon.Location = new System.Drawing.Point(482, 210);
-            this.pbUsernameIcon.Margin = new System.Windows.Forms.Padding(2);
-            this.pbUsernameIcon.Name = "pbUsernameIcon";
-            this.pbUsernameIcon.Size = new System.Drawing.Size(28, 29);
-            this.pbUsernameIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbUsernameIcon.TabIndex = 49;
-            this.pbUsernameIcon.TabStop = false;
             // 
             // label4
             // 
@@ -235,6 +187,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.ShowPassword);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label2);
@@ -253,6 +206,32 @@
             this.pictureBox1.TabIndex = 59;
             this.pictureBox1.TabStop = false;
             // 
+            // TbNewPassword
+            // 
+            this.TbNewPassword.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TbNewPassword.ForeColor = System.Drawing.Color.Black;
+            this.TbNewPassword.Location = new System.Drawing.Point(514, 287);
+            this.TbNewPassword.Margin = new System.Windows.Forms.Padding(2);
+            this.TbNewPassword.Name = "TbNewPassword";
+            this.TbNewPassword.Size = new System.Drawing.Size(249, 30);
+            this.TbNewPassword.TabIndex = 2;
+            this.TbNewPassword.UseSystemPasswordChar = true;
+            this.TbNewPassword.TextChanged += new System.EventHandler(this.TbNewPassword_TextChanged);
+            // 
+            // ShowPassword
+            // 
+            this.ShowPassword.AutoSize = true;
+            this.ShowPassword.BackColor = System.Drawing.Color.White;
+            this.ShowPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShowPassword.Location = new System.Drawing.Point(228, 410);
+            this.ShowPassword.Margin = new System.Windows.Forms.Padding(2);
+            this.ShowPassword.Name = "ShowPassword";
+            this.ShowPassword.Size = new System.Drawing.Size(126, 21);
+            this.ShowPassword.TabIndex = 55;
+            this.ShowPassword.Text = "Show Password";
+            this.ShowPassword.UseVisualStyleBackColor = false;
+            this.ShowPassword.CheckedChanged += new System.EventHandler(this.ShowPassword_CheckedChanged);
+            // 
             // Reset_Password
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -264,14 +243,11 @@
             this.Controls.Add(this.panelStrengthBar);
             this.Controls.Add(this.TbConfirmPassword);
             this.Controls.Add(this.TbEmail);
-            this.Controls.Add(this.TbNewPassword);
             this.Controls.Add(this.BtnLogin);
             this.Controls.Add(this.LinkSignIn);
             this.Controls.Add(this.pictureBox3);
-            this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.pbPasswordIcon);
-            this.Controls.Add(this.pbUsernameIcon);
+            this.Controls.Add(this.TbNewPassword);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pictureBox1);
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -280,9 +256,6 @@
             this.Text = "Renatal Mangement System";
             this.Load += new System.EventHandler(this.Reset_Password_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbPasswordIcon)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbUsernameIcon)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -298,18 +271,16 @@
         private System.Windows.Forms.Panel panelStrengthBar;
         private System.Windows.Forms.TextBox TbConfirmPassword;
         private System.Windows.Forms.TextBox TbEmail;
-        private System.Windows.Forms.TextBox TbNewPassword;
         private System.Windows.Forms.Button BtnLogin;
         private System.Windows.Forms.LinkLabel LinkSignIn;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox3;
-        private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox pbPasswordIcon;
-        private System.Windows.Forms.PictureBox pbUsernameIcon;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TextBox TbNewPassword;
+        private System.Windows.Forms.CheckBox ShowPassword;
     }
 }

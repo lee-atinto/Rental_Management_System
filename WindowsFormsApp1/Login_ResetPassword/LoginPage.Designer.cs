@@ -39,6 +39,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.lbTitle = new System.Windows.Forms.Label();
             this.plLoginForm = new System.Windows.Forms.Panel();
+            this.cbRememberMe = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -61,7 +62,7 @@
             this.LinkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LinkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.LinkLabel1.LinkColor = System.Drawing.Color.DarkGray;
-            this.LinkLabel1.Location = new System.Drawing.Point(264, 402);
+            this.LinkLabel1.Location = new System.Drawing.Point(169, 471);
             this.LinkLabel1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.LinkLabel1.Name = "LinkLabel1";
             this.LinkLabel1.Size = new System.Drawing.Size(122, 17);
@@ -75,7 +76,7 @@
             // 
             this.TbUsername.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TbUsername.ForeColor = System.Drawing.Color.Black;
-            this.TbUsername.Location = new System.Drawing.Point(86, 263);
+            this.TbUsername.Location = new System.Drawing.Point(86, 249);
             this.TbUsername.Margin = new System.Windows.Forms.Padding(2);
             this.TbUsername.Name = "TbUsername";
             this.TbUsername.Size = new System.Drawing.Size(323, 30);
@@ -85,7 +86,7 @@
             // 
             this.TbPassword.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TbPassword.ForeColor = System.Drawing.Color.Black;
-            this.TbPassword.Location = new System.Drawing.Point(86, 352);
+            this.TbPassword.Location = new System.Drawing.Point(86, 332);
             this.TbPassword.Margin = new System.Windows.Forms.Padding(2);
             this.TbPassword.Name = "TbPassword";
             this.TbPassword.Size = new System.Drawing.Size(323, 30);
@@ -94,7 +95,7 @@
             // BtnLogin
             // 
             this.BtnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnLogin.Location = new System.Drawing.Point(50, 444);
+            this.BtnLogin.Location = new System.Drawing.Point(50, 421);
             this.BtnLogin.Margin = new System.Windows.Forms.Padding(2);
             this.BtnLogin.Name = "BtnLogin";
             this.BtnLogin.Size = new System.Drawing.Size(359, 38);
@@ -108,7 +109,7 @@
             this.ShowPassword.AutoSize = true;
             this.ShowPassword.BackColor = System.Drawing.Color.White;
             this.ShowPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ShowPassword.Location = new System.Drawing.Point(72, 398);
+            this.ShowPassword.Location = new System.Drawing.Point(283, 379);
             this.ShowPassword.Margin = new System.Windows.Forms.Padding(2);
             this.ShowPassword.Name = "ShowPassword";
             this.ShowPassword.Size = new System.Drawing.Size(126, 21);
@@ -121,7 +122,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(82, 327);
+            this.label4.Location = new System.Drawing.Point(82, 307);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(86, 23);
@@ -132,7 +133,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(82, 238);
+            this.label3.Location = new System.Drawing.Point(82, 224);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(89, 23);
@@ -165,6 +166,7 @@
             // plLoginForm
             // 
             this.plLoginForm.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.plLoginForm.Controls.Add(this.cbRememberMe);
             this.plLoginForm.Controls.Add(this.button2);
             this.plLoginForm.Controls.Add(this.button1);
             this.plLoginForm.Controls.Add(this.label1);
@@ -186,6 +188,19 @@
             this.plLoginForm.Name = "plLoginForm";
             this.plLoginForm.Size = new System.Drawing.Size(449, 608);
             this.plLoginForm.TabIndex = 44;
+            // 
+            // cbRememberMe
+            // 
+            this.cbRememberMe.AutoSize = true;
+            this.cbRememberMe.BackColor = System.Drawing.Color.White;
+            this.cbRememberMe.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbRememberMe.Location = new System.Drawing.Point(50, 379);
+            this.cbRememberMe.Margin = new System.Windows.Forms.Padding(2);
+            this.cbRememberMe.Name = "cbRememberMe";
+            this.cbRememberMe.Size = new System.Drawing.Size(119, 21);
+            this.cbRememberMe.TabIndex = 46;
+            this.cbRememberMe.Text = "Remember me";
+            this.cbRememberMe.UseVisualStyleBackColor = false;
             // 
             // button2
             // 
@@ -225,14 +240,13 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Location = new System.Drawing.Point(50, 503);
+            this.panel2.Location = new System.Drawing.Point(50, 504);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(359, 2);
             this.panel2.TabIndex = 42;
             // 
             // btnAdmin
             // 
-            this.btnAdmin.Image = global::WindowsFormsApp1.Properties.Resources.setting;
             this.btnAdmin.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.btnAdmin.Location = new System.Drawing.Point(244, 109);
             this.btnAdmin.Name = "btnAdmin";
@@ -244,7 +258,6 @@
             // 
             // btnSuperAdmin
             // 
-            this.btnSuperAdmin.Image = global::WindowsFormsApp1.Properties.Resources.shield;
             this.btnSuperAdmin.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
             this.btnSuperAdmin.Location = new System.Drawing.Point(50, 108);
             this.btnSuperAdmin.Name = "btnSuperAdmin";
@@ -257,7 +270,7 @@
             // pbPasswordIcon
             // 
             this.pbPasswordIcon.Image = ((System.Drawing.Image)(resources.GetObject("pbPasswordIcon.Image")));
-            this.pbPasswordIcon.Location = new System.Drawing.Point(50, 354);
+            this.pbPasswordIcon.Location = new System.Drawing.Point(50, 334);
             this.pbPasswordIcon.Margin = new System.Windows.Forms.Padding(2);
             this.pbPasswordIcon.Name = "pbPasswordIcon";
             this.pbPasswordIcon.Size = new System.Drawing.Size(40, 29);
@@ -268,7 +281,7 @@
             // pbUsernameIcon
             // 
             this.pbUsernameIcon.Image = ((System.Drawing.Image)(resources.GetObject("pbUsernameIcon.Image")));
-            this.pbUsernameIcon.Location = new System.Drawing.Point(50, 264);
+            this.pbUsernameIcon.Location = new System.Drawing.Point(50, 250);
             this.pbUsernameIcon.Margin = new System.Windows.Forms.Padding(2);
             this.pbUsernameIcon.Name = "pbUsernameIcon";
             this.pbUsernameIcon.Size = new System.Drawing.Size(40, 29);
@@ -329,5 +342,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox cbRememberMe;
     }
 }

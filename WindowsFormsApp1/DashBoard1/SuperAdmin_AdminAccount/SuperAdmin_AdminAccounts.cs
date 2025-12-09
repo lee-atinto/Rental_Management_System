@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Super_Admin_Account;
@@ -337,7 +338,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount
         private void btnDashBoard_Click_1(object sender, EventArgs e)
         {
             DashBoard dashboard = new DashBoard(Username, UserRole);
-            dashboard.ShowDialog();
+            dashboard.Show();
             this.Hide();
         }
 

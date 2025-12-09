@@ -76,6 +76,24 @@
     <Compile Include="DashBoard1\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.Designer.cs">
       <DependentUpon>SuperAdmin_AdminAccounts.cs</DependentUpon>
     </Compile>
+    <Compile Include="DashBoard1\SuperAdmin_BackUp\BackUp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DashBoard1\SuperAdmin_BackUp\BackUp.Designer.cs">
+      <DependentUpon>BackUp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\Payment_Records.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\Payment_Records.Designer.cs">
+      <DependentUpon>Payment_Records.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DashBoard1\SuperAdmin_Properties\AddProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DashBoard1\SuperAdmin_Properties\AddProperties.Designer.cs">
+      <DependentUpon>AddProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="DashBoard1\SuperAdmin_Properties\ProperTies.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,18 +112,7 @@
     <Compile Include="Login_ResetPassword\LoginPage.Designer.cs">
       <DependentUpon>LoginPage.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\AddNewPayment.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\AddNewPayment.Designer.cs">
-      <DependentUpon>AddNewPayment.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\Payment Records.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\Payment Records.Designer.cs">
-      <DependentUpon>Payment Records.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Login_ResetPassword\PasswordAuto.cs" />
     <Compile Include="Login_ResetPassword\Reset Password.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -119,6 +126,11 @@
     </Compile>
     <Compile Include="DashBoard2\Admin DashBoardcs.Designer.cs">
       <DependentUpon>Admin DashBoardcs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="RentalManagementSystemDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -144,6 +156,15 @@
     <EmbeddedResource Include="DashBoard1\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.resx">
       <DependentUpon>SuperAdmin_AdminAccounts.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DashBoard1\SuperAdmin_BackUp\BackUp.resx">
+      <DependentUpon>BackUp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DashBoard1\SuperAdmin_PaymentRecords\Payment_Records.resx">
+      <DependentUpon>Payment_Records.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DashBoard1\SuperAdmin_Properties\AddProperties.resx">
+      <DependentUpon>AddProperties.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DashBoard1\SuperAdmin_Properties\ProperTies.resx">
       <DependentUpon>ProperTies.cs</DependentUpon>
     </EmbeddedResource>
@@ -153,25 +174,9 @@
     <EmbeddedResource Include="Login_ResetPassword\LoginPage.resx">
       <DependentUpon>LoginPage.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_PaymentRecords\AddNewPayment.resx">
-      <DependentUpon>AddNewPayment.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_PaymentRecords\Payment Records.resx">
-      <DependentUpon>Payment Records.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Login_ResetPassword\Reset Password.resx">
       <DependentUpon>Reset Password.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="DashBoard2\Admin DashBoardcs.resx">
       <DependentUpon>Admin DashBoardcs.cs</DependentUpon>
     </EmbeddedResource>
@@ -180,6 +185,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DashBoard1\SuperAdmin_Tenants\Tenants.resx">
       <DependentUpon>Tenants.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -207,13 +216,33 @@
     <None Include="RentalManagementSystemDataSet.xss">
       <DependentUpon>RentalManagementSystemDataSet.xsd</DependentUpon>
     </None>
-    <None Include="Resources\shield.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\padlock.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\setting.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\delete.png" />
+    <None Include="Resources\shield.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\profit.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\payment.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\calendar.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\downlaod.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sync.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

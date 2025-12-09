@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.Login_ResetPassword;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -88,6 +89,8 @@ namespace WindowsFormsApp1.Super_Admin_Account
             panelHeader.BackColor = Color.White;
             PanelBackGroundProfile.BackColor = Color.FromArgb(46, 51, 73);
 
+            // -------------------- Set Icon Button -------------------- //
+
             // -------------------- Set Padding Button -------------------- //
             btnDashBoard.Padding = new Padding(30, 0, 0, 0);
             btnAdminAcc.Padding = new Padding(30, 0, 0, 0);
@@ -123,8 +126,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             panel4.BackColor = Color.White;
 
             // -------------------- Set Scroll Form -------------------- //
-            this.RightSideBar.AutoScroll = true;
-            AddContentToForceScroll(this.RightSideBar);
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)

@@ -38,6 +38,13 @@
             this.btnlogout = new System.Windows.Forms.Button();
             this.SideBarBakground = new System.Windows.Forms.PictureBox();
             this.flowLayoutPanelRightSideBar = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnProperties = new System.Windows.Forms.Button();
+            this.btnPaymentRec = new System.Windows.Forms.Button();
+            this.btnBackUp = new System.Windows.Forms.Button();
+            this.btnViewReport = new System.Windows.Forms.Button();
+            this.btnTenant = new System.Windows.Forms.Button();
+            this.btnAdminAcc = new System.Windows.Forms.Button();
+            this.btnDashBoard = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -47,18 +54,10 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tbSearch = new System.Windows.Forms.TextBox();
             this.lbSearch = new System.Windows.Forms.Label();
-            this.btnProperties = new System.Windows.Forms.Button();
-            this.btnPaymentRec = new System.Windows.Forms.Button();
-            this.btnBackUp = new System.Windows.Forms.Button();
-            this.btnViewReport = new System.Windows.Forms.Button();
-            this.btnTenant = new System.Windows.Forms.Button();
-            this.btnAdminAcc = new System.Windows.Forms.Button();
-            this.btnDashBoard = new System.Windows.Forms.Button();
             this.PanelBackGroundProfile.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).BeginInit();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).BeginInit();
-            this.flowLayoutPanelRightSideBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -154,104 +153,10 @@
             // flowLayoutPanelRightSideBar
             // 
             this.flowLayoutPanelRightSideBar.BackColor = System.Drawing.SystemColors.Control;
-            this.flowLayoutPanelRightSideBar.Controls.Add(this.panel1);
-            this.flowLayoutPanelRightSideBar.Location = new System.Drawing.Point(319, 82);
+            this.flowLayoutPanelRightSideBar.Location = new System.Drawing.Point(319, 306);
             this.flowLayoutPanelRightSideBar.Name = "flowLayoutPanelRightSideBar";
-            this.flowLayoutPanelRightSideBar.Size = new System.Drawing.Size(1199, 715);
+            this.flowLayoutPanelRightSideBar.Size = new System.Drawing.Size(1196, 468);
             this.flowLayoutPanelRightSideBar.TabIndex = 264;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.btnAdd);
-            this.panel1.Controls.Add(this.panel2);
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1196, 220);
-            this.panel1.TabIndex = 0;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(33, 78);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(287, 19);
-            this.label3.TabIndex = 252;
-            this.label3.Text = "Manage all tenant information and records";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(32, 47);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(199, 26);
-            this.label2.TabIndex = 251;
-            this.label2.Text = "Tenants Management";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(34, 15);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1129, 13);
-            this.label1.TabIndex = 250;
-            this.label1.Text = "_________________________________________________________________________________" +
-    "________________________________________________________________________________" +
-    "__________________________\r\n";
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAdd.Location = new System.Drawing.Point(988, 47);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(181, 50);
-            this.btnAdd.TabIndex = 249;
-            this.btnAdd.Text = "+   Add Tenant";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            // 
-            // panel2
-            // 
-            this.panel2.BackColor = System.Drawing.Color.White;
-            this.panel2.Controls.Add(this.comboBox1);
-            this.panel2.Controls.Add(this.tbSearch);
-            this.panel2.Controls.Add(this.lbSearch);
-            this.panel2.Location = new System.Drawing.Point(14, 125);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1165, 93);
-            this.panel2.TabIndex = 253;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(1000, 27);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(142, 34);
-            this.comboBox1.TabIndex = 238;
-            // 
-            // tbSearch
-            // 
-            this.tbSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tbSearch.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbSearch.Location = new System.Drawing.Point(112, 27);
-            this.tbSearch.Name = "tbSearch";
-            this.tbSearch.Size = new System.Drawing.Size(868, 33);
-            this.tbSearch.TabIndex = 236;
-            // 
-            // lbSearch
-            // 
-            this.lbSearch.AutoSize = true;
-            this.lbSearch.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbSearch.Location = new System.Drawing.Point(30, 30);
-            this.lbSearch.Name = "lbSearch";
-            this.lbSearch.Size = new System.Drawing.Size(76, 26);
-            this.lbSearch.TabIndex = 237;
-            this.lbSearch.Text = "Search:";
             // 
             // btnProperties
             // 
@@ -355,11 +260,107 @@
             this.btnDashBoard.UseVisualStyleBackColor = false;
             this.btnDashBoard.Click += new System.EventHandler(this.btnDashBoard_Click);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.btnAdd);
+            this.panel1.Controls.Add(this.panel2);
+            this.panel1.Location = new System.Drawing.Point(319, 82);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1196, 220);
+            this.panel1.TabIndex = 272;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(33, 78);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(287, 19);
+            this.label3.TabIndex = 252;
+            this.label3.Text = "Manage all tenant information and records";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(32, 47);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(199, 26);
+            this.label2.TabIndex = 251;
+            this.label2.Text = "Tenants Management";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(34, 15);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(1129, 13);
+            this.label1.TabIndex = 250;
+            this.label1.Text = "_________________________________________________________________________________" +
+    "________________________________________________________________________________" +
+    "__________________________\r\n";
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAdd.Location = new System.Drawing.Point(988, 47);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(181, 50);
+            this.btnAdd.TabIndex = 249;
+            this.btnAdd.Text = "+   Add Tenant";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.White;
+            this.panel2.Controls.Add(this.comboBox1);
+            this.panel2.Controls.Add(this.tbSearch);
+            this.panel2.Controls.Add(this.lbSearch);
+            this.panel2.Location = new System.Drawing.Point(14, 125);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1165, 93);
+            this.panel2.TabIndex = 253;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(1000, 27);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(142, 34);
+            this.comboBox1.TabIndex = 238;
+            // 
+            // tbSearch
+            // 
+            this.tbSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tbSearch.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbSearch.Location = new System.Drawing.Point(112, 27);
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(868, 33);
+            this.tbSearch.TabIndex = 236;
+            this.tbSearch.TextChanged += new System.EventHandler(this.tbSearch_TextChanged_1);
+            // 
+            // lbSearch
+            // 
+            this.lbSearch.AutoSize = true;
+            this.lbSearch.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbSearch.Location = new System.Drawing.Point(30, 30);
+            this.lbSearch.Name = "lbSearch";
+            this.lbSearch.Size = new System.Drawing.Size(76, 26);
+            this.lbSearch.TabIndex = 237;
+            this.lbSearch.Text = "Search:";
+            // 
             // ProperTies
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1533, 798);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnProperties);
             this.Controls.Add(this.btnPaymentRec);
             this.Controls.Add(this.btnBackUp);
@@ -383,7 +384,6 @@
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).EndInit();
-            this.flowLayoutPanelRightSideBar.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -403,6 +403,13 @@
         private System.Windows.Forms.PictureBox SideBarBakground;
         private System.Windows.Forms.Panel panelProperties;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelRightSideBar;
+        private System.Windows.Forms.Button btnProperties;
+        private System.Windows.Forms.Button btnPaymentRec;
+        private System.Windows.Forms.Button btnBackUp;
+        private System.Windows.Forms.Button btnViewReport;
+        private System.Windows.Forms.Button btnTenant;
+        private System.Windows.Forms.Button btnAdminAcc;
+        private System.Windows.Forms.Button btnDashBoard;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
@@ -412,12 +419,5 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TextBox tbSearch;
         private System.Windows.Forms.Label lbSearch;
-        private System.Windows.Forms.Button btnProperties;
-        private System.Windows.Forms.Button btnPaymentRec;
-        private System.Windows.Forms.Button btnBackUp;
-        private System.Windows.Forms.Button btnViewReport;
-        private System.Windows.Forms.Button btnTenant;
-        private System.Windows.Forms.Button btnAdminAcc;
-        private System.Windows.Forms.Button btnDashBoard;
     }
 }

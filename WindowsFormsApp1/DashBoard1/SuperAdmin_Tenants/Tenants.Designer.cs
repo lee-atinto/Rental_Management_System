@@ -383,7 +383,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1533, 798);
+            this.ClientSize = new System.Drawing.Size(1526, 845);
             this.Controls.Add(this.btnProperties);
             this.Controls.Add(this.btnPaymentRec);
             this.Controls.Add(this.btnBackUp);
