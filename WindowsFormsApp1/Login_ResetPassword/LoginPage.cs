@@ -2,17 +2,11 @@
 using Rental_Management_System;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApp1.Super_Admin_Account;
@@ -50,9 +44,7 @@ namespace WindowsFormsApp1.Login_ResetPassword
 
             navButtons = new List<Button> { btnSuperAdmin, btnAdmin };
             foreach (var button in navButtons)
-            {
                 ApplyDefaultButtonStyle(button);
-            }
 
             tokenFilePath = Path.Combine(appFolder, "login.token");
             lastUserFilePath = Path.Combine(appFolder, "lastuser.txt");
@@ -63,26 +55,23 @@ namespace WindowsFormsApp1.Login_ResetPassword
                 AutoSize = true,
                 Location = new Point(TbPassword.Left, TbPassword.Bottom + 5)
             };
-
             this.Controls.Add(chkRememberMe);
+
             this.Load += async (s, e) => { await LoginPage_LoadAsync(); };
         }
 
         private void ApplyDefaultButtonStyle(Button button)
         {
             if (button == null) return;
-
             button.TabStop = false;
             button.FlatStyle = FlatStyle.Flat;
             button.FlatAppearance.BorderSize = 1;
             button.FlatAppearance.BorderColor = inactiveForeColor;
             button.Padding = new Padding(50, 5, 5, 5);
-
             button.ForeColor = inactiveForeColor;
             button.BackColor = inactiveBackColor;
             button.FlatAppearance.MouseDownBackColor = inactiveBackColor;
             button.FlatAppearance.MouseOverBackColor = inactiveBackColor;
-
             button.TextAlign = ContentAlignment.MiddleLeft;
             button.ImageAlign = ContentAlignment.MiddleLeft;
         }
@@ -124,15 +113,12 @@ namespace WindowsFormsApp1.Login_ResetPassword
         public static Image ResizeImage(Image originalImage, int newWidth, int newHeight)
         {
             if (originalImage == null) return null;
-
             Bitmap resized = new Bitmap(newWidth, newHeight);
-
             using (Graphics g = Graphics.FromImage(resized))
             {
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(originalImage, 0, 0, newWidth, newHeight);
             }
-
             return resized;
         }
 
@@ -190,36 +176,6 @@ namespace WindowsFormsApp1.Login_ResetPassword
             }
         }
 
-        private void MarkAdminOnline(string username)
-        {
-            using (SqlConnection conn = new SqlConnection(DataConnection))
-            {
-                string query = "UPDATE Account SET active = 1, last_login = SYSDATETIME() WHERE username=@u";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", username);
-
-                try
-                {
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-                catch { }
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            new DashBoard("lee anthony", "SuperAdmin").Show();
-            this.Hide();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            new Admin_DashBoardcs("jewel beduya", "Admin").Show();
-            this.Hide();
-        }
-
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Reset_Password reset = new Reset_Password();
@@ -227,7 +183,7 @@ namespace WindowsFormsApp1.Login_ResetPassword
             this.Hide();
         }
 
-        // -------------------- NEW FEATURE METHODS -------------------- //
+        // -------------------- Async Helpers -------------------- //
 
         private async Task LoginPage_LoadAsync()
         {
@@ -281,15 +237,11 @@ namespace WindowsFormsApp1.Login_ResetPassword
 
                             if (dbToken == token && dbExp > DateTime.UtcNow)
                             {
-                                await MarkAdminOnlineAsync(username);
+                                await MarkUserOnlineAsync(username);
 
                                 this.Invoke((MethodInvoker)delegate
                                 {
-                                    if (role == "SuperAdmin")
-                                        new DashBoard(username, role).Show();
-                                    else
-                                        new Admin_DashBoardcs(username, role).Show();
-
+                                    new DashBoard(username, role).Show();
                                     this.Hide();
                                 });
 
@@ -317,8 +269,9 @@ namespace WindowsFormsApp1.Login_ResetPassword
                 await conn.OpenAsync();
 
                 string query = @"SELECT username, password_hash, role, failed_attempts, lock_until 
-                         FROM Account 
-                         WHERE username=@u AND role=@role";
+                                 FROM Account 
+                                 WHERE username=@u AND role=@role";
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@u", username);
@@ -336,55 +289,22 @@ namespace WindowsFormsApp1.Login_ResetPassword
                         string dbHash = reader["password_hash"].ToString();
                         string role = reader["role"].ToString();
                         DateTime? lockUntil = reader["lock_until"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["lock_until"]);
-
                         reader.Close();
 
                         if (!BCrypt.Net.BCrypt.Verify(password, dbHash))
                         {
-                            string updateQuery = @" UPDATE Account SET failed_attempts = CASE  WHEN ISNULL(failed_attempts, 0) < 3 THEN ISNULL(failed_attempts, 0) + 1 ELSE 3
-                                                    END, lock_until = CASE WHEN ISNULL(failed_attempts, 0) + 1 >= 3 THEN DATEADD(MINUTE, 1, SYSDATETIME()) 
-                                                    ELSE NULL END WHERE username = @u; SELECT failed_attempts, lock_until FROM Account WHERE username = @u;";
-                            using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
-                            {
-                                updateCmd.Parameters.AddWithValue("@u", dbUser);
-
-                                using (var updateReader = await updateCmd.ExecuteReaderAsync())
-                                {
-                                    if (await updateReader.ReadAsync())
-                                    {
-                                        int currentAttempts = Convert.ToInt32(updateReader["failed_attempts"]);
-                                        DateTime? updatedLock = updateReader["lock_until"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(updateReader["lock_until"]);
-
-                                        string msg = $"Incorrect password. Attempt {currentAttempts} of 3.";
-                                        if (currentAttempts >= 3 && updatedLock.HasValue)
-                                            msg += " Account locked for 1 minute.";
-
-                                        MessageBox.Show(msg);
-                                    }
-                                }
-                            }
+                            MessageBox.Show("Incorrect password.");
                             return;
                         }
-                        
-                        string resetQuery = @"UPDATE Account 
-                                      SET failed_attempts = 0, lock_until = NULL 
-                                      WHERE username=@u";
-                        using (SqlCommand resetCmd = new SqlCommand(resetQuery, conn))
-                        {
-                            resetCmd.Parameters.AddWithValue("@u", dbUser);
-                            await resetCmd.ExecuteNonQueryAsync();
-                        }
 
+                        await ResetFailedAttemptsAsync(dbUser);
                         SaveLastUser(dbUser);
                         if (chkRememberMe.Checked) await SaveRememberMeAsync(dbUser);
-                        await MarkAdminOnlineAsync(dbUser);
+                        await MarkUserOnlineAsync(dbUser);
 
                         this.Invoke((MethodInvoker)delegate
                         {
-                            if (role == "SuperAdmin")
-                                new DashBoard(dbUser, role).Show();
-                            else
-                                new Admin_DashBoardcs(dbUser, role).Show();
+                            new DashBoard(dbUser, role).Show();
                             this.Hide();
                         });
                     }
@@ -392,25 +312,16 @@ namespace WindowsFormsApp1.Login_ResetPassword
             }
         }
 
-
-        private async Task IncreaseFailedAttemptsAsync(string username)
+        private async void button1_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(DataConnection))
-            {
-                string query = @"
-                UPDATE Account SET failed_attempts = failed_attempts + 1
-                WHERE username=@u;
-                IF (SELECT failed_attempts FROM Account WHERE username=@u) >= @max
-                BEGIN
-                    UPDATE Account SET lock_until = DATEADD(MINUTE, @mins, SYSDATETIME()) WHERE username=@u;
-                END";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", username);
-                cmd.Parameters.AddWithValue("@max", MAX_FAILED_ATTEMPTS);
-                cmd.Parameters.AddWithValue("@mins", LOCKOUT_DURATION.TotalMinutes);
-                await conn.OpenAsync();
-                await cmd.ExecuteNonQueryAsync();
-            }
+            selectedRole = "SuperAdmin";
+            await PerformLoginAsync();
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            selectedRole = "Admin";
+            await PerformLoginAsync();
         }
 
         private async Task ResetFailedAttemptsAsync(string username)
@@ -459,7 +370,7 @@ namespace WindowsFormsApp1.Login_ResetPassword
             catch { }
         }
 
-        private async Task MarkAdminOnlineAsync(string username)
+        private async Task MarkUserOnlineAsync(string username)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
             {

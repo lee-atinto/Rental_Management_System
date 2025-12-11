@@ -64,46 +64,52 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DashBoard1\SuperAdmin_AdminAccount\AddAmin Acccounts.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Maintenance\Maintenance.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_AdminAccount\AddAmin Acccounts.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Maintenance\Maintenance.Designer.cs">
+      <DependentUpon>Maintenance.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_AdminAccount\AddAmin Acccounts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_AdminAccount\AddAmin Acccounts.Designer.cs">
       <DependentUpon>AddAmin Acccounts.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.Designer.cs">
       <DependentUpon>SuperAdmin_AdminAccounts.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_BackUp\BackUp.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_BackUp\BackUp.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_BackUp\BackUp.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_BackUp\BackUp.Designer.cs">
       <DependentUpon>BackUp.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\Payment_Records.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\Payment_Records.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_PaymentRecords\Payment_Records.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\Payment_Records.Designer.cs">
       <DependentUpon>Payment_Records.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Properties\AddProperties.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Properties\AddProperties.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Properties\AddProperties.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Properties\AddProperties.Designer.cs">
       <DependentUpon>AddProperties.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Properties\ProperTies.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Properties\ProperTies.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Properties\ProperTies.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Properties\ProperTies.Designer.cs">
       <DependentUpon>ProperTies.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Tenants\AddTenants.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Tenants\AddTenants.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Tenants\AddTenants.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Tenants\AddTenants.Designer.cs">
       <DependentUpon>AddTenants.cs</DependentUpon>
     </Compile>
     <Compile Include="Login_ResetPassword\LoginPage.cs">
@@ -121,12 +127,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DashBoard2\Admin DashBoardcs.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DashBoard2\Admin DashBoardcs.Designer.cs">
-      <DependentUpon>Admin DashBoardcs.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -138,37 +138,40 @@
       <DependentUpon>RentalManagementSystemDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="SessionManager.cs" />
-    <Compile Include="DashBoard1\SuperAdmin_DashBoard\DashBoard.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_DashBoard\DashBoard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_DashBoard\DashBoard.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_DashBoard\DashBoard.Designer.cs">
       <DependentUpon>DashBoard.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Tenants\Tenants.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Tenants\Tenants.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DashBoard1\SuperAdmin_Tenants\Tenants.Designer.cs">
+    <Compile Include="Main Form Dashboards\SuperAdmin_Tenants\Tenants.Designer.cs">
       <DependentUpon>Tenants.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_AdminAccount\AddAmin Acccounts.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_AdminAccount\AddAmin Acccounts.resx">
       <DependentUpon>AddAmin Acccounts.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_AdminAccount\SuperAdmin_AdminAccounts.resx">
       <DependentUpon>SuperAdmin_AdminAccounts.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_BackUp\BackUp.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_BackUp\BackUp.resx">
       <DependentUpon>BackUp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_PaymentRecords\Payment_Records.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Maintenance\Maintenance.resx">
+      <DependentUpon>Maintenance.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_PaymentRecords\Payment_Records.resx">
       <DependentUpon>Payment_Records.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_Properties\AddProperties.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Properties\AddProperties.resx">
       <DependentUpon>AddProperties.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_Properties\ProperTies.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Properties\ProperTies.resx">
       <DependentUpon>ProperTies.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_Tenants\AddTenants.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Tenants\AddTenants.resx">
       <DependentUpon>AddTenants.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login_ResetPassword\LoginPage.resx">
@@ -177,13 +180,10 @@
     <EmbeddedResource Include="Login_ResetPassword\Reset Password.resx">
       <DependentUpon>Reset Password.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard2\Admin DashBoardcs.resx">
-      <DependentUpon>Admin DashBoardcs.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_DashBoard\DashBoard.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_DashBoard\DashBoard.resx">
       <DependentUpon>DashBoard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashBoard1\SuperAdmin_Tenants\Tenants.resx">
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Tenants\Tenants.resx">
       <DependentUpon>Tenants.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -243,6 +243,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sync.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tool.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -260,16 +260,17 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             btnDelete.Font = new Font("Calibri", 14, FontStyle.Regular);
             btnDelete.Click += (s, e) => MessageBox.Show($"Delete {propertyName}");
 
-            //try
-            //{
-            //    Image original = Properties.Resources.delete;
-            //    Image zoomed = new Bitmap(original, new Size(20, 20));
-            //    btnDelete.Image = zoomed;
-            //}
-            //catch
-            //{
-            //    btnDelete.Text = "Delete";
-            //}
+            try
+            {
+                Image original = Properties.Resources.delete;
+                Image zoomed = new Bitmap(original, new Size(20, 20));
+                btnDelete.Image = zoomed;
+            }
+
+            catch
+            {
+                btnDelete.Text = "Delete";
+            }
 
             btnDelete.BackColor = Color.White;
             btnDelete.FlatStyle = FlatStyle.Flat;
