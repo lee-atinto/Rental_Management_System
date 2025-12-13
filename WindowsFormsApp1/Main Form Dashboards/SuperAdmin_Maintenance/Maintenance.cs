@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsApp1.Main_Form_Dashboards
@@ -18,8 +14,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         private string UserName;
         private string UserRole;
 
-        private DataTable MaintenanceData;
-        public Maintenance(String username, string userRole)
+        public Maintenance(string username, string userRole)
         {
             this.UserName = username;
             this.UserRole = userRole;
@@ -36,33 +31,17 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             string totalRequestsQuery = "SELECT COUNT(*) FROM MaintenanceRequest";
             string pendingQuery = "SELECT COUNT(*) FROM MaintenanceRequest WHERE Status = 'Pending'";
             string completedQuery = "SELECT COUNT(*) FROM MaintenanceRequest WHERE Status = 'Completed'";
-            string thisMonthQuery = @" SELECT COUNT(*) FROM MaintenanceRequest WHERE DATENAME(month, requestDate) = DATENAME(month, GETDATE()) AND DATENAME(year, requestDate) = DATENAME(year, GETDATE())";
+            string thisMonthQuery = @"SELECT COUNT(*) FROM MaintenanceRequest WHERE DATENAME(month, requestDate) = DATENAME(month, GETDATE()) AND DATENAME(year, requestDate) = DATENAME(year, GETDATE())";
 
             using (SqlConnection con = new SqlConnection(DataConnection))
             {
                 try
                 {
                     con.Open();
-
-                    using (SqlCommand cmd = new SqlCommand(totalRequestsQuery, con))
-                    {
-                        values["TotalRequests"] = (int)cmd.ExecuteScalar();
-                    }
-
-                    using (SqlCommand cmd = new SqlCommand(pendingQuery, con))
-                    {
-                        values["Pending"] = (int)cmd.ExecuteScalar();
-                    }
-
-                    using (SqlCommand cmd = new SqlCommand(completedQuery, con))
-                    {
-                        values["Completed"] = (int)cmd.ExecuteScalar();
-                    }
-
-                    using (SqlCommand cmd = new SqlCommand(thisMonthQuery, con))
-                    {
-                        values["ThisMonth"] = (int)cmd.ExecuteScalar();
-                    }
+                    values["TotalRequests"] = (int)new SqlCommand(totalRequestsQuery, con).ExecuteScalar();
+                    values["Pending"] = (int)new SqlCommand(pendingQuery, con).ExecuteScalar();
+                    values["Completed"] = (int)new SqlCommand(completedQuery, con).ExecuteScalar();
+                    values["ThisMonth"] = (int)new SqlCommand(thisMonthQuery, con).ExecuteScalar();
                 }
                 catch (Exception ex)
                 {
@@ -75,8 +54,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
 
         private void DisplayDashboardValues()
         {
-            Dictionary<string, int> data = GetDashboardValues();
-
+            var data = GetDashboardValues();
             lbTotalRecquest.Text = data["TotalRequests"].ToString();
             lbPending.Text = data["Pending"].ToString();
             lbCompleted.Text = data["Completed"].ToString();
@@ -86,16 +64,38 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         private DataTable GetMaintenance()
         {
             DataTable dt = new DataTable();
+            string query = @" 
+                SELECT 
+                    MR.maintenanceReqID, 
+                    MR.description, 
+                    MR.requestDate, 
+                    MR.Status AS MaintenanceStatus,
+                    U.UnitNumber,
+                    PI.firstName, 
+                    PI.middleName, 
+                    PI.lastName
+                FROM MaintenanceRequest AS MR 
+                INNER JOIN Tenant AS T ON MR.TenantID = T.TenantID
+                INNER JOIN PersonalInformation AS PI ON T.TenantID = PI.TenantID 
+                INNER JOIN Contract AS C ON T.TenantID = C.TenantID 
+                INNER JOIN Unit AS U ON C.UnitID = U.UnitID
+                WHERE C.ContractStatus = 'Active' OR C.ContractStatus IS NULL 
+                ORDER BY MR.requestDate DESC;
+            ";
 
-            using (SqlConnection con = new SqlConnection(DataConnection))
+            try
             {
-                con.Open();
-                string query = @" SELECT MR.maintenanceReqID, MR.description, MR.requestDate, MR.Status AS MaintenanceStatus,P.unitNumber, PI.firstName, PI.middleName, PI.lastName
-                                  FROM MaintenanceRequest AS MR INNER JOIN Property AS P ON MR.PropertyID = P.PropertyID INNER JOIN PersonalInformation AS PI ON MR.maintenanceReqID = PI.personalInfoID;";
-
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
-                da.Fill(dt);
+                using (SqlConnection con = new SqlConnection(DataConnection))
+                {
+                    con.Open();
+                    new SqlDataAdapter(query, con).Fill(dt);
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Database Error: {ex.Message}", "SQL Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             return dt;
         }
 
@@ -132,7 +132,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         private Panel CreateMaintenanceCard(int requestID, string description, string requestDate, string maintenanceStatus, string unitNumber, string firstName, string lastName, string middleName)
         {
             Panel MaintenanceCards = new Panel();
-            MaintenanceCards.Size = new Size(1165, 150);
+            MaintenanceCards.Size = new Size(1130, 180);
             MaintenanceCards.BackColor = Color.White;
             MaintenanceCards.BorderStyle = BorderStyle.None;
             MaintenanceCards.Margin = new Padding(15);
@@ -143,7 +143,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             lbStatus.Text = maintenanceStatus;
             lbStatus.TextAlign = ContentAlignment.MiddleCenter;
             lbStatus.Font = new Font("Calibri", 10, FontStyle.Bold);
-            lbStatus.Location = new Point(255, 20);
+            lbStatus.Location = new Point(1000, 40);
 
             switch (maintenanceStatus.ToLower())
             {
@@ -173,13 +173,6 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             lbDescriptionTitle.Location = new Point(95, 35);
             MaintenanceCards.Controls.Add(lbDescriptionTitle);
 
-            PictureBox pbToolIcon = new PictureBox();
-            pbToolIcon.Image = Properties.Resources.tool;
-            pbToolIcon.Size = new Size(35, 35);
-            pbToolIcon.SizeMode = PictureBoxSizeMode.StretchImage;
-            pbToolIcon.Location = new Point(lbDescriptionTitle.Left - 60, lbDescriptionTitle.Top + 5);
-            MaintenanceCards.Controls.Add(pbToolIcon);
-
             Label lbDescription = new Label();
             lbDescription.Text = description;
             lbDescription.AutoSize = false;
@@ -200,52 +193,211 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             lbRequester.Location = new Point(95, 75);
             MaintenanceCards.Controls.Add(lbRequester);
 
-            Label lbDateTitle = new Label();
-            lbDateTitle.Text = "Date:";
-            lbDateTitle.Font = new Font("Calibri", 12, FontStyle.Bold);
-            lbDateTitle.Location = new Point(200, 140);
-            MaintenanceCards.Controls.Add(lbDateTitle);
-
-            Label lbDate = new Label();
-            lbDate.Text = requestDate;
-            lbDate.Font = new Font("Calibri", 12, FontStyle.Regular);
-            lbDate.Location = new Point(250, 140);
-            MaintenanceCards.Controls.Add(lbDate);
-
-            Label lbRequesterTitle = new Label();
-            lbRequesterTitle.Text = "Requester:";
-            lbRequesterTitle.Font = new Font("Calibri", 12, FontStyle.Bold);
-            lbRequesterTitle.Location = new Point(30, 170);
-            MaintenanceCards.Controls.Add(lbRequesterTitle);
-
-            Button btnView = new Button();
-            btnView.Text = "View";
-            btnView.Size = new Size(95, 40);
-            btnView.Location = new Point(35, 230);
-
-            btnView.Click += (s, e) => MessageBox.Show($"Viewing Request ID: {requestID} - {description}");
-            MaintenanceCards.Controls.Add(btnView);
-
-            Button btnEdit = new Button();
-            btnEdit.Text = "Edit";
-            btnEdit.Size = new Size(95, 40);
-            btnEdit.Location = new Point(135, 230); 
-
-            btnEdit.Click += (s, e) => MessageBox.Show($"Editing Request ID: {requestID} - {description}");
-            MaintenanceCards.Controls.Add(btnEdit);
-
-            Button btnDelete = new Button();
-            btnDelete.Size = new Size(95, 40);
-            btnDelete.Location = new Point(235, 230);
-
-            MaintenanceCards.Controls.Add(btnDelete);
+            Label lbMergedDate = new Label();
+            lbMergedDate.AutoSize = true;
+            lbMergedDate.Text = $"Date: {requestDate}";
+            lbMergedDate.Font = new Font("Calibri", 14, FontStyle.Regular);
+            lbMergedDate.Location = new Point(95, 140);
+            MaintenanceCards.Controls.Add(lbMergedDate);
 
             return MaintenanceCards;
         }
 
+        private void SetupStatusComboBox()
+        {
+            cbStatus.Items.Clear(); 
+            cbStatus.Items.Add("All Status");
+            cbStatus.Items.Add("Pending");
+            cbStatus.Items.Add("In Progress");
+            cbStatus.Items.Add("Completed");
+            cbStatus.SelectedIndex = 0;
+
+            cbStatus.SelectedIndexChanged += (s, e) =>
+            {
+                string selected = cbStatus.SelectedItem.ToString();
+                LoadMaintenanceCardsByStatus(selected);
+            };
+        }
+
+        private void LoadMaintenanceCardsByStatus(string status)
+        {
+            DataTable dt = new DataTable();
+            string query;
+
+            if (status == "All Status")
+            {
+                // Show all maintenance requests
+                query = @" 
+            SELECT 
+                MR.maintenanceReqID, 
+                MR.description, 
+                MR.requestDate, 
+                MR.Status AS MaintenanceStatus,
+                U.UnitNumber,
+                PI.firstName, 
+                PI.middleName, 
+                PI.lastName
+            FROM MaintenanceRequest AS MR 
+            INNER JOIN Tenant AS T ON MR.TenantID = T.TenantID
+            INNER JOIN PersonalInformation AS PI ON T.TenantID = PI.TenantID 
+            INNER JOIN Contract AS C ON T.TenantID = C.TenantID 
+            INNER JOIN Unit AS U ON C.UnitID = U.UnitID
+            WHERE C.ContractStatus = 'Active' OR C.ContractStatus IS NULL
+            ORDER BY MR.requestDate DESC;";
+
+                using (SqlConnection con = new SqlConnection(DataConnection))
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+                }
+            }
+            else
+            {
+                // Filter by the specific status
+                query = @" 
+            SELECT 
+                MR.maintenanceReqID, 
+                MR.description, 
+                MR.requestDate, 
+                MR.Status AS MaintenanceStatus,
+                U.UnitNumber,
+                PI.firstName, 
+                PI.middleName, 
+                PI.lastName
+            FROM MaintenanceRequest AS MR 
+            INNER JOIN Tenant AS T ON MR.TenantID = T.TenantID
+            INNER JOIN PersonalInformation AS PI ON T.TenantID = PI.TenantID 
+            INNER JOIN Contract AS C ON T.TenantID = C.TenantID 
+            INNER JOIN Unit AS U ON C.UnitID = U.UnitID
+            WHERE (C.ContractStatus = 'Active' OR C.ContractStatus IS NULL)
+              AND MR.Status = @Status
+            ORDER BY MR.requestDate DESC;";
+
+                using (SqlConnection con = new SqlConnection(DataConnection))
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+                }
+            }
+
+            flowLayoutPanelRightSideBar.Controls.Clear();
+            foreach (DataRow row in dt.Rows)
+            {
+                int requestID = Convert.ToInt32(row["maintenanceReqID"]);
+                Panel card = CreateMaintenanceCard(
+                    requestID,
+                    row["description"].ToString(),
+                    row["requestDate"].ToString(),
+                    row["MaintenanceStatus"].ToString(),
+                    row["unitNumber"].ToString(),
+                    row["firstName"].ToString(),
+                    row["lastName"].ToString(),
+                    row["middleName"].ToString()
+                );
+                flowLayoutPanelRightSideBar.Controls.Add(card);
+            }
+        }
+
+        private void LoadMaintenanceCardsByStatusAndSearch(string status, string searchText)
+        {
+            DataTable dt = new DataTable();
+            string query;
+
+            if (status == "All Status")
+            {
+                query = @" 
+            SELECT 
+                MR.maintenanceReqID, 
+                MR.description, 
+                MR.requestDate, 
+                MR.Status AS MaintenanceStatus,
+                U.UnitNumber,
+                PI.firstName, 
+                PI.middleName, 
+                PI.lastName
+            FROM MaintenanceRequest AS MR 
+            INNER JOIN Tenant AS T ON MR.TenantID = T.TenantID
+            INNER JOIN PersonalInformation AS PI ON T.TenantID = PI.TenantID 
+            INNER JOIN Contract AS C ON T.TenantID = C.TenantID 
+            INNER JOIN Unit AS U ON C.UnitID = U.UnitID
+            WHERE (C.ContractStatus = 'Active' OR C.ContractStatus IS NULL)
+              AND (MR.description LIKE @Search OR U.UnitNumber LIKE @Search OR 
+                   PI.firstName + ' ' + PI.middleName + ' ' + PI.lastName LIKE @Search)
+            ORDER BY MR.requestDate DESC;";
+            }
+            else
+            {
+                query = @" 
+            SELECT 
+                MR.maintenanceReqID, 
+                MR.description, 
+                MR.requestDate, 
+                MR.Status AS MaintenanceStatus,
+                U.UnitNumber,
+                PI.firstName, 
+                PI.middleName, 
+                PI.lastName
+            FROM MaintenanceRequest AS MR 
+            INNER JOIN Tenant AS T ON MR.TenantID = T.TenantID
+            INNER JOIN PersonalInformation AS PI ON T.TenantID = PI.TenantID 
+            INNER JOIN Contract AS C ON T.TenantID = C.TenantID 
+            INNER JOIN Unit AS U ON C.UnitID = U.UnitID
+            WHERE (C.ContractStatus = 'Active' OR C.ContractStatus IS NULL)
+              AND MR.Status = @Status
+              AND (MR.description LIKE @Search OR U.UnitNumber LIKE @Search OR 
+                   PI.firstName + ' ' + PI.middleName + ' ' + PI.lastName LIKE @Search)
+            ORDER BY MR.requestDate DESC;";
+            }
+
+            using (SqlConnection con = new SqlConnection(DataConnection))
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@Search", "%" + searchText + "%");
+                if (status != "All Status")
+                    cmd.Parameters.AddWithValue("@Status", status);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+
+            flowLayoutPanelRightSideBar.Controls.Clear();
+            foreach (DataRow row in dt.Rows)
+            {
+                int requestID = Convert.ToInt32(row["maintenanceReqID"]);
+                Panel card = CreateMaintenanceCard(
+                    requestID,
+                    row["description"].ToString(),
+                    row["requestDate"].ToString(),
+                    row["MaintenanceStatus"].ToString(),
+                    row["unitNumber"].ToString(),
+                    row["firstName"].ToString(),
+                    row["lastName"].ToString(),
+                    row["middleName"].ToString()
+                );
+                flowLayoutPanelRightSideBar.Controls.Add(card);
+            }
+        }
+
         private void Maintenance_Load(object sender, EventArgs e)
         {
+            SetupStatusComboBox();
+        }
 
+        private void tbSearch_TextChanged(object sender, EventArgs e)
+        {
+            string searchText = tbSearch.Text.Trim();
+            string selectedStatus = cbStatus.SelectedItem.ToString();
+            LoadMaintenanceCardsByStatusAndSearch(selectedStatus, searchText);
+        }
+
+        private void cbStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string searchText = tbSearch.Text.Trim();
+            string selected = cbStatus.SelectedItem.ToString();
+            LoadMaintenanceCardsByStatusAndSearch(selected, searchText);
         }
     }
 }

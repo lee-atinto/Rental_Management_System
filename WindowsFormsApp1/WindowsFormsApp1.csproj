@@ -64,6 +64,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Main Form Dashboards\SuperAdmin_Contract\AddContract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_Contract\AddContract.Designer.cs">
+      <DependentUpon>AddContract.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_Contract\Contracts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_Contract\Contracts.Designer.cs">
+      <DependentUpon>Contracts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main Form Dashboards\SuperAdmin_Maintenance\Maintenance.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,11 +100,23 @@
     <Compile Include="Main Form Dashboards\SuperAdmin_BackUp\BackUp.Designer.cs">
       <DependentUpon>BackUp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\AddPayment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\AddPayment.Designer.cs">
+      <DependentUpon>AddPayment.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\Payment_Records.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\Payment_Records.Designer.cs">
       <DependentUpon>Payment_Records.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\ViewPaymentHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_PaymentRecords\ViewPaymentHistory.Designer.cs">
+      <DependentUpon>ViewPaymentHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Main Form Dashboards\SuperAdmin_Properties\AddProperties.cs">
       <SubType>Form</SubType>
@@ -159,11 +183,23 @@
     <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_BackUp\BackUp.resx">
       <DependentUpon>BackUp.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Contract\AddContract.resx">
+      <DependentUpon>AddContract.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Contract\Contracts.resx">
+      <DependentUpon>Contracts.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Maintenance\Maintenance.resx">
       <DependentUpon>Maintenance.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_PaymentRecords\AddPayment.resx">
+      <DependentUpon>AddPayment.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_PaymentRecords\Payment_Records.resx">
       <DependentUpon>Payment_Records.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_PaymentRecords\ViewPaymentHistory.resx">
+      <DependentUpon>ViewPaymentHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Properties\AddProperties.resx">
       <DependentUpon>AddProperties.cs</DependentUpon>
@@ -218,7 +254,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\application.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lender.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\padlock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\payment.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\profile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\property.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\revenue.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\setting.png" />
@@ -227,28 +284,25 @@
     <None Include="Resources\shield.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\profit.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\payment.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\calendar.gif" />
+    <None Include="Resources\tool.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\view.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\downlaod.png" />
+    <None Include="Resources\calendar.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\payment.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\profit.gif" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sync.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\tool.png" />
+    <None Include="Resources\downlaod.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

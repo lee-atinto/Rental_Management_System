@@ -32,122 +32,102 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
             }
         }
 
-        private void AddTenants_Load(object sender, EventArgs e) { }
+        private void AddTenants_Load(object sender, EventArgs e) 
+        {
+            tbContactNum.MaxLength = 11;
+        }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        // --------------------------------------------
-        // LOAD TENANT DATA FOR EDIT MODE
-        // --------------------------------------------
         private void LoadTenantData(int tenantID)
         {
-            string sql = @"
-                SELECT 
-                    P.firstName, P.middleName, P.lastName,
-                    P.contactNumber, P.email,
-                    T.tenantStatus
-                FROM PersonalInformation P
-                INNER JOIN Tenant T ON P.tenantID = T.tenantID
-                WHERE P.tenantID = @id";
+            string sql = @" SELECT P.firstName, P.middleName, P.lastName, P.contactNumber, P.email, T.tenantStatus FROM PersonalInformation P INNER JOIN Tenant T ON P.tenantID = T.tenantID WHERE P.tenantID = @id";
 
             using (SqlConnection con = new SqlConnection(DataConnection))
             using (SqlCommand cmd = new SqlCommand(sql, con))
             {
                 cmd.Parameters.AddWithValue("@id", tenantID);
 
-                con.Open();
-                SqlDataReader r = cmd.ExecuteReader();
-
-                if (r.Read())
+                try
                 {
-                    tbFirstName.Text = r["firstName"].ToString();
-                    tbMiddleName.Text = r["middleName"] == DBNull.Value ? "" : r["middleName"].ToString();
-                    tbLastName.Text = r["lastName"].ToString();
-                    tbContactNum.Text = r["contactNumber"].ToString();
-                    tbEmail.Text = r["email"].ToString();
+                    con.Open();
+                    SqlDataReader r = cmd.ExecuteReader();
+
+                    if (r.Read())
+                    {
+                        tbFirstName.Text = r["firstName"].ToString();
+                        tbMiddleName.Text = r["middleName"] == DBNull.Value ? "" : r["middleName"].ToString();
+                        tbLastName.Text = r["lastName"].ToString();
+                        tbContactNum.Text = r["contactNumber"].ToString();
+                        tbEmail.Text = r["email"].ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading tenant data: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        // --------------------------------------------
-        // INSERT NEW TENANT
-        // --------------------------------------------
         private void InsertNewTenant(string fn, string mn, string ln, string cn, string em)
         {
-            using (var scope = new TransactionScope())
             using (SqlConnection con = new SqlConnection(DataConnection))
             {
                 con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
 
-                // 1. Insert into PersonalInformation
-                string sqlPI = @"
-                    INSERT INTO PersonalInformation
-                        (firstName, middleName, lastName, contactNumber, email)
-                    OUTPUT INSERTED.personalInfoID
-                    VALUES (@fn, @mn, @ln, @cn, @em)";
-
-                int newID;
-
-                using (SqlCommand cmd = new SqlCommand(sqlPI, con))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@fn", fn);
-                    cmd.Parameters.AddWithValue("@ln", ln);
-                    cmd.Parameters.AddWithValue("@cn", cn);
-                    cmd.Parameters.AddWithValue("@em", em);
+                    string sqlInsertTenant = @" INSERT INTO Tenant (tenantStatus, dateRegistered) OUTPUT INSERTED.tenantID VALUES ('Inactive', @date);";
 
-                    if (string.IsNullOrWhiteSpace(mn))
-                        cmd.Parameters.AddWithValue("@mn", DBNull.Value);
-                    else
-                        cmd.Parameters.AddWithValue("@mn", mn);
+                    int newTenantID;
 
-                    newID = Convert.ToInt32(cmd.ExecuteScalar());
+                    using (SqlCommand cmd = new SqlCommand(sqlInsertTenant, con, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@date", DateTime.Now.Date);
+
+                        object result = cmd.ExecuteScalar();
+                        if (result == null || result == DBNull.Value)
+                            throw new Exception("Failed to get new tenantID.");
+
+                        newTenantID = Convert.ToInt32(result);
+                    }
+
+                    string sqlInsertPersonalInfo = @" INSERT INTO PersonalInformation (tenantID, firstName, middleName, lastName, contactNumber, email) VALUES (@id, @fn, @mn, @ln, @cn, @em);";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlInsertPersonalInfo, con, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@id", newTenantID);
+                        cmd.Parameters.AddWithValue("@fn", fn);
+                        cmd.Parameters.AddWithValue("@ln", ln);
+                        cmd.Parameters.AddWithValue("@cn", cn);
+                        cmd.Parameters.AddWithValue("@em", em);
+                        cmd.Parameters.AddWithValue("@mn", string.IsNullOrWhiteSpace(mn) ? (object)DBNull.Value : mn);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
                 }
-
-                // 2. Insert into Tenant
-                string sqlTenant = @"
-                    INSERT INTO Tenant (tenantID, tenantStatus, dateRegistered)
-                    VALUES (@id, 'Inactive', @date)";
-
-                using (SqlCommand cmd = new SqlCommand(sqlTenant, con))
+                catch (Exception ex)
                 {
-                    cmd.Parameters.AddWithValue("@id", newID);
-                    cmd.Parameters.AddWithValue("@date", DateTime.Now.Date);
-                    cmd.ExecuteNonQuery();
+                    transaction.Rollback();
+                    throw ex;
                 }
-
-                // 3. Update PersonalInformation.tenantID
-                string sqlUpdate = @"UPDATE PersonalInformation SET tenantID = @id WHERE personalInfoID = @id";
-
-                using (SqlCommand cmd = new SqlCommand(sqlUpdate, con))
-                {
-                    cmd.Parameters.AddWithValue("@id", newID);
-                    cmd.ExecuteNonQuery();
-                }
-
-                scope.Complete();
             }
         }
 
-        // --------------------------------------------
-        // UPDATE TENANT (EDIT MODE)
-        // --------------------------------------------
+
         private void UpdateTenant(int id, string fn, string mn, string ln, string cn, string em)
         {
             using (SqlConnection con = new SqlConnection(DataConnection))
             {
                 con.Open();
 
-                string sql = @"
-                    UPDATE PersonalInformation SET
-                        firstName = @fn,
-                        middleName = @mn,
-                        lastName = @ln,
-                        contactNumber = @cn,
-                        email = @em
-                    WHERE tenantID = @id";
+                string sql = @" UPDATE PersonalInformation SET firstName = @fn, middleName = @mn, lastName = @ln, contactNumber = @cn, email = @em WHERE tenantID = @id";
 
                 using (SqlCommand cmd = new SqlCommand(sql, con))
                 {
@@ -156,20 +136,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
                     cmd.Parameters.AddWithValue("@ln", ln);
                     cmd.Parameters.AddWithValue("@cn", cn);
                     cmd.Parameters.AddWithValue("@em", em);
-
-                    if (string.IsNullOrWhiteSpace(mn))
-                        cmd.Parameters.AddWithValue("@mn", DBNull.Value);
-                    else
-                        cmd.Parameters.AddWithValue("@mn", mn);
+                    cmd.Parameters.AddWithValue("@mn", string.IsNullOrWhiteSpace(mn) ? (object)DBNull.Value : mn);
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        // --------------------------------------------
-        // SUBMIT BUTTON — ADD OR EDIT
-        // --------------------------------------------
         private void btnSubmit_Click(object sender, EventArgs e)
         {
             string fn = tbFirstName.Text.Trim();
@@ -177,6 +150,20 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
             string ln = tbLastName.Text.Trim();
             string cn = tbContactNum.Text.Trim();
             string em = tbEmail.Text.Trim();
+
+            if (!long.TryParse(cn, out _))
+            {
+                MessageBox.Show("Contact number must contain numbers only.", "Invalid Input",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (cn.Length != 11)
+            {
+                MessageBox.Show("Contact number must be exactly 11 digits.", "Invalid Input",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (string.IsNullOrEmpty(fn) || string.IsNullOrEmpty(ln) || string.IsNullOrEmpty(cn))
             {
@@ -191,19 +178,31 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
                 {
                     InsertNewTenant(fn, mn, ln, cn, em);
                     MessageBox.Show("Tenant added successfully!");
+
+                    parentForm.LoadTenantsData("All", parentForm.CurrentSearchText);
                 }
                 else
                 {
                     UpdateTenant(tenantIDToEdit, fn, mn, ln, cn, em);
                     MessageBox.Show("Tenant updated successfully!");
+
+                    parentForm.LoadTenantsData(parentForm.CurrentStatusFilter, parentForm.CurrentSearchText);
                 }
 
-                parentForm.LoadTenantsData(null, null);
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string action = tenantIDToEdit == -1 ? "adding" : "updating";
+                MessageBox.Show($"An error occurred while {action} the tenant: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void tbContactNum_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
             }
         }
     }

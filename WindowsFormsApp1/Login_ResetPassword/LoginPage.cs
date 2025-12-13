@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApp1.Super_Admin_Account;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace WindowsFormsApp1.Login_ResetPassword
 {
@@ -312,16 +313,23 @@ namespace WindowsFormsApp1.Login_ResetPassword
             }
         }
 
+
         private async void button1_Click(object sender, EventArgs e)
         {
-            selectedRole = "SuperAdmin";
-            await PerformLoginAsync();
+            string demoUsername = "DEMO_SUPER";
+            string demoRole = "SuperAdmin";
+            DashBoard dashBoard = new DashBoard(demoUsername, demoRole);
+            dashBoard.Show();
+            this.Hide();
         }
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            selectedRole = "Admin";
-            await PerformLoginAsync();
+            string demoUsername = "DEMO_ADMIN";
+            string demoRole = "Admin";
+            DashBoard dashBoard = new DashBoard(demoUsername, demoRole);
+            dashBoard.Show();
+            this.Hide();
         }
 
         private async Task ResetFailedAttemptsAsync(string username)

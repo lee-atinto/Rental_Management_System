@@ -112,6 +112,7 @@
             this.tbContactNum.Name = "tbContactNum";
             this.tbContactNum.Size = new System.Drawing.Size(319, 27);
             this.tbContactNum.TabIndex = 4;
+            this.tbContactNum.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbContactNum_KeyPress);
             // 
             // tbEmail
             // 

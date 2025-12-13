@@ -13,25 +13,40 @@ using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants;
 using WindowsFormsApp1.Login_ResetPassword;
+using WindowsFormsApp1.Main_Form_Dashboards;
+using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace WindowsFormsApp1.Super_Admin_Account
 {
     public partial class Tenants : Form
     {
-        private readonly string DataConnection = @"Data Source=LEEANTHONYDATIN\SQLEXPRESS; Initial Catalog=RentalManagementSystem;Integrated Security=True";
+        private readonly string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
-        private readonly string Username;
+        private readonly string UserName;
         private readonly string UserRole;
 
-        private readonly Color activeColor = Color.FromArgb(46, 51, 73);
+        private readonly Color activeColor = Color.FromArgb(56, 55, 83);
         private readonly Color defaultBackColor = Color.FromArgb(240, 240, 240);
+
+        public string CurrentStatusFilter
+        {
+            get { return comboBox1.SelectedItem?.ToString(); }
+        }
+        public string CurrentSearchText
+        {
+            get { return tbSearch.Text; }
+        }
 
         public Tenants(string username, string userRole)
         {
             InitializeComponent();
-            this.Username = username;
+
+            this.WindowState = FormWindowState.Maximized;
+
+            this.UserName = username;
             this.UserRole = userRole;
-            this.lbName.Text = $"{Username} \n ({UserRole})";
+            this.lbName.Text = $"{UserName} \n ({UserRole})";
 
 
             this.TenantsData.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DataTenants_CellFormatting);
@@ -52,10 +67,18 @@ namespace WindowsFormsApp1.Super_Admin_Account
             InitializeButtonStyle(btnViewReport);
             InitializeButtonStyle(btnBackUp);
             InitializeButtonStyle(btnProperties);
+            InitializeButtonStyle(btnContracts);
+            InitializeButtonStyle(btnMaintenance);
+
+            ApplyRoleRestrictions();
 
             panelHeader.BackColor = Color.White;
-            PanelBackGroundProfile.BackColor = Color.FromArgb(46, 51, 73);
+            lbName.BackColor = Color.FromArgb(46, 51, 73);
+            PicUserProfile.Image = Properties.Resources.profile;
+            PicUserProfile.BackColor = Color.FromArgb(46, 51, 73);
+            SideBarBakground.BackColor = Color.FromArgb(46, 51, 73);
 
+            // -------------------- Set Padding -------------------- //
             btnDashBoard.Padding = new Padding(30, 0, 0, 0);
             btnAdminAcc.Padding = new Padding(30, 0, 0, 0);
             btnTenant.Padding = new Padding(30, 0, 0, 0);
@@ -63,13 +86,18 @@ namespace WindowsFormsApp1.Super_Admin_Account
             btnViewReport.Padding = new Padding(30, 0, 0, 0);
             btnBackUp.Padding = new Padding(30, 0, 0, 0);
             btnProperties.Padding = new Padding(30, 0, 0, 0);
+            btnContracts.Padding = new Padding(30, 0, 0, 0);
+            btnMaintenance.Padding = new Padding(30, 0, 0, 0);
 
+            // -------------------- Set Color Unactive Button -------------------- //
             btnDashBoard.ForeColor = Color.Black;
             btnAdminAcc.ForeColor = Color.Black;
             btnPaymentRec.ForeColor = Color.Black;
             btnViewReport.ForeColor = Color.Black;
             btnBackUp.ForeColor = Color.Black;
             btnProperties.ForeColor = Color.Black;
+            btnContracts.ForeColor = Color.Black;
+            btnMaintenance.ForeColor = Color.Black;
 
             TenantsData.BorderStyle = BorderStyle.None;
             TenantsData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
@@ -84,26 +112,35 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
             TenantsData.RowTemplate.Height = 60;
 
-            DataGridViewButtonColumn viewBtnCol = new DataGridViewButtonColumn();
-            viewBtnCol.Name = "Edit";
-            viewBtnCol.Text = "Edit";
-            viewBtnCol.UseColumnTextForButtonValue = true;
-            TenantsData.Columns.Add(viewBtnCol);
+            if (!TenantsData.Columns.Contains("Edit"))
+            {
+                DataGridViewButtonColumn viewBtnCol = new DataGridViewButtonColumn();
+                viewBtnCol.Name = "Edit";
+                viewBtnCol.Text = "Edit";
+                viewBtnCol.UseColumnTextForButtonValue = true;
+                TenantsData.Columns.Add(viewBtnCol);
+            }
 
-            DataGridViewButtonColumn editBtnCol = new DataGridViewButtonColumn();
-            editBtnCol.Name = "Delete";
-            editBtnCol.Text = "Delete";
-            editBtnCol.UseColumnTextForButtonValue = true;
-            TenantsData.Columns.Add(editBtnCol);
+            if (!TenantsData.Columns.Contains("Delete"))
+            {
+                DataGridViewButtonColumn editBtnCol = new DataGridViewButtonColumn();
+                editBtnCol.Name = "Delete";
+                editBtnCol.Text = "Delete";
+                editBtnCol.UseColumnTextForButtonValue = true;
+                TenantsData.Columns.Add(editBtnCol);
+            }
         }
 
         private void Tenants_Load(object sender, EventArgs e)
         {
             SetButtonActiveStyle(btnTenant, activeColor);
 
-            comboBox1.Items.Add("Active");
-            comboBox1.Items.Add("Inactive");
-            comboBox1.SelectedIndex = 0;
+            if (!comboBox1.Items.Contains("Active"))
+                comboBox1.Items.Add("Active");
+            if (!comboBox1.Items.Contains("Inactive"))
+                comboBox1.Items.Add("Inactive");
+            if (comboBox1.SelectedIndex < 0)
+                comboBox1.SelectedIndex = 0;
         }
 
         public void LoadTenantsData(string statusFilter = null, string searchText = null)
@@ -121,7 +158,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
 
             string whereClause = whereConditions.Any() ? " WHERE " + string.Join(" AND ", whereConditions) : "";
-            string query = $@" SELECT P.personalInfoID AS TenantID, P.firstName + ' ' + P.lastName AS TenantName, P.contactNumber AS Contact, T.tenantStatus AS Status, T.dateRegistered AS DateRegistered FROM PersonalInformation P INNER JOIN Tenant T ON P.tenantID = T.tenantID {whereClause}";
+            string query = $@" SELECT T.tenantID AS TenantID, P.firstName + ' ' + P.lastName AS TenantName, P.contactNumber AS Contact, T.tenantStatus AS Status, T.dateRegistered AS DateRegistered FROM PersonalInformation P INNER JOIN Tenant T ON P.tenantID = T.tenantID {whereClause}";
 
             try
             {
@@ -190,7 +227,15 @@ namespace WindowsFormsApp1.Super_Admin_Account
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch 
+                    {
+
+                    }
+
                     MessageBox.Show($"Deletion failed due to: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -270,7 +315,13 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
         private void DataTenants_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex >= 0 && TenantsData.Columns.Contains("Status"))
+            if (e.RowIndex < 0)
+                return;
+
+            if (TenantsData.Columns[e.ColumnIndex] is DataGridViewButtonColumn)
+                return;
+
+            if (TenantsData.Columns.Contains("Status"))
             {
                 DataGridViewRow row = TenantsData.Rows[e.RowIndex];
                 object statusValue = row.Cells["Status"].Value;
@@ -304,9 +355,23 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
         private void TenantsData_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
-            string tenantIdString = TenantsData.Rows[e.RowIndex].Cells["TenantID"].Value?.ToString();
-            string tenantName = TenantsData.Rows[e.RowIndex].Cells["TenantName"].Value?.ToString();
-            string clickedColumnName = TenantsData.Columns[e.ColumnIndex].Name;
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
+            if (!(TenantsData.Columns[e.ColumnIndex] is DataGridViewButtonColumn))
+                return;
+
+            var idCell = TenantsData.Rows[e.RowIndex].Cells["TenantID"];
+            var nameCell = TenantsData.Rows[e.RowIndex].Cells["TenantName"];
+
+            if (idCell == null)
+            {
+                MessageBox.Show("Tenant ID column not found.", "Data Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string tenantIdString = idCell.Value?.ToString();
+            string tenantName = nameCell?.Value?.ToString() ?? "";
 
             if (string.IsNullOrEmpty(tenantIdString) || !int.TryParse(tenantIdString, out int tenantID))
             {
@@ -314,6 +379,8 @@ namespace WindowsFormsApp1.Super_Admin_Account
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            string clickedColumnName = TenantsData.Columns[e.ColumnIndex].Name;
 
             if (clickedColumnName == "Edit")
             {
@@ -328,10 +395,26 @@ namespace WindowsFormsApp1.Super_Admin_Account
                     DeleteTenant(tenantID.ToString(), tenantName);
                 }
             }
+        }
 
-            if (e.RowIndex < 0 || !(TenantsData.Columns[e.ColumnIndex] is DataGridViewButtonColumn))
+        private void ApplyRoleRestrictions()
+        {
+            if (UserRole == "Admin")
             {
-                return;
+                btnAdminAcc.Visible = false;
+                btnBackUp.Visible = false;
+                btnViewReport.Visible = false;
+
+
+                panelHeader.BackColor = Color.LightBlue;
+            }
+            else if (UserRole == "SuperAdmin")
+            {
+                btnAdminAcc.Visible = true;
+                btnBackUp.Visible = true;
+                btnViewReport.Visible = true;
+
+                panelHeader.BackColor = Color.White;
             }
         }
 
@@ -348,46 +431,90 @@ namespace WindowsFormsApp1.Super_Admin_Account
             LoadTenantsData(selectedStatus, tbSearch.Text);
         }
 
-        // -------------------- Dashboard Buttons Click Event -------------------- //
-        private void btnDashBoard_Click_1(object sender, EventArgs e)
+        // -------------------- Button Side Bar -------------------- //
+
+        // --------------- Dashboard Button --------------- //
+        private void btnDashBoard_Click(object sender, EventArgs e)
         {
-            DashBoard dashboard = new DashBoard(Username, UserRole);
+            DashBoard dashboard = new DashBoard(UserName, UserRole);
             dashboard.Show();
             this.Hide();
         }
 
-        // -------------------- Admin Accounts Buttons Click Event -------------------- //
-        private void btnAdminAcc_Click_1(object sender, EventArgs e)
+        // --------------- Properties Button --------------- //
+        private void btnProperties_Click_1(object sender, EventArgs e)
         {
-            SuperAdmin_AdminAccounts AdminAccounts = new SuperAdmin_AdminAccounts(Username, UserRole);
-            AdminAccounts.Show();
-            this.Hide();
-        }
-
-        // -------------------- Properties Buttons Click Event -------------------- //
-        private void btnProperties_Click(object sender, EventArgs e)
-        {
-            ProperTies properties = new ProperTies(Username, UserRole);
+            ProperTies properties = new ProperTies(UserName, UserRole);
             properties.Show();
             this.Hide();
         }
 
-        // -------------------- Payment Records Buttons Click Event -------------------- //
-        private void btnPaymentRec_Click(object sender, EventArgs e)
+        // --------------- Payment Record Button --------------- //
+        private void btnPaymentRec_Click_1(object sender, EventArgs e)
         {
-            Payment_Records payment = new Payment_Records(Username, UserRole);
-            payment.Show();
+            Payment_Records paymentRec = new Payment_Records(UserName, UserRole);
+            paymentRec.Show();
             this.Hide();
         }
 
-        // -------------------- Logout Buttons Click Event -------------------- //
-        private void btnlogout_Click(object sender, EventArgs e)
+        // --------------- Contracts Button --------------- //
+        private void btnContracts_Click(object sender, EventArgs e)
+        {
+            Contracts contract = new Contracts(UserName, UserRole);
+            contract.Show();
+            this.Hide();
+        }
+
+        // --------------- Maintenance Button --------------- //
+        private void btnMaintenance_Click(object sender, EventArgs e)
+        {
+            Maintenance maintenance = new Maintenance(UserName, UserRole);
+            maintenance.Show();
+            this.Hide();
+        }
+
+        // --------------- Admin Account Button --------------- //
+        private void btnAdminAcc_Click(object sender, EventArgs e)
+        {
+            SuperAdmin_AdminAccounts adminAcc = new SuperAdmin_AdminAccounts(UserName, UserRole);
+            adminAcc.Show();
+            this.Hide();
+        }
+
+        // --------------- View Reports Button --------------- //
+        private void btnViewReport_Click(object sender, EventArgs e)
+        {
+            if (UserRole == "SuperAdmin")
+            {
+
+            }
+            else
+            {
+                MessageBox.Show("Access Denied: Admin cannot view full reports.");
+            }
+        }
+
+        // --------------- Backup Button --------------- //
+        private void btnBackUp_Click(object sender, EventArgs e)
+        {
+            if (UserRole == "SuperAdmin")
+            {
+
+            }
+            else
+            {
+                MessageBox.Show("Access Denied: Admin cannot access backups.");
+            }
+        }
+
+        // --------------- Logout Button --------------- //
+        private void btnlogout_Click_1(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
             {
                 string query = "UPDATE Account SET active = 0 WHERE username=@u";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", this.Username);
+                cmd.Parameters.AddWithValue("@u", this.UserName);
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }

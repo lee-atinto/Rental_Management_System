@@ -7,6 +7,8 @@ using System.Windows.Forms;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.Login_ResetPassword;
+using WindowsFormsApp1.Main_Form_Dashboards;
+using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
 using WindowsFormsApp1.Super_Admin_Account;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -15,7 +17,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 {
     public partial class ProperTies : Form
     {
-        private readonly string DataConnection = @"Data Source=LEEANTHONYDATIN\SQLEXPRESS; Initial Catalog=RentalManagementSystem;Integrated Security=True";
+        private readonly string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
         private string UserName;
         private string UserRole;
@@ -23,10 +25,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
         private DataTable propertyData;
 
         // -------------------- Button Style -------------------- //
-        private readonly Color activeColor = Color.FromArgb(46, 51, 73);
+        private readonly Color activeColor = Color.FromArgb(56, 55, 83);
         private readonly Color defaultBackColor = Color.FromArgb(240, 240, 240);
 
-        // -------------------- Initialize Button Style -------------------- //
         private void InitializeButtonStyle(Button button)
         {
             if (button != null)
@@ -55,6 +56,11 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.UserRole = userRole;
             this.lbName.Text = $"{userName} \n ({userRole})";
 
+            cbStatus.Items.Clear();
+            cbStatus.Items.AddRange(new object[] { "All Status", "Vacant", "Occupied", "Under Maintenance" ,"Reserved"});
+            cbStatus.SelectedIndex = 0;
+            cbStatus.SelectedIndexChanged += cbStatusFilter_SelectedIndexChanged;
+
             LoadPropertyCards();
 
             propertyData = GetProperties();
@@ -68,9 +74,14 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             InitializeButtonStyle(btnPaymentRec);
             InitializeButtonStyle(btnViewReport);
             InitializeButtonStyle(btnBackUp);
+            InitializeButtonStyle(btnContracts);
+            InitializeButtonStyle(btnMaintenance);
 
             panelHeader.BackColor = Color.White;
-            PanelBackGroundProfile.BackColor = Color.FromArgb(46, 51, 73);
+            lbName.BackColor = Color.FromArgb(46, 51, 73);
+            PicUserProfile.Image = Properties.Resources.profile;
+            PicUserProfile.BackColor = Color.FromArgb(46, 51, 73);
+            SideBarBakground.BackColor = Color.FromArgb(46, 51, 73);
 
             // -------------------- Set Padding Button -------------------- //
             btnDashBoard.Padding = new Padding(30, 0, 0, 0);
@@ -80,6 +91,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             btnViewReport.Padding = new Padding(30, 0, 0, 0);
             btnBackUp.Padding = new Padding(30, 0, 0, 0);
             btnPaymentRec.Padding = new Padding(30, 0, 0, 0);
+            btnContracts.Padding = new Padding(30, 0, 0, 0);
+            btnMaintenance.Padding = new Padding(30, 0, 0, 0);
 
             // -------------------- Set Color Unactive Button -------------------- //
             btnAdminAcc.ForeColor = Color.Black;
@@ -88,6 +101,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             btnViewReport.ForeColor = Color.Black;
             btnBackUp.ForeColor = Color.Black;
             btnPaymentRec.ForeColor = Color.Black;
+            btnMaintenance.ForeColor = Color.Black;
+            btnContracts.ForeColor = Color.Black;
         }
 
         private DataTable GetProperties()
@@ -97,24 +112,66 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             using (SqlConnection con = new SqlConnection(DataConnection))
             {
                 con.Open();
-
-                string query = @" SELECT P.propertyID, P.propertyName, P.unitNumber, P.AddressID, P.propertyOwnerID, A.city, A.street, A.barangay, A.province, A.postalCode, PO.firstName, PO.middleName, PO.lastName, PO.contactNumber, PO.Email, R.RentAmount
-                               FROM Property P INNER JOIN Address A ON P.AddressID = A.AddressID INNER JOIN PropertyOwner PO ON P.propertyOwnerID = PO.propertyOwnerID LEFT JOIN Rent R ON P.propertyID = R.propertyID;";
+                string query = @" SELECT 
+                                     P.propertyID, P.propertyName, P.AddressID, P.propertyOwnerID, 
+                                     A.city, A.street, A.barangay, A.province, A.postalCode, 
+                                     PO.firstName, PO.middleName, PO.lastName, PO.contactNumber, PO.Email, 
+                                     U.UnitID, U.UnitNumber, U.UnitType, U.MonthlyRent AS RentAmount, U.Status
+                                 FROM Property P 
+                                 INNER JOIN Address A ON P.AddressID = A.AddressID 
+                                 INNER JOIN PropertyOwner PO ON P.propertyOwnerID = PO.propertyOwnerID 
+                                 LEFT JOIN Unit U ON P.propertyID = U.PropertyID;";
 
                 SqlDataAdapter da = new SqlDataAdapter(query, con);
                 da.Fill(dt);
-            }   
+            }
             return dt;
         }
 
-
-        private Panel CreatePropertyCard(int propertyID, string propertyName, string unitNumber, string rentAmount, string firstName, string lastName, string middleName, string contactNumber, string email, string street, string barangay, string city, string province, string postalCode)
+        private Panel CreatePropertyCard(int propertyID, int unitID, string propertyName, string unitNumber, string rentAmount, string firstName, string lastName, string middleName, string contactNumber, string email, string street, string barangay, string city, string province, string postalCode, string unitType, string status)
         {
             Panel PropertyCards = new Panel();
             PropertyCards.Size = new Size(363, 500);
             PropertyCards.BackColor = Color.White;
             PropertyCards.BorderStyle = BorderStyle.None;
             PropertyCards.Margin = new Padding(15);
+            PropertyCards.Tag = status;
+
+            Color statusBackColor;
+            Color statusForeColor;
+            switch (status.ToLower())
+            {
+                case "vacant":
+                    statusBackColor = Color.FromArgb(189, 230, 191);
+                    statusForeColor = Color.FromArgb(0, 128, 0);
+                    break;
+                case "occupied":
+                    statusBackColor = Color.FromArgb(255, 192, 203);
+                    statusForeColor = Color.FromArgb(255, 0, 0);
+                    break;
+                case "under maintenance":
+                    statusBackColor = Color.FromArgb(255, 255, 153);
+                    statusForeColor = Color.FromArgb(255, 140, 0);
+                    break;
+                default:
+                    statusBackColor = Color.LightGray;
+                    statusForeColor = Color.Black;
+                    break;
+            }
+
+            Label lbStatus = new Label();
+            lbStatus.Text = status;
+            lbStatus.AutoSize = false;
+            lbStatus.TextAlign = ContentAlignment.MiddleCenter;
+            lbStatus.Font = new Font("Calibri", 10, FontStyle.Bold);
+            lbStatus.Size = new Size(100, 25);
+
+            lbStatus.Location = new Point(245, 185);
+            lbStatus.BackColor = statusBackColor;
+            lbStatus.ForeColor = statusForeColor;
+            lbStatus.BorderStyle = BorderStyle.FixedSingle;
+            lbStatus.Margin = new Padding(0);
+            PropertyCards.Controls.Add(lbStatus);
 
             Label lbProperty = new Label();
             lbProperty.AutoSize = false;
@@ -123,33 +180,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             lbProperty.Font = new Font("Calibri", 14, FontStyle.Bold);
             lbProperty.Location = new Point(30, 185);
             PropertyCards.Controls.Add(lbProperty);
-
-            //Label lbStatus = new Label();
-            //lbStatus.AutoSize = false;
-            //lbStatus.Size = new Size(83, 20);
-            //lbStatus.Text = propertyStatus;
-            //lbStatus.BackColor = Color.LightGreen;
-            //lbStatus.ForeColor = Color.Green;
-            //lbStatus.TextAlign = ContentAlignment.MiddleCenter;
-            //lbStatus.Font = new Font("Calibri", 10, FontStyle.Regular);
-            //lbStatus.Location = new Point(255, 190);
-
-            //switch (propertyStatus)
-            //{
-            //    case "Occupied":
-            //        lbStatus.BackColor = Color.LightGreen;
-            //        lbStatus.ForeColor = Color.Green;
-            //        break;
-            //    case "Vacant":
-            //        lbStatus.BackColor = Color.LightYellow;
-            //        lbStatus.ForeColor = Color.Orange;
-            //        break;
-            //    case "Maintenance":
-            //        lbStatus.BackColor = Color.LightPink;
-            //        lbStatus.ForeColor = Color.Red;
-            //        break;
-            //}
-            //PropertyCards.Controls.Add(lbStatus);
 
             Label UnitNumber = new Label();
             UnitNumber.Text = unitNumber;
@@ -197,22 +227,20 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             Label UnderLine1 = new Label();
             UnderLine1.BackColor = Color.DarkGray;
             UnderLine1.Size = new Size(lbRentTitle.Width, 2);
-            UnderLine1.Location = new Point(lbRentTitle.Left, lbRentTitle.Bottom + 20);
+            UnderLine1.Location = new Point(lbRentTitle.Left, lbRentTitle.Bottom + 50);
             PropertyCards.Controls.Add(UnderLine1);
 
             Label UnderLine2 = new Label();
             UnderLine2.BackColor = Color.DarkGray;
             UnderLine2.Size = new Size(lbRent.Width, 2);
-            UnderLine2.Location = new Point(lbRent.Left, lbRent.Bottom + 20);
+            UnderLine2.Location = new Point(lbRent.Left, lbRent.Bottom + 50);
             PropertyCards.Controls.Add(UnderLine2);
 
-            // --------------- Button View Style --------------- //
             Button btnView = new Button();
             btnView.Text = "View";
             btnView.Size = new Size(95, 50);
-            btnView.Location = new Point(35, 420);
+            btnView.Location = new Point(35, 440);
             btnView.Font = new Font("Calibri", 14, FontStyle.Regular);
-            btnView.Click += (s, e) => MessageBox.Show($"Viewing {propertyName}");
             PropertyCards.Controls.Add(btnView);
 
             btnView.BackColor = Color.White;
@@ -223,13 +251,11 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             btnView.FlatAppearance.MouseOverBackColor = Color.FromArgb(204, 204, 255);
             PropertyCards.Controls.Add(btnView);
 
-            // --------------- Button Edit Style --------------- //
             Button btnEdit = new Button();
             btnEdit.Text = "Edit";
             btnEdit.Size = new Size(95, 50);
-            btnEdit.Location = new Point(135, 420);
+            btnEdit.Location = new Point(135, 440);
             btnEdit.Font = new Font("Calibri", 14, FontStyle.Regular);
-            btnEdit.Click += (s, e) => MessageBox.Show($"Editing {propertyName}");
 
             btnEdit.BackColor = Color.White;
             btnEdit.FlatStyle = FlatStyle.Flat;
@@ -240,7 +266,26 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 
             btnEdit.Click += (s, e) =>
             {
-                AddProperties editForm = new AddProperties( propertyID, firstName, lastName, middleName, contactNumber, email, street, barangay, city, province, postalCode, propertyName, unitNumber, decimal.TryParse(rentAmount, out decimal rent) ? rent : 0 );
+                decimal rent = decimal.TryParse(rentAmount, out decimal parsedRent) ? parsedRent : 0;
+                AddProperties editForm = new AddProperties(
+                    propertyID,
+                    firstName,
+                    lastName,
+                    middleName,
+                    contactNumber,
+                    email,
+                    street,
+                    barangay,
+                    city,
+                    province,
+                    postalCode,
+                    propertyName,
+                    unitNumber,
+                    rent,
+                    unitID,
+                    unitType,
+                    status
+                );
 
                 editForm.PropertyAdded += (sender, args) =>
                 {
@@ -253,12 +298,10 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 
             PropertyCards.Controls.Add(btnEdit);
 
-            // --------------- Button Delete Style --------------- //
             Button btnDelete = new Button();
             btnDelete.Size = new Size(95, 50);
-            btnDelete.Location = new Point(235, 420);
+            btnDelete.Location = new Point(235, 440);
             btnDelete.Font = new Font("Calibri", 14, FontStyle.Regular);
-            btnDelete.Click += (s, e) => MessageBox.Show($"Delete {propertyName}");
 
             try
             {
@@ -281,7 +324,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 
             btnDelete.Click += (s, e) =>
             {
-                DialogResult result = MessageBox.Show($"Are you sure you want to delete \"{propertyName}\"?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show($"Are you sure you want to delete \"{propertyName}\" and ALL its associated units and records?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result != DialogResult.Yes) return;
 
                 using (SqlConnection con = new SqlConnection(DataConnection))
@@ -291,17 +334,50 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                     {
                         try
                         {
-                            using (SqlCommand cmdRent = new SqlCommand("DELETE FROM Rent WHERE propertyID = @pid", con, tx))
+                            int ownerID = 0;
+                            int addressID = 0;
+                            using (SqlCommand cmdGetIDs = new SqlCommand("SELECT propertyOwnerID, AddressID FROM Property WHERE propertyID = @pid", con, tx))
                             {
-                                cmdRent.Parameters.AddWithValue("@pid", propertyID);
-                                cmdRent.ExecuteNonQuery();
+                                cmdGetIDs.Parameters.AddWithValue("@pid", propertyID);
+                                using (SqlDataReader reader = cmdGetIDs.ExecuteReader())
+                                {
+                                    if (reader.Read())
+                                    {
+                                        ownerID = reader.GetInt32(0);
+                                        addressID = reader.GetInt32(1);
+                                    }
+                                }
                             }
+
+                            using (SqlCommand cmdRentDelete = new SqlCommand("DELETE FROM Rent WHERE PropertyID = @pid", con, tx))
+                            {
+                                cmdRentDelete.Parameters.AddWithValue("@pid", propertyID);
+                                cmdRentDelete.ExecuteNonQuery();
+                            }
+
+                            using (SqlCommand cmdContractDelete = new SqlCommand("DELETE FROM Contract WHERE PropertyID = @pid", con, tx))
+                            {
+                                cmdContractDelete.Parameters.AddWithValue("@pid", propertyID);
+                                cmdContractDelete.ExecuteNonQuery();
+                            }
+
+                            using (SqlCommand cmdMaintDelete = new SqlCommand("DELETE FROM MaintenanceRequest WHERE PropertyID = @pid", con, tx))
+                            {
+                                cmdMaintDelete.Parameters.AddWithValue("@pid", propertyID);
+                                cmdMaintDelete.ExecuteNonQuery();
+                            }
+
+                            using (SqlCommand cmdUnitDelete = new SqlCommand("DELETE FROM Unit WHERE PropertyID = @pid", con, tx))
+                            {
+                                cmdUnitDelete.Parameters.AddWithValue("@pid", propertyID);
+                                cmdUnitDelete.ExecuteNonQuery();
+                            }
+
 
                             using (SqlCommand cmdProp = new SqlCommand("DELETE FROM Property WHERE propertyID = @pid", con, tx))
                             {
                                 cmdProp.Parameters.AddWithValue("@pid", propertyID);
                                 int affected = cmdProp.ExecuteNonQuery();
-
                                 if (affected == 0)
                                 {
                                     tx.Rollback();
@@ -310,20 +386,31 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                                 }
                             }
 
+                            using (SqlCommand cmdOwner = new SqlCommand(@" DELETE FROM PropertyOwner WHERE propertyOwnerID = @oid AND NOT EXISTS (SELECT 1 FROM Property WHERE propertyOwnerID = @oid)", con, tx))
+                            {
+                                cmdOwner.Parameters.AddWithValue("@oid", ownerID);
+                                cmdOwner.ExecuteNonQuery();
+                            }
+
+                            using (SqlCommand cmdAddress = new SqlCommand(@" DELETE FROM Address WHERE AddressID = @aid AND NOT EXISTS (SELECT 1 FROM Property WHERE AddressID = @aid)", con, tx))
+                            {
+                                cmdAddress.Parameters.AddWithValue("@aid", addressID);
+                                cmdAddress.ExecuteNonQuery();
+                            }
+
                             tx.Commit();
+                            propertyData = GetProperties();
 
                             if (flowLayoutPanelRightSideBar.InvokeRequired)
                             {
                                 flowLayoutPanelRightSideBar.Invoke((Action)(() =>
                                 {
-                                    flowLayoutPanelRightSideBar.Controls.Remove(PropertyCards);
-                                    PropertyCards.Dispose();
+                                    DisplayPropertyCards(propertyData);
                                 }));
                             }
                             else
                             {
-                                flowLayoutPanelRightSideBar.Controls.Remove(PropertyCards);
-                                PropertyCards.Dispose();
+                                DisplayPropertyCards(propertyData);
                             }
 
                             MessageBox.Show("Property deleted successfully.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -356,11 +443,18 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             foreach (DataRow row in dt.Rows)
             {
                 int propertyID = Convert.ToInt32(row["propertyID"]);
+                int unitID = row["UnitID"] != DBNull.Value ? Convert.ToInt32(row["UnitID"]) : 0;
+                string unitNumber = row["UnitNumber"] != DBNull.Value ? row["UnitNumber"].ToString() : "N/A (No Units)";
+                string rentAmount = row["RentAmount"] != DBNull.Value ? row["RentAmount"].ToString() : "N/A";
+                string unitType = row["UnitType"] != DBNull.Value ? row["UnitType"].ToString() : string.Empty;
+                string status = row["Status"] != DBNull.Value ? row["Status"].ToString() : string.Empty;
+
                 Panel card = CreatePropertyCard(
                     propertyID,
+                    unitID,
                     row["PropertyName"].ToString(),
-                    row["UnitNumber"].ToString(),
-                    row["RentAmount"].ToString(),
+                    unitNumber,
+                    rentAmount,
                     row["FirstName"].ToString(),
                     row["LastName"].ToString(),
                     row["MiddleName"].ToString(),
@@ -370,13 +464,14 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                     row["Barangay"].ToString(),
                     row["City"].ToString(),
                     row["Province"].ToString(),
-                    row["PostalCode"].ToString()
+                    row["PostalCode"].ToString(),
+                    unitType,
+                    status
                 );
                 flowLayoutPanelRightSideBar.Controls.Add(card);
             }
         }
 
-        // -------------------- Set Active Button Style -------------------- //
         private void SetButtonActiveStyle(Button button, Color backColor)
         {
             if (button != null)
@@ -392,39 +487,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             SetButtonActiveStyle(btnProperties, activeColor);
         }
 
-        // -------------------- Dashboard Buttons Click Event -------------------- //
-        private void btnDashBoard_Click(object sender, EventArgs e)
-        {
-            DashBoard dashboard = new DashBoard(UserName, UserRole);
-            dashboard.Show();
-            this.Hide();
-        }
-
-        // -------------------- Admin Accounts Buttons Click Event -------------------- //
-        private void btnAdminAcc_Click(object sender, EventArgs e)
-        {
-            SuperAdmin_AdminAccounts AdminAccount = new SuperAdmin_AdminAccounts(UserName, UserRole);
-            AdminAccount.Show();
-            this.Hide();
-        }
-
-        // -------------------- Tenants Buttons Click Event -------------------- //
-        private void btnTenant_Click(object sender, EventArgs e)
-        {
-            Tenants tenant = new Tenants(UserName, UserRole);
-            tenant.Show();
-            this.Hide();
-        }
-
-        // -------------------- Payment Accounts Buttons Click Event -------------------- //
-        private void btnPaymentRec_Click(object sender, EventArgs e)
-        {
-            Payment_Records payments = new Payment_Records(UserName, UserRole);
-            payments.Show();
-            this.Hide();
-        }
-
-
         private void DisplayPropertyCards(DataTable dt)
         {
             flowLayoutPanelRightSideBar.Controls.Clear();
@@ -435,11 +497,18 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             foreach (DataRow row in dt.Rows)
             {
                 int propertyID = Convert.ToInt32(row["propertyID"]);
+                int unitID = row["UnitID"] != DBNull.Value ? Convert.ToInt32(row["UnitID"]) : 0;
+                string unitNumber = row["UnitNumber"] != DBNull.Value ? row["UnitNumber"].ToString() : "N/A (No Units)";
+                string rentAmount = row["RentAmount"] != DBNull.Value ? row["RentAmount"].ToString() : "N/A";
+                string unitType = row["UnitType"] != DBNull.Value ? row["UnitType"].ToString() : string.Empty;
+                string status = row["Status"] != DBNull.Value ? row["Status"].ToString() : string.Empty;
+
                 Panel card = CreatePropertyCard(
                     propertyID,
+                    unitID,
                     row["PropertyName"].ToString(),
-                    row["UnitNumber"].ToString(),
-                    row["RentAmount"].ToString(),
+                    unitNumber,
+                    rentAmount,
                     row["FirstName"].ToString(),
                     row["LastName"].ToString(),
                     row["MiddleName"].ToString(),
@@ -449,7 +518,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                     row["Barangay"].ToString(),
                     row["City"].ToString(),
                     row["Province"].ToString(),
-                    row["PostalCode"].ToString()
+                    row["PostalCode"].ToString(),
+                    unitType,
+                    status
                 );
                 flowLayoutPanelRightSideBar.Controls.Add(card);
 
@@ -481,10 +552,46 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
         }
 
-        private void AddProperties_PropertyAdded(object sender, EventArgs e)
+        private void cbStatusFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
-            propertyData = GetProperties();
-            DisplayPropertyCards(propertyData);
+            ComboBox cb = sender as ComboBox;
+            if (cb == null) return;
+
+            string selectedStatus = cb.SelectedItem.ToString();
+
+            string filterExpression = "";
+            if (selectedStatus != "All Status")
+            {
+                filterExpression = $"Status = '{selectedStatus}'";
+            }
+
+            DataRow[] filteredRows;
+            if (string.IsNullOrEmpty(filterExpression))
+            {
+                filteredRows = propertyData.Select();
+            }
+            else
+            {
+                try
+                {
+                    filteredRows = propertyData.Select(filterExpression);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error applying status filter: " + ex.Message, "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            if (filteredRows.Length > 0)
+            {
+                DataTable filteredDT = filteredRows.CopyToDataTable();
+                DisplayPropertyCards(filteredDT);
+            }
+            else
+            {
+                flowLayoutPanelRightSideBar.Controls.Clear();
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -501,5 +608,96 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             add.ShowDialog();
         }
 
+        // -------------------- Button Side Bar -------------------- //
+
+        // --------------- Dashboard Button --------------- //
+        private void btnDashBoard_Click(object sender, EventArgs e)
+        {
+            DashBoard dashboard = new DashBoard(UserName, UserRole);
+            dashboard.Show();
+            this.Hide();
+        }
+
+        // --------------- Tenant Button --------------- //
+        private void btnTenant_Click(object sender, EventArgs e)
+        {
+            Tenants tenants = new Tenants(UserName, UserRole);
+            tenants.Show();
+            this.Hide();
+        }
+
+        // --------------- Payment Record Button --------------- //
+        private void btnPaymentRec_Click(object sender, EventArgs e)
+        {
+            Payment_Records paymentRec = new Payment_Records(UserName, UserRole);
+            paymentRec.Show();
+            this.Hide();
+        }
+
+        // --------------- Contract Button --------------- //
+        private void btnContracts_Click(object sender, EventArgs e)
+        {
+            Contracts contract = new Contracts(UserName, UserRole);
+            contract.Show();
+            this.Hide();
+        }
+
+        // --------------- Maintenances Button --------------- //
+        private void btnMaintenance_Click(object sender, EventArgs e)
+        {
+            Maintenance maintenance = new Maintenance(UserName, UserRole);
+            maintenance.Show();
+            this.Hide();
+        }
+
+        // --------------- Admin Accoutn Button --------------- //
+        private void btnAdminAcc_Click(object sender, EventArgs e)
+        {
+            SuperAdmin_AdminAccounts adminAcc = new SuperAdmin_AdminAccounts(UserName, UserRole);
+            adminAcc.Show();
+            this.Hide();
+        }
+
+        // --------------- Vuew Reports Button --------------- //
+        private void btnViewReport_Click(object sender, EventArgs e)
+        {
+            if (UserRole == "SuperAdmin")
+            {
+
+            }
+            else
+            {
+                MessageBox.Show("Access Denied: Admin cannot view full reports.");
+            }
+        }
+
+        // --------------- Baskup Button --------------- //
+        private void btnBackUp_Click(object sender, EventArgs e)
+        {
+            if (UserRole == "SuperAdmin")
+            {
+
+            }
+            else
+            {
+                MessageBox.Show("Access Denied: Admin cannot access backups.");
+            }
+        }
+
+        // --------------- Logout Button --------------- //
+        private void btnlogout_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(DataConnection))
+            {
+                string query = "UPDATE Account SET active = 0 WHERE username=@u";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@u", this.UserName);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            this.Hide();
+            new LoginPage().Show();
+        }
     }
 }

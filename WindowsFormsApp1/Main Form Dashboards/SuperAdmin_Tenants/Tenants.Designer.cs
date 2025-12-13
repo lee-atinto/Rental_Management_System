@@ -28,17 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Tenants));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.PanelBackGroundProfile = new System.Windows.Forms.Panel();
-            this.lbLine = new System.Windows.Forms.Label();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PicUserProfile = new System.Windows.Forms.PictureBox();
             this.lbName = new System.Windows.Forms.Label();
             this.lbTitle = new System.Windows.Forms.Label();
             this.panelHeader = new System.Windows.Forms.Panel();
-            this.btnlogout = new System.Windows.Forms.Button();
-            this.SideBarBakground = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -49,52 +44,34 @@
             this.tbSearch = new System.Windows.Forms.TextBox();
             this.lbSearch = new System.Windows.Forms.Label();
             this.TenantsData = new System.Windows.Forms.DataGridView();
+            this.btnContracts = new System.Windows.Forms.Button();
+            this.btnMaintenance = new System.Windows.Forms.Button();
+            this.btnAdminAcc = new System.Windows.Forms.Button();
             this.btnProperties = new System.Windows.Forms.Button();
             this.btnPaymentRec = new System.Windows.Forms.Button();
             this.btnBackUp = new System.Windows.Forms.Button();
             this.btnViewReport = new System.Windows.Forms.Button();
             this.btnTenant = new System.Windows.Forms.Button();
-            this.btnAdminAcc = new System.Windows.Forms.Button();
             this.btnDashBoard = new System.Windows.Forms.Button();
-            this.PanelBackGroundProfile.SuspendLayout();
+            this.btnlogout = new System.Windows.Forms.Button();
+            this.SideBarBakground = new System.Windows.Forms.PictureBox();
+            this.panel9 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).BeginInit();
             this.panelHeader.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TenantsData)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).BeginInit();
             this.SuspendLayout();
-            // 
-            // PanelBackGroundProfile
-            // 
-            this.PanelBackGroundProfile.Controls.Add(this.lbLine);
-            this.PanelBackGroundProfile.Controls.Add(this.PicUserProfile);
-            this.PanelBackGroundProfile.Controls.Add(this.lbName);
-            this.PanelBackGroundProfile.Location = new System.Drawing.Point(0, 0);
-            this.PanelBackGroundProfile.Margin = new System.Windows.Forms.Padding(2);
-            this.PanelBackGroundProfile.Name = "PanelBackGroundProfile";
-            this.PanelBackGroundProfile.Size = new System.Drawing.Size(302, 110);
-            this.PanelBackGroundProfile.TabIndex = 186;
-            // 
-            // lbLine
-            // 
-            this.lbLine.AutoSize = true;
-            this.lbLine.Location = new System.Drawing.Point(-6, 97);
-            this.lbLine.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lbLine.Name = "lbLine";
-            this.lbLine.Size = new System.Drawing.Size(331, 13);
-            this.lbLine.TabIndex = 166;
-            this.lbLine.Text = "______________________________________________________";
             // 
             // PicUserProfile
             // 
-            this.PicUserProfile.Image = ((System.Drawing.Image)(resources.GetObject("PicUserProfile.Image")));
-            this.PicUserProfile.Location = new System.Drawing.Point(16, 22);
+            this.PicUserProfile.Location = new System.Drawing.Point(41, 29);
             this.PicUserProfile.Margin = new System.Windows.Forms.Padding(2);
             this.PicUserProfile.Name = "PicUserProfile";
-            this.PicUserProfile.Size = new System.Drawing.Size(72, 74);
+            this.PicUserProfile.Size = new System.Drawing.Size(69, 52);
             this.PicUserProfile.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.PicUserProfile.TabIndex = 164;
+            this.PicUserProfile.TabIndex = 168;
             this.PicUserProfile.TabStop = false;
             // 
             // lbName
@@ -102,11 +79,11 @@
             this.lbName.AutoSize = true;
             this.lbName.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbName.ForeColor = System.Drawing.Color.White;
-            this.lbName.Location = new System.Drawing.Point(104, 33);
+            this.lbName.Location = new System.Drawing.Point(114, 29);
             this.lbName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbName.Name = "lbName";
             this.lbName.Size = new System.Drawing.Size(60, 24);
-            this.lbName.TabIndex = 165;
+            this.lbName.TabIndex = 167;
             this.lbName.Text = "label1";
             // 
             // lbTitle
@@ -128,31 +105,8 @@
             this.panelHeader.Location = new System.Drawing.Point(302, 0);
             this.panelHeader.Margin = new System.Windows.Forms.Padding(2);
             this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Size = new System.Drawing.Size(1224, 81);
+            this.panelHeader.Size = new System.Drawing.Size(1244, 81);
             this.panelHeader.TabIndex = 193;
-            // 
-            // btnlogout
-            // 
-            this.btnlogout.BackColor = System.Drawing.Color.White;
-            this.btnlogout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.btnlogout.Location = new System.Drawing.Point(16, 724);
-            this.btnlogout.Margin = new System.Windows.Forms.Padding(2);
-            this.btnlogout.Name = "btnlogout";
-            this.btnlogout.Size = new System.Drawing.Size(271, 50);
-            this.btnlogout.TabIndex = 185;
-            this.btnlogout.Text = "&Log out";
-            this.btnlogout.UseVisualStyleBackColor = false;
-            this.btnlogout.Click += new System.EventHandler(this.btnlogout_Click);
-            // 
-            // SideBarBakground
-            // 
-            this.SideBarBakground.BackColor = System.Drawing.Color.White;
-            this.SideBarBakground.Location = new System.Drawing.Point(0, 0);
-            this.SideBarBakground.Margin = new System.Windows.Forms.Padding(2);
-            this.SideBarBakground.Name = "SideBarBakground";
-            this.SideBarBakground.Size = new System.Drawing.Size(302, 797);
-            this.SideBarBakground.TabIndex = 184;
-            this.SideBarBakground.TabStop = false;
             // 
             // panel2
             // 
@@ -162,9 +116,9 @@
             this.panel2.Controls.Add(this.btnAdd);
             this.panel2.Controls.Add(this.panel1);
             this.panel2.Controls.Add(this.TenantsData);
-            this.panel2.Location = new System.Drawing.Point(319, 82);
+            this.panel2.Location = new System.Drawing.Point(332, 82);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1196, 869);
+            this.panel2.Size = new System.Drawing.Size(1196, 715);
             this.panel2.TabIndex = 243;
             // 
             // label3
@@ -255,175 +209,235 @@
             // 
             this.TenantsData.AllowUserToResizeColumns = false;
             this.TenantsData.AllowUserToResizeRows = false;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.Padding = new System.Windows.Forms.Padding(65, 10, 20, 10);
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.TenantsData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(65, 10, 20, 10);
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.TenantsData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.TenantsData.ColumnHeadersHeight = 55;
             this.TenantsData.Location = new System.Drawing.Point(14, 262);
             this.TenantsData.Name = "TenantsData";
             this.TenantsData.RowHeadersWidth = 51;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.Padding = new System.Windows.Forms.Padding(30, 10, 30, 10);
-            this.TenantsData.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(30, 10, 30, 10);
+            this.TenantsData.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.TenantsData.RowTemplate.Height = 24;
             this.TenantsData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.TenantsData.Size = new System.Drawing.Size(1165, 421);
             this.TenantsData.TabIndex = 244;
             this.TenantsData.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TenantsData_CellContentClick_1);
             // 
-            // btnProperties
+            // btnContracts
             // 
-            this.btnProperties.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnProperties.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnProperties.ForeColor = System.Drawing.Color.White;
-            this.btnProperties.Location = new System.Drawing.Point(16, 347);
-            this.btnProperties.Margin = new System.Windows.Forms.Padding(2);
-            this.btnProperties.Name = "btnProperties";
-            this.btnProperties.Size = new System.Drawing.Size(271, 50);
-            this.btnProperties.TabIndex = 250;
-            this.btnProperties.Text = "Properties";
-            this.btnProperties.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnProperties.UseVisualStyleBackColor = false;
-            this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click);
+            this.btnContracts.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnContracts.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnContracts.ForeColor = System.Drawing.Color.White;
+            this.btnContracts.Location = new System.Drawing.Point(24, 367);
+            this.btnContracts.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnContracts.Name = "btnContracts";
+            this.btnContracts.Size = new System.Drawing.Size(250, 50);
+            this.btnContracts.TabIndex = 252;
+            this.btnContracts.Text = "Contracts";
+            this.btnContracts.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnContracts.UseVisualStyleBackColor = false;
+            this.btnContracts.Click += new System.EventHandler(this.btnContracts_Click);
             // 
-            // btnPaymentRec
+            // btnMaintenance
             // 
-            this.btnPaymentRec.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnPaymentRec.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPaymentRec.ForeColor = System.Drawing.Color.White;
-            this.btnPaymentRec.Location = new System.Drawing.Point(16, 543);
-            this.btnPaymentRec.Margin = new System.Windows.Forms.Padding(2);
-            this.btnPaymentRec.Name = "btnPaymentRec";
-            this.btnPaymentRec.Size = new System.Drawing.Size(271, 50);
-            this.btnPaymentRec.TabIndex = 249;
-            this.btnPaymentRec.Text = "Payment Record";
-            this.btnPaymentRec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnPaymentRec.UseVisualStyleBackColor = false;
-            this.btnPaymentRec.Click += new System.EventHandler(this.btnPaymentRec_Click);
-            // 
-            // btnBackUp
-            // 
-            this.btnBackUp.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnBackUp.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBackUp.ForeColor = System.Drawing.Color.White;
-            this.btnBackUp.Location = new System.Drawing.Point(16, 476);
-            this.btnBackUp.Margin = new System.Windows.Forms.Padding(2);
-            this.btnBackUp.Name = "btnBackUp";
-            this.btnBackUp.Size = new System.Drawing.Size(271, 50);
-            this.btnBackUp.TabIndex = 248;
-            this.btnBackUp.Text = "Back up";
-            this.btnBackUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnBackUp.UseVisualStyleBackColor = false;
-            // 
-            // btnViewReport
-            // 
-            this.btnViewReport.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnViewReport.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnViewReport.ForeColor = System.Drawing.Color.White;
-            this.btnViewReport.Location = new System.Drawing.Point(16, 411);
-            this.btnViewReport.Margin = new System.Windows.Forms.Padding(2);
-            this.btnViewReport.Name = "btnViewReport";
-            this.btnViewReport.Size = new System.Drawing.Size(271, 50);
-            this.btnViewReport.TabIndex = 247;
-            this.btnViewReport.Text = "View Report";
-            this.btnViewReport.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnViewReport.UseVisualStyleBackColor = false;
-            // 
-            // btnTenant
-            // 
-            this.btnTenant.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.btnTenant.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTenant.ForeColor = System.Drawing.Color.White;
-            this.btnTenant.Location = new System.Drawing.Point(16, 281);
-            this.btnTenant.Margin = new System.Windows.Forms.Padding(2);
-            this.btnTenant.Name = "btnTenant";
-            this.btnTenant.Size = new System.Drawing.Size(271, 50);
-            this.btnTenant.TabIndex = 246;
-            this.btnTenant.Text = "Tenants";
-            this.btnTenant.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnTenant.UseVisualStyleBackColor = false;
+            this.btnMaintenance.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnMaintenance.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMaintenance.ForeColor = System.Drawing.Color.White;
+            this.btnMaintenance.Location = new System.Drawing.Point(24, 427);
+            this.btnMaintenance.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnMaintenance.Name = "btnMaintenance";
+            this.btnMaintenance.Size = new System.Drawing.Size(250, 50);
+            this.btnMaintenance.TabIndex = 253;
+            this.btnMaintenance.Text = "Maintenance";
+            this.btnMaintenance.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMaintenance.UseVisualStyleBackColor = false;
+            this.btnMaintenance.Click += new System.EventHandler(this.btnMaintenance_Click);
             // 
             // btnAdminAcc
             // 
             this.btnAdminAcc.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnAdminAcc.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAdminAcc.ForeColor = System.Drawing.Color.White;
-            this.btnAdminAcc.Location = new System.Drawing.Point(16, 217);
-            this.btnAdminAcc.Margin = new System.Windows.Forms.Padding(2);
+            this.btnAdminAcc.Location = new System.Drawing.Point(24, 487);
+            this.btnAdminAcc.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
             this.btnAdminAcc.Name = "btnAdminAcc";
-            this.btnAdminAcc.Size = new System.Drawing.Size(271, 50);
-            this.btnAdminAcc.TabIndex = 245;
+            this.btnAdminAcc.Size = new System.Drawing.Size(250, 50);
+            this.btnAdminAcc.TabIndex = 246;
             this.btnAdminAcc.Text = "Admin Account";
             this.btnAdminAcc.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnAdminAcc.UseVisualStyleBackColor = false;
-            this.btnAdminAcc.Click += new System.EventHandler(this.btnAdminAcc_Click_1);
+            this.btnAdminAcc.Click += new System.EventHandler(this.btnAdminAcc_Click);
+            // 
+            // btnProperties
+            // 
+            this.btnProperties.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnProperties.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnProperties.ForeColor = System.Drawing.Color.White;
+            this.btnProperties.Location = new System.Drawing.Point(24, 247);
+            this.btnProperties.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnProperties.Name = "btnProperties";
+            this.btnProperties.Size = new System.Drawing.Size(250, 50);
+            this.btnProperties.TabIndex = 251;
+            this.btnProperties.Text = "Properties";
+            this.btnProperties.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnProperties.UseVisualStyleBackColor = false;
+            this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click_1);
+            // 
+            // btnPaymentRec
+            // 
+            this.btnPaymentRec.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnPaymentRec.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPaymentRec.ForeColor = System.Drawing.Color.White;
+            this.btnPaymentRec.Location = new System.Drawing.Point(24, 307);
+            this.btnPaymentRec.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnPaymentRec.Name = "btnPaymentRec";
+            this.btnPaymentRec.Size = new System.Drawing.Size(250, 50);
+            this.btnPaymentRec.TabIndex = 250;
+            this.btnPaymentRec.Text = "Payment Record";
+            this.btnPaymentRec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPaymentRec.UseVisualStyleBackColor = false;
+            this.btnPaymentRec.Click += new System.EventHandler(this.btnPaymentRec_Click_1);
+            // 
+            // btnBackUp
+            // 
+            this.btnBackUp.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnBackUp.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBackUp.ForeColor = System.Drawing.Color.White;
+            this.btnBackUp.Location = new System.Drawing.Point(24, 607);
+            this.btnBackUp.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnBackUp.Name = "btnBackUp";
+            this.btnBackUp.Size = new System.Drawing.Size(250, 50);
+            this.btnBackUp.TabIndex = 249;
+            this.btnBackUp.Text = "Back up";
+            this.btnBackUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnBackUp.UseVisualStyleBackColor = false;
+            this.btnBackUp.Click += new System.EventHandler(this.btnBackUp_Click);
+            // 
+            // btnViewReport
+            // 
+            this.btnViewReport.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnViewReport.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnViewReport.ForeColor = System.Drawing.Color.White;
+            this.btnViewReport.Location = new System.Drawing.Point(24, 547);
+            this.btnViewReport.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnViewReport.Name = "btnViewReport";
+            this.btnViewReport.Size = new System.Drawing.Size(250, 50);
+            this.btnViewReport.TabIndex = 248;
+            this.btnViewReport.Text = "View Report";
+            this.btnViewReport.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnViewReport.UseVisualStyleBackColor = false;
+            this.btnViewReport.Click += new System.EventHandler(this.btnViewReport_Click);
+            // 
+            // btnTenant
+            // 
+            this.btnTenant.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnTenant.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTenant.ForeColor = System.Drawing.Color.White;
+            this.btnTenant.Location = new System.Drawing.Point(24, 187);
+            this.btnTenant.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnTenant.Name = "btnTenant";
+            this.btnTenant.Size = new System.Drawing.Size(250, 50);
+            this.btnTenant.TabIndex = 247;
+            this.btnTenant.Text = "Tenants";
+            this.btnTenant.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTenant.UseVisualStyleBackColor = false;
             // 
             // btnDashBoard
             // 
             this.btnDashBoard.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnDashBoard.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDashBoard.ForeColor = System.Drawing.Color.White;
-            this.btnDashBoard.Location = new System.Drawing.Point(16, 155);
-            this.btnDashBoard.Margin = new System.Windows.Forms.Padding(2);
+            this.btnDashBoard.Location = new System.Drawing.Point(24, 127);
+            this.btnDashBoard.Margin = new System.Windows.Forms.Padding(15, 15, 15, 5);
             this.btnDashBoard.Name = "btnDashBoard";
-            this.btnDashBoard.Size = new System.Drawing.Size(271, 50);
-            this.btnDashBoard.TabIndex = 244;
+            this.btnDashBoard.Size = new System.Drawing.Size(250, 50);
+            this.btnDashBoard.TabIndex = 245;
             this.btnDashBoard.Text = "Dashboard";
             this.btnDashBoard.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnDashBoard.UseVisualStyleBackColor = false;
-            this.btnDashBoard.Click += new System.EventHandler(this.btnDashBoard_Click_1);
+            this.btnDashBoard.Click += new System.EventHandler(this.btnDashBoard_Click);
+            // 
+            // btnlogout
+            // 
+            this.btnlogout.BackColor = System.Drawing.Color.White;
+            this.btnlogout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnlogout.Location = new System.Drawing.Point(24, 726);
+            this.btnlogout.Margin = new System.Windows.Forms.Padding(2);
+            this.btnlogout.Name = "btnlogout";
+            this.btnlogout.Size = new System.Drawing.Size(250, 50);
+            this.btnlogout.TabIndex = 244;
+            this.btnlogout.Text = "&Log out";
+            this.btnlogout.UseVisualStyleBackColor = false;
+            this.btnlogout.Click += new System.EventHandler(this.btnlogout_Click_1);
+            // 
+            // SideBarBakground
+            // 
+            this.SideBarBakground.BackColor = System.Drawing.Color.White;
+            this.SideBarBakground.Location = new System.Drawing.Point(0, 0);
+            this.SideBarBakground.Margin = new System.Windows.Forms.Padding(2);
+            this.SideBarBakground.Name = "SideBarBakground";
+            this.SideBarBakground.Size = new System.Drawing.Size(302, 797);
+            this.SideBarBakground.TabIndex = 184;
+            this.SideBarBakground.TabStop = false;
+            // 
+            // panel9
+            // 
+            this.panel9.Location = new System.Drawing.Point(0, 107);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(302, 2);
+            this.panel9.TabIndex = 238;
             // 
             // Tenants
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1526, 845);
+            this.ClientSize = new System.Drawing.Size(1540, 799);
+            this.Controls.Add(this.panel9);
+            this.Controls.Add(this.btnContracts);
+            this.Controls.Add(this.btnMaintenance);
+            this.Controls.Add(this.PicUserProfile);
+            this.Controls.Add(this.lbName);
+            this.Controls.Add(this.btnAdminAcc);
             this.Controls.Add(this.btnProperties);
             this.Controls.Add(this.btnPaymentRec);
             this.Controls.Add(this.btnBackUp);
             this.Controls.Add(this.btnViewReport);
             this.Controls.Add(this.btnTenant);
-            this.Controls.Add(this.btnAdminAcc);
             this.Controls.Add(this.btnDashBoard);
-            this.Controls.Add(this.PanelBackGroundProfile);
-            this.Controls.Add(this.panelHeader);
             this.Controls.Add(this.btnlogout);
+            this.Controls.Add(this.panelHeader);
             this.Controls.Add(this.SideBarBakground);
             this.Controls.Add(this.panel2);
             this.Name = "Tenants";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Rental Management System";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Tenants_Load);
-            this.PanelBackGroundProfile.ResumeLayout(false);
-            this.PanelBackGroundProfile.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).EndInit();
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TenantsData)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel PanelBackGroundProfile;
-        private System.Windows.Forms.Label lbLine;
-        private System.Windows.Forms.PictureBox PicUserProfile;
-        private System.Windows.Forms.Label lbName;
         private System.Windows.Forms.Label lbTitle;
         private System.Windows.Forms.Panel panelHeader;
-        private System.Windows.Forms.Button btnlogout;
         private System.Windows.Forms.PictureBox SideBarBakground;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label2;
@@ -435,12 +449,18 @@
         private System.Windows.Forms.Label lbSearch;
         private System.Windows.Forms.DataGridView TenantsData;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnContracts;
+        private System.Windows.Forms.Button btnMaintenance;
+        private System.Windows.Forms.Button btnAdminAcc;
         private System.Windows.Forms.Button btnProperties;
         private System.Windows.Forms.Button btnPaymentRec;
         private System.Windows.Forms.Button btnBackUp;
         private System.Windows.Forms.Button btnViewReport;
         private System.Windows.Forms.Button btnTenant;
-        private System.Windows.Forms.Button btnAdminAcc;
         private System.Windows.Forms.Button btnDashBoard;
+        private System.Windows.Forms.Button btnlogout;
+        private System.Windows.Forms.Label lbName;
+        private System.Windows.Forms.PictureBox PicUserProfile;
+        private System.Windows.Forms.Panel panel9;
     }
 }

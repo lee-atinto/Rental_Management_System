@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -8,27 +9,32 @@ using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.Login_ResetPassword;
+using WindowsFormsApp1.Main_Form_Dashboards;
+using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
 
 namespace WindowsFormsApp1.Super_Admin_Account
 {
     public partial class DashBoard : Form
     {
-        private readonly string DataConnection = @"Data Source=LEEANTHONYDATIN\SQLEXPRESS; Initial Catalog=RentalManagementSystem;Integrated Security=True";
+        private readonly string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
         private string UserName;
         private string UserRole;
 
         // -------------------- Button Style -------------------- //
-        private readonly Color activeColor = Color.FromArgb(46, 51, 73);
+        private readonly Color activeColor = Color.FromArgb(56, 55, 83);
         private readonly Color defaultBackColor = Color.FromArgb(240, 240, 240);
 
         public DashBoard(string username, string userRole)
         {
             InitializeComponent();
+            LoadMaintenanceData();
+            
+            this.WindowState = FormWindowState.Maximized;
 
             this.UserName = username;
             this.UserRole = userRole;
-            lbName.Text = $"{username} \n ({userRole})";
+            lbName.Text = $"{username} \n{userRole}";
 
             InitializeButtonStyle(btnDashBoard);
             InitializeButtonStyle(btnAdminAcc);
@@ -42,8 +48,29 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
             ApplyRoleRestrictions();
 
+            DataRecentMaintenanceRequests.CellFormatting += new DataGridViewCellFormattingEventHandler(dgv_CellFormatting);
+
             panelHeader.BackColor = Color.White;
-            PanelBackGroundProfile.BackColor = Color.FromArgb(46, 51, 73);
+            lbName.BackColor = Color.FromArgb(46, 51, 73);
+            PicUserProfile.Image = Properties.Resources.profile;
+            PicUserProfile.BackColor = Color.FromArgb(46, 51, 73);
+            SideBarBakground.BackColor = Color.FromArgb(46, 51, 73);
+
+            Size iconSize = new Size(64, 64);
+            pictureBox1.Size = iconSize;
+            pictureBox2.Size = iconSize;
+            pictureBox3.Size = iconSize;
+            pictureBox4.Size = iconSize;
+
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
+
+            pictureBox1.Image = Properties.Resources.property;
+            pictureBox2.Image = Properties.Resources.lender;
+            pictureBox3.Image = Properties.Resources.revenue;
+            pictureBox4.Image = Properties.Resources.application;
 
             // -------------------- Set Padding -------------------- //
             int padding = 30;
@@ -68,21 +95,123 @@ namespace WindowsFormsApp1.Super_Admin_Account
             btnMaintenance.ForeColor = Color.Black;
 
             // -------------------- Set Borderline -------------------- //
-            plRecentPayments.BorderStyle = BorderStyle.FixedSingle;
-            plUpcomingRenewals.BorderStyle = BorderStyle.FixedSingle;
             panel1.BorderStyle = BorderStyle.FixedSingle;
             panel2.BorderStyle = BorderStyle.FixedSingle;
             panel3.BorderStyle = BorderStyle.FixedSingle;
             panel4.BorderStyle = BorderStyle.FixedSingle;
 
-            // -------------------- Set Borderline color -------------------- //
-            plRecentPayments.BackColor = Color.FromArgb(240, 240, 240);
-            plUpcomingRenewals.BackColor = Color.FromArgb(240, 240, 240);
-            panel1.BackColor = Color.White; panel2.BackColor = Color.White;
-            panel3.BackColor = Color.White; panel4.BackColor = Color.White;
+            // -------------------- Data Recent Maintenance Request Borderline -------------------- //
+            DataRecentMaintenanceRequests.ReadOnly = true;
+            DataRecentMaintenanceRequests.Dock = DockStyle.Fill;
+            DataRecentMaintenanceRequests.RowHeadersVisible = false;
+            DataRecentMaintenanceRequests.ColumnHeadersVisible = false;
+            DataRecentMaintenanceRequests.BorderStyle = BorderStyle.None;
+            DataRecentMaintenanceRequests.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            DataRecentMaintenanceRequests.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            DataRecentMaintenanceRequests.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            DataRecentMaintenanceRequests.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
-        // -------------------- Role-Based Control -------------------- //
+        public void LoadMaintenanceData()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DataConnection))
+                {
+                    string query = @"SELECT CONCAT(
+                                CONCAT(PI.firstName, ' ', PI.middleName, ' ', PI.lastName),
+                                CHAR(13), CHAR(10),
+                                CONCAT(U.unitNumber, ' ', MR.description),
+                                CHAR(13), CHAR(10),
+                                (MR.requestDate)
+                                ) AS [Info],
+                                MR.Status
+                                FROM PersonalInformation PI
+                                INNER JOIN Property P ON PI.personalInfoID = P.propertyID
+                                INNER JOIN Unit U ON P.PropertyID = U.PropertyID -- NEW: Join the Unit table
+                                INNER JOIN MaintenanceRequest MR ON P.PropertyID = MR.PropertyID";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+
+                    conn.Open();
+                    adapter.Fill(dt);
+
+                    DataRecentMaintenanceRequests.DataSource = dt;
+
+                    if (DataRecentMaintenanceRequests.Columns.Contains("Info"))
+                    {
+                        DataRecentMaintenanceRequests.Columns["Info"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    }
+
+                    if (DataRecentMaintenanceRequests.Columns.Contains("Status"))
+                    {
+                        DataRecentMaintenanceRequests.Columns["Status"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                        DataRecentMaintenanceRequests.Columns["Status"].Width = 125;
+                        DataRecentMaintenanceRequests.Columns["Status"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void dgv_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (DataRecentMaintenanceRequests == null || DataRecentMaintenanceRequests.Rows.Count == 0 || e.RowIndex < 0)
+            {
+                return;
+            }
+
+            if (!DataRecentMaintenanceRequests.Columns.Contains("Status") || !DataRecentMaintenanceRequests.Columns.Contains("Info"))
+            {
+                return;
+            }
+
+            int statusColumnIndex = DataRecentMaintenanceRequests.Columns["Status"].Index;
+            int infoColumnIndex = DataRecentMaintenanceRequests.Columns["Info"].Index;
+
+            if (e.ColumnIndex != statusColumnIndex && e.ColumnIndex != infoColumnIndex)
+            {
+                return;
+            }
+
+            if (e.ColumnIndex == statusColumnIndex)
+            {
+                object cellValue = DataRecentMaintenanceRequests.Rows[e.RowIndex].Cells[statusColumnIndex].Value;
+                Color statusColor = Color.White;
+
+                if (cellValue != null && cellValue != DBNull.Value)
+                {
+                    string status = cellValue.ToString().ToLower().Replace("-", "");
+
+                    switch (status)
+                    {
+                        case "pending":
+                            break;
+                        case "inprogress":
+                            break;
+                        case "completed":
+                            break;
+                    }
+                }
+
+                e.CellStyle.BackColor = statusColor;
+                e.CellStyle.SelectionBackColor = statusColor;
+            }
+
+            else if (e.ColumnIndex == infoColumnIndex)
+            {
+                e.CellStyle.BackColor = Color.White;
+                e.CellStyle.SelectionBackColor = Color.White;
+            }
+
+            e.CellStyle.ForeColor = Color.Black;
+            e.CellStyle.SelectionForeColor = Color.Black;
+        }
+
         private void ApplyRoleRestrictions()
         {
             if (UserRole == "Admin")
@@ -103,7 +232,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        // -------------------- Button Style -------------------- //
         private void InitializeButtonStyle(Button button)
         {
             if (button != null)
@@ -130,15 +258,12 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        protected override bool ShowFocusCues => false;
-
         private void DashBoard_Load(object sender, EventArgs e)
         {
             SetButtonActiveStyle(btnDashBoard, activeColor);
             LoadDashboardData();
         }
 
-        // -------------------- Load Dashboard Data -------------------- //
         private void LoadDashboardData()
         {
             CultureInfo philippinesCulture = new CultureInfo("en-PH");
@@ -196,14 +321,22 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        // -------------------- Buttons Click Events -------------------- //
-        private void btnAdminAcc_Click(object sender, EventArgs e)
+        private void DataRecentMaintenanceRequests_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            SuperAdmin_AdminAccounts adminAccount = new SuperAdmin_AdminAccounts(UserName, UserRole);
-            adminAccount.Show();
+
+        }
+
+        // -------------------- Button Side Bar -------------------- //
+
+        // --------------- Tenant Button --------------- //
+        private void btnTenant_Click_1(object sender, EventArgs e)
+        {
+            Tenants tenants = new Tenants(UserName, UserRole);
+            tenants.Show();
             this.Hide();
         }
 
+        // --------------- Properties Button --------------- //
         private void btnProperties_Click(object sender, EventArgs e)
         {
             ProperTies properties = new ProperTies(UserName, UserRole);
@@ -211,21 +344,40 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        private void btnTenant_Click(object sender, EventArgs e)
+        // --------------- Payment Record Button --------------- //
+        private void btnPaymentRec_Click(object sender, EventArgs e)
         {
-            Tenants tenants = new Tenants(UserName, UserRole);
-            tenants.Show();
+            Payment_Records paymentRec = new Payment_Records(UserName, UserRole);
+            paymentRec.Show();
             this.Hide();
         }
 
-        private void btnPaymentRec_Click_1(object sender, EventArgs e)
+        // --------------- Contracts Button --------------- //
+        private void btnContracts_Click(object sender, EventArgs e)
         {
-            Payment_Records payment = new Payment_Records(UserName, UserRole);
-            payment.Show();
+            Contracts contract = new Contracts(UserName, UserRole);
+            contract.Show();
             this.Hide();
         }
 
-        private void btnViewReport_Click(object sender, EventArgs e)
+        // --------------- Maintenance Button --------------- //
+        private void btnMaintenance_Click(object sender, EventArgs e)
+        {
+            Maintenance maintenance = new Maintenance(UserName, UserRole);
+            maintenance.Show();
+            this.Hide();
+        }
+
+        // --------------- Admin Account Button --------------- //
+        private void btnAdminAcc_Click(object sender, EventArgs e)
+        {
+            SuperAdmin_AdminAccounts adminAcc = new SuperAdmin_AdminAccounts(UserName, UserRole);
+            adminAcc.Show();
+            this.Hide();
+        }
+
+        // --------------- View Reports Button --------------- //
+        private void btnViewReport_Click_1(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
             {
@@ -237,7 +389,8 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        private void btnBackUp_Click(object sender, EventArgs e)
+        // --------------- Backup Button --------------- //
+        private void btnBackUp_Click_1(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
             {
@@ -249,16 +402,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        private void btnContracts_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void btnMaintenance_Click(object sender, EventArgs e)
-        {
-            
-        }
-
+        // --------------- Logout Button --------------- //
         private void btnlogout_Click(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
