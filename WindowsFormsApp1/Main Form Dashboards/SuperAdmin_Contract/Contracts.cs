@@ -17,6 +17,7 @@ using WindowsFormsApp1.DashBoard1;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Super_Admin_Account;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 
 // NOTE: You must ensure that the namespace 'WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract' 
 // and the referenced forms (e.g., DashBoard, Tenants, AddContract, etc.) are correctly implemented 
@@ -603,7 +604,9 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
         {
             if (UserRole == "SuperAdmin")
             {
-                // TODO: Implement report viewing logic
+                View_Reports view = new View_Reports(UserName, UserRole);
+                view.Show();
+                this.Hide();
             }
             else
             {
@@ -616,7 +619,9 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
         {
             if (UserRole == "SuperAdmin")
             {
-                // TODO: Implement database backup logic
+                BackUp backup = new BackUp(UserName, UserRole);
+                backup.Show();
+                this.Hide();
             }
             else
             {

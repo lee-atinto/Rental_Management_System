@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.Login_ResetPassword;
@@ -971,7 +972,9 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         {
             if (UserRole == "SuperAdmin")
             {
-
+                BackUp backup = new BackUp(UserName, UserRole);
+                backup.Show();
+                this.Hide();
             }
             else
             {

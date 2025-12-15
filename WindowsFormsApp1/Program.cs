@@ -28,7 +28,7 @@ namespace WindowsFormsApp1
             //Application.Run(new ProperTies("TestUser", " Super Admin"));
 
             // --------------- Superadmin Login Tester --------------- //
-            Application.Run(new BackUp("TestUser", "Super A dmin"));
+            //Application.Run(new BackUp("TestUser", "Super A dmin"));
             //Application.Run(new Tenants("TestUser", " Super A dmin"));
             //Application.Run(new DashBoard("TestUser", "Super Admin"));
             //Application.Run(new ProperTies("TestUser", "Super Admin"));

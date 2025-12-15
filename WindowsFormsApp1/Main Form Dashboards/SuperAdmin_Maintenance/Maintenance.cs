@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.Login_ResetPassword;
@@ -632,7 +633,9 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         {
             if (UserRole == "SuperAdmin")
             {
-
+                View_Reports view = new View_Reports(UserName, UserRole);
+                view.Show();
+                this.Hide();
             }
             else
             {
@@ -645,7 +648,9 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         {
             if (UserRole == "SuperAdmin")
             {
-
+                BackUp backup = new BackUp(UserName, UserRole);
+                backup.Show();
+                this.Hide();
             }
             else
             {

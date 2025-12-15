@@ -446,7 +446,9 @@ ORDER BY t.name;
         {
             if (UserRole == "SuperAdmin")
             {
-
+                View_Reports view = new View_Reports(UserName, UserRole);
+                view.Show();
+                this.Hide();
             }
             else
             {

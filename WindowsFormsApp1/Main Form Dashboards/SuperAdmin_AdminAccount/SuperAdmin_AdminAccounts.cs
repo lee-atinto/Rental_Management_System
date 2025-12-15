@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 
 namespace WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount
 {
@@ -714,7 +715,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount
         {
             if (UserRole == "SuperAdmin")
             {
-
+                View_Reports view = new View_Reports(UserName, UserRole);
+                view.Show();
+                this.Hide();
             }
             else
             {
@@ -727,7 +730,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount
         {
             if (UserRole == "SuperAdmin")
             {
-
+                BackUp backlup = new BackUp(UserName, UserRole);
+                backlup.Show();
+                this.Hide();
             }
             else
             {

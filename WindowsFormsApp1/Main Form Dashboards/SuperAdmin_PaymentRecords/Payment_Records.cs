@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Main_Form_Dashboards;
@@ -398,13 +399,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
 
             PaymentTenantData.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
-            // Removed non-existent column names from the section below to prevent errors
-            // if (PaymentTenantData.Columns.Contains("DownloadColumn"))
-            //    PaymentTenantData.Columns["DownloadColumn"].HeaderCell.Style.ForeColor = Color.Transparent;
-            // if (PaymentTenantData.Columns.Contains("UpdateColumn"))
-            //    PaymentTenantData.Columns["UpdateColumn"].HeaderCell.Style.ForeColor = Color.Transparent;
-            // if (PaymentTenantData.Columns.Contains("DeleteColumn"))
-            //    PaymentTenantData.Columns["DeleteColumn"].HeaderCell.Style.ForeColor = Color.Transparent;
         }
 
         private void FormatDataGridColumns()
@@ -437,11 +431,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             string rowFilter = "";
 
             if (statusFilter != "All Statuses") rowFilter += $"Status = '{statusFilter}'";
-            // NOTE: Ang 'DateMethod' column sa DataGridView ay nagpapakita ng 'N/A' o 'Multiple' based sa LastPaymentDate,
-            // HINDI sa actual na payment method (tulad ng GCash/Cash). Pinalitan ko ang logic dito para hindi mag-filter ng mali.
-            // Walang available na 'PaymentMethod' column sa dtCombinedRecords kaya hindi ito gagana ng tama.
-            // Kung gusto mong mag-filter ng Payment Method, kailangan mong i-update ang `GetPaymentData()` query.
-            // Para sa ngayon, inalis ko ang methodFilter sa DataView.RowFilter.
 
             if (!string.IsNullOrEmpty(searchFilter))
             {
@@ -652,7 +641,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         {
             if (UserRole == "SuperAdmin")
             {
-
+                View_Reports view = new View_Reports(UserName, UserRole);
+                view.Show();
+                this.Hide();
             }
             else
             {
@@ -665,7 +656,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         {
             if (UserRole == "SuperAdmin")
             {
-
+                BackUp backup = new BackUp(UserName, UserRole);
+                backup.Show();
+                this.Hide();
             }
             else
             {
