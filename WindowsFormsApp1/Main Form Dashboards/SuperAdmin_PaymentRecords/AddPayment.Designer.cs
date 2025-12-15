@@ -42,6 +42,8 @@
             this.lbAmountPaid = new System.Windows.Forms.Label();
             this.lbDatePaid = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
+            this.lbReferenceNumber = new System.Windows.Forms.Label();
+            this.tbReferenceID = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // cbTenantName
@@ -59,15 +61,15 @@
             this.tbUnitNumber.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbUnitNumber.Location = new System.Drawing.Point(360, 97);
             this.tbUnitNumber.Name = "tbUnitNumber";
-            this.tbUnitNumber.Size = new System.Drawing.Size(153, 31);
+            this.tbUnitNumber.Size = new System.Drawing.Size(226, 31);
             this.tbUnitNumber.TabIndex = 1;
             // 
             // dtpPaymentDate
             // 
             this.dtpPaymentDate.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtpPaymentDate.Location = new System.Drawing.Point(272, 253);
+            this.dtpPaymentDate.Location = new System.Drawing.Point(399, 253);
             this.dtpPaymentDate.Name = "dtpPaymentDate";
-            this.dtpPaymentDate.Size = new System.Drawing.Size(241, 31);
+            this.dtpPaymentDate.Size = new System.Drawing.Size(187, 31);
             this.dtpPaymentDate.TabIndex = 2;
             // 
             // cbPaymentType
@@ -76,7 +78,7 @@
             this.cbPaymentType.FormattingEnabled = true;
             this.cbPaymentType.Location = new System.Drawing.Point(332, 179);
             this.cbPaymentType.Name = "cbPaymentType";
-            this.cbPaymentType.Size = new System.Drawing.Size(181, 31);
+            this.cbPaymentType.Size = new System.Drawing.Size(254, 31);
             this.cbPaymentType.TabIndex = 3;
             // 
             // cbPaymentMethod
@@ -93,7 +95,7 @@
             this.tbAmountPaid.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbAmountPaid.Location = new System.Drawing.Point(55, 253);
             this.tbAmountPaid.Name = "tbAmountPaid";
-            this.tbAmountPaid.Size = new System.Drawing.Size(154, 31);
+            this.tbAmountPaid.Size = new System.Drawing.Size(131, 31);
             this.tbAmountPaid.TabIndex = 5;
             // 
             // label1
@@ -160,7 +162,7 @@
             // 
             this.lbDatePaid.AutoSize = true;
             this.lbDatePaid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbDatePaid.Location = new System.Drawing.Point(268, 231);
+            this.lbDatePaid.Location = new System.Drawing.Point(395, 231);
             this.lbDatePaid.Name = "lbDatePaid";
             this.lbDatePaid.Size = new System.Drawing.Size(40, 19);
             this.lbDatePaid.TabIndex = 12;
@@ -169,7 +171,7 @@
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(220, 329);
+            this.btnSave.Location = new System.Drawing.Point(228, 330);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(141, 35);
             this.btnSave.TabIndex = 13;
@@ -177,11 +179,31 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // lbReferenceNumber
+            // 
+            this.lbReferenceNumber.AutoSize = true;
+            this.lbReferenceNumber.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbReferenceNumber.Location = new System.Drawing.Point(211, 231);
+            this.lbReferenceNumber.Name = "lbReferenceNumber";
+            this.lbReferenceNumber.Size = new System.Drawing.Size(130, 19);
+            this.lbReferenceNumber.TabIndex = 15;
+            this.lbReferenceNumber.Text = "Reference Number";
+            // 
+            // tbReferenceID
+            // 
+            this.tbReferenceID.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbReferenceID.Location = new System.Drawing.Point(215, 253);
+            this.tbReferenceID.Name = "tbReferenceID";
+            this.tbReferenceID.Size = new System.Drawing.Size(154, 31);
+            this.tbReferenceID.TabIndex = 14;
+            // 
             // AddPayment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(583, 389);
+            this.ClientSize = new System.Drawing.Size(653, 389);
+            this.Controls.Add(this.lbReferenceNumber);
+            this.Controls.Add(this.tbReferenceID);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.lbDatePaid);
             this.Controls.Add(this.lbAmountPaid);
@@ -221,5 +243,7 @@
         private System.Windows.Forms.Label lbAmountPaid;
         private System.Windows.Forms.Label lbDatePaid;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Label lbReferenceNumber;
+        private System.Windows.Forms.TextBox tbReferenceID;
     }
 }

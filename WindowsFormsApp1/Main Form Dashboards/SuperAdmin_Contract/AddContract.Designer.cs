@@ -34,15 +34,17 @@
             this.dtpStartDate = new System.Windows.Forms.DateTimePicker();
             this.dtpEndDate = new System.Windows.Forms.DateTimePicker();
             this.tbDepositAmount = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lbTitle = new System.Windows.Forms.Label();
+            this.lbName = new System.Windows.Forms.Label();
+            this.lbUnitStatus = new System.Windows.Forms.Label();
+            this.lbStatus = new System.Windows.Forms.Label();
+            this.lbDepositAmount = new System.Windows.Forms.Label();
+            this.lbStartDate = new System.Windows.Forms.Label();
+            this.lbEndDate = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.lbPropertyName = new System.Windows.Forms.Label();
+            this.cbProperty = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // cbTenant
@@ -58,7 +60,7 @@
             // 
             this.cbUnit.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbUnit.FormattingEnabled = true;
-            this.cbUnit.Location = new System.Drawing.Point(402, 113);
+            this.cbUnit.Location = new System.Drawing.Point(42, 198);
             this.cbUnit.Name = "cbUnit";
             this.cbUnit.Size = new System.Drawing.Size(137, 27);
             this.cbUnit.TabIndex = 1;
@@ -67,7 +69,7 @@
             // 
             this.cbStatus.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbStatus.FormattingEnabled = true;
-            this.cbStatus.Location = new System.Drawing.Point(597, 113);
+            this.cbStatus.Location = new System.Drawing.Point(411, 109);
             this.cbStatus.Name = "cbStatus";
             this.cbStatus.Size = new System.Drawing.Size(121, 27);
             this.cbStatus.TabIndex = 2;
@@ -75,7 +77,7 @@
             // dtpStartDate
             // 
             this.dtpStartDate.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtpStartDate.Location = new System.Drawing.Point(42, 187);
+            this.dtpStartDate.Location = new System.Drawing.Point(42, 277);
             this.dtpStartDate.Name = "dtpStartDate";
             this.dtpStartDate.Size = new System.Drawing.Size(200, 31);
             this.dtpStartDate.TabIndex = 3;
@@ -83,7 +85,7 @@
             // dtpEndDate
             // 
             this.dtpEndDate.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtpEndDate.Location = new System.Drawing.Point(289, 187);
+            this.dtpEndDate.Location = new System.Drawing.Point(289, 277);
             this.dtpEndDate.Name = "dtpEndDate";
             this.dtpEndDate.Size = new System.Drawing.Size(200, 31);
             this.dtpEndDate.TabIndex = 4;
@@ -91,85 +93,85 @@
             // tbDepositAmount
             // 
             this.tbDepositAmount.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbDepositAmount.Location = new System.Drawing.Point(518, 190);
+            this.tbDepositAmount.Location = new System.Drawing.Point(411, 198);
             this.tbDepositAmount.Name = "tbDepositAmount";
-            this.tbDepositAmount.Size = new System.Drawing.Size(200, 27);
+            this.tbDepositAmount.Size = new System.Drawing.Size(121, 27);
             this.tbDepositAmount.TabIndex = 5;
             // 
-            // label1
+            // lbTitle
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(38, 34);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(114, 23);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Add Contract";
+            this.lbTitle.AutoSize = true;
+            this.lbTitle.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbTitle.Location = new System.Drawing.Point(38, 34);
+            this.lbTitle.Name = "lbTitle";
+            this.lbTitle.Size = new System.Drawing.Size(114, 23);
+            this.lbTitle.TabIndex = 6;
+            this.lbTitle.Text = "Add Contract";
             // 
-            // label2
+            // lbName
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(38, 87);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(95, 19);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Tenant Name";
+            this.lbName.AutoSize = true;
+            this.lbName.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbName.Location = new System.Drawing.Point(38, 87);
+            this.lbName.Name = "lbName";
+            this.lbName.Size = new System.Drawing.Size(95, 19);
+            this.lbName.TabIndex = 7;
+            this.lbName.Text = "Tenant Name";
             // 
-            // label3
+            // lbUnitStatus
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(398, 91);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(91, 19);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Unit Number";
+            this.lbUnitStatus.AutoSize = true;
+            this.lbUnitStatus.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbUnitStatus.Location = new System.Drawing.Point(38, 176);
+            this.lbUnitStatus.Name = "lbUnitStatus";
+            this.lbUnitStatus.Size = new System.Drawing.Size(91, 19);
+            this.lbUnitStatus.TabIndex = 8;
+            this.lbUnitStatus.Text = "Unit Number";
             // 
-            // label4
+            // lbStatus
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(593, 91);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 19);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Status";
+            this.lbStatus.AutoSize = true;
+            this.lbStatus.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbStatus.Location = new System.Drawing.Point(407, 87);
+            this.lbStatus.Name = "lbStatus";
+            this.lbStatus.Size = new System.Drawing.Size(49, 19);
+            this.lbStatus.TabIndex = 9;
+            this.lbStatus.Text = "Status";
             // 
-            // label5
+            // lbDepositAmount
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(514, 168);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(113, 19);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Deposit Amount";
+            this.lbDepositAmount.AutoSize = true;
+            this.lbDepositAmount.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbDepositAmount.Location = new System.Drawing.Point(407, 176);
+            this.lbDepositAmount.Name = "lbDepositAmount";
+            this.lbDepositAmount.Size = new System.Drawing.Size(113, 19);
+            this.lbDepositAmount.TabIndex = 10;
+            this.lbDepositAmount.Text = "Deposit Amount";
             // 
-            // label6
+            // lbStartDate
             // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(38, 165);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(74, 19);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Start Date";
+            this.lbStartDate.AutoSize = true;
+            this.lbStartDate.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbStartDate.Location = new System.Drawing.Point(38, 255);
+            this.lbStartDate.Name = "lbStartDate";
+            this.lbStartDate.Size = new System.Drawing.Size(74, 19);
+            this.lbStartDate.TabIndex = 11;
+            this.lbStartDate.Text = "Start Date";
             // 
-            // label7
+            // lbEndDate
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(285, 165);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(68, 19);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "End Date";
+            this.lbEndDate.AutoSize = true;
+            this.lbEndDate.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbEndDate.Location = new System.Drawing.Point(285, 255);
+            this.lbEndDate.Name = "lbEndDate";
+            this.lbEndDate.Size = new System.Drawing.Size(68, 19);
+            this.lbEndDate.TabIndex = 12;
+            this.lbEndDate.Text = "End Date";
             // 
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(214, 269);
+            this.btnSave.Location = new System.Drawing.Point(138, 352);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(139, 34);
             this.btnSave.TabIndex = 13;
@@ -180,7 +182,7 @@
             // btnCancel
             // 
             this.btnCancel.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(400, 269);
+            this.btnCancel.Location = new System.Drawing.Point(324, 352);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(139, 34);
             this.btnCancel.TabIndex = 14;
@@ -188,20 +190,41 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click_1);
             // 
+            // lbPropertyName
+            // 
+            this.lbPropertyName.AutoSize = true;
+            this.lbPropertyName.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbPropertyName.Location = new System.Drawing.Point(234, 176);
+            this.lbPropertyName.Name = "lbPropertyName";
+            this.lbPropertyName.Size = new System.Drawing.Size(63, 19);
+            this.lbPropertyName.TabIndex = 16;
+            this.lbPropertyName.Text = "Property";
+            // 
+            // cbProperty
+            // 
+            this.cbProperty.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbProperty.FormattingEnabled = true;
+            this.cbProperty.Location = new System.Drawing.Point(238, 198);
+            this.cbProperty.Name = "cbProperty";
+            this.cbProperty.Size = new System.Drawing.Size(137, 27);
+            this.cbProperty.TabIndex = 15;
+            // 
             // AddContract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(762, 329);
+            this.ClientSize = new System.Drawing.Size(579, 437);
+            this.Controls.Add(this.lbPropertyName);
+            this.Controls.Add(this.cbProperty);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lbEndDate);
+            this.Controls.Add(this.lbStartDate);
+            this.Controls.Add(this.lbDepositAmount);
+            this.Controls.Add(this.lbStatus);
+            this.Controls.Add(this.lbUnitStatus);
+            this.Controls.Add(this.lbName);
+            this.Controls.Add(this.lbTitle);
             this.Controls.Add(this.tbDepositAmount);
             this.Controls.Add(this.dtpEndDate);
             this.Controls.Add(this.dtpStartDate);
@@ -225,14 +248,16 @@
         private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.DateTimePicker dtpEndDate;
         private System.Windows.Forms.TextBox tbDepositAmount;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lbTitle;
+        private System.Windows.Forms.Label lbName;
+        private System.Windows.Forms.Label lbUnitStatus;
+        private System.Windows.Forms.Label lbStatus;
+        private System.Windows.Forms.Label lbDepositAmount;
+        private System.Windows.Forms.Label lbStartDate;
+        private System.Windows.Forms.Label lbEndDate;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Label lbPropertyName;
+        private System.Windows.Forms.ComboBox cbProperty;
     }
 }

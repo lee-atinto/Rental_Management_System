@@ -62,6 +62,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             cbStatus.SelectedIndexChanged += cbStatusFilter_SelectedIndexChanged;
 
             LoadPropertyCards();
+            ApplyRoleRestrictions();
 
             propertyData = GetProperties();
             DisplayPropertyCards(propertyData);
@@ -606,6 +607,25 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             };
 
             add.ShowDialog();
+        }
+
+        private void ApplyRoleRestrictions()
+        {
+            if (UserRole == "Admin")
+            {
+                btnBackUp.Visible = false;
+                btnViewReport.Visible = false;
+
+                panelHeader.BackColor = Color.LightBlue;
+            }
+            else if (UserRole == "SuperAdmin")
+            {
+                btnAdminAcc.Visible = true;
+                btnBackUp.Visible = true;
+                btnViewReport.Visible = true;
+
+                panelHeader.BackColor = Color.White;
+            }
         }
 
         // -------------------- Button Side Bar -------------------- //

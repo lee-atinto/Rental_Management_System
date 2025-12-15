@@ -28,56 +28,70 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnOverView = new System.Windows.Forms.Button();
-            this.btnDataBase = new System.Windows.Forms.Button();
-            this.plSystemOverView = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnSystemUsers = new System.Windows.Forms.Button();
-            this.plDataBase = new System.Windows.Forms.Panel();
-            this.DataTables = new System.Windows.Forms.DataGridView();
-            this.btnOptimize = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.plSystemUsers = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.plBackUpRec = new System.Windows.Forms.Panel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.button4 = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
             this.panelHeader = new System.Windows.Forms.Panel();
             this.lbTitle = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.plBackupRecovery = new System.Windows.Forms.Panel();
+            this.btnBrowseRestore = new System.Windows.Forms.Button();
+            this.btnBrowseBackup = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tbRestoreFile = new System.Windows.Forms.TextBox();
+            this.tbBackupPath = new System.Windows.Forms.TextBox();
+            this.btnRestore = new System.Windows.Forms.Button();
+            this.btnBackups = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.btnBackupRecovery = new System.Windows.Forms.Button();
+            this.btnDatabse = new System.Windows.Forms.Button();
+            this.btnSystemOverview = new System.Windows.Forms.Button();
+            this.plDataBase = new System.Windows.Forms.Panel();
+            this.btnOptimizeData = new System.Windows.Forms.Button();
+            this.dtDatabase = new System.Windows.Forms.DataGridView();
+            this.label4 = new System.Windows.Forms.Label();
+            this.plSystemOverView = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.btnContracts = new System.Windows.Forms.Button();
+            this.btnMaintenance = new System.Windows.Forms.Button();
+            this.btnAdminAcc = new System.Windows.Forms.Button();
+            this.PicUserProfile = new System.Windows.Forms.PictureBox();
+            this.lbName = new System.Windows.Forms.Label();
+            this.btnProperties = new System.Windows.Forms.Button();
+            this.btnPaymentRec = new System.Windows.Forms.Button();
+            this.btnBackUp = new System.Windows.Forms.Button();
+            this.btnViewReport = new System.Windows.Forms.Button();
+            this.btnTenant = new System.Windows.Forms.Button();
+            this.btnDashBoard = new System.Windows.Forms.Button();
+            this.btnlogout = new System.Windows.Forms.Button();
+            this.SideBarBakground = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
-            this.plSystemOverView.SuspendLayout();
-            this.plDataBase.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DataTables)).BeginInit();
-            this.plSystemUsers.SuspendLayout();
-            this.panel3.SuspendLayout();
-            this.plBackUpRec.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panelHeader.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.plBackupRecovery.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.plDataBase.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dtDatabase)).BeginInit();
+            this.plSystemOverView.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.BackColor = System.Drawing.Color.PeachPuff;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(28, 28);
+            this.panel1.Location = new System.Drawing.Point(37, 16);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(25);
-            this.panel1.Size = new System.Drawing.Size(1140, 148);
+            this.panel1.Size = new System.Drawing.Size(1132, 148);
             this.panel1.TabIndex = 0;
             // 
             // label2
@@ -102,224 +116,6 @@
     "actions performed here are logged and \r\nmonitored. Please exercise caution when " +
     "making changes.";
             // 
-            // btnOverView
-            // 
-            this.btnOverView.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOverView.Location = new System.Drawing.Point(28, 28);
-            this.btnOverView.Name = "btnOverView";
-            this.btnOverView.Size = new System.Drawing.Size(157, 35);
-            this.btnOverView.TabIndex = 1;
-            this.btnOverView.Text = "System Overview";
-            this.btnOverView.UseVisualStyleBackColor = true;
-            this.btnOverView.Click += new System.EventHandler(this.btnOverView_Click);
-            // 
-            // btnDataBase
-            // 
-            this.btnDataBase.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDataBase.Location = new System.Drawing.Point(221, 28);
-            this.btnDataBase.Name = "btnDataBase";
-            this.btnDataBase.Size = new System.Drawing.Size(104, 35);
-            this.btnDataBase.TabIndex = 2;
-            this.btnDataBase.Text = "Database";
-            this.btnDataBase.UseVisualStyleBackColor = true;
-            this.btnDataBase.Click += new System.EventHandler(this.btnDataBase_Click);
-            // 
-            // plSystemOverView
-            // 
-            this.plSystemOverView.Controls.Add(this.label3);
-            this.plSystemOverView.Location = new System.Drawing.Point(0, 85);
-            this.plSystemOverView.Name = "plSystemOverView";
-            this.plSystemOverView.Size = new System.Drawing.Size(1140, 447);
-            this.plSystemOverView.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(28, 25);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(219, 26);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Recent System Activities";
-            // 
-            // btnSystemUsers
-            // 
-            this.btnSystemUsers.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSystemUsers.Location = new System.Drawing.Point(356, 28);
-            this.btnSystemUsers.Name = "btnSystemUsers";
-            this.btnSystemUsers.Size = new System.Drawing.Size(157, 35);
-            this.btnSystemUsers.TabIndex = 4;
-            this.btnSystemUsers.Text = "System User\'s";
-            this.btnSystemUsers.UseVisualStyleBackColor = true;
-            this.btnSystemUsers.Click += new System.EventHandler(this.btnSystemUsers_Click);
-            // 
-            // plDataBase
-            // 
-            this.plDataBase.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.plDataBase.Controls.Add(this.DataTables);
-            this.plDataBase.Controls.Add(this.btnOptimize);
-            this.plDataBase.Controls.Add(this.label4);
-            this.plDataBase.Location = new System.Drawing.Point(0, 85);
-            this.plDataBase.Name = "plDataBase";
-            this.plDataBase.Padding = new System.Windows.Forms.Padding(25);
-            this.plDataBase.Size = new System.Drawing.Size(1140, 475);
-            this.plDataBase.TabIndex = 4;
-            // 
-            // DataTables
-            // 
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle15.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle15.Padding = new System.Windows.Forms.Padding(20);
-            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataTables.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle15;
-            this.DataTables.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DataTables.Location = new System.Drawing.Point(28, 95);
-            this.DataTables.Name = "DataTables";
-            dataGridViewCellStyle16.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle16.Padding = new System.Windows.Forms.Padding(5, 10, 5, 10);
-            this.DataTables.RowsDefaultCellStyle = dataGridViewCellStyle16;
-            this.DataTables.Size = new System.Drawing.Size(1083, 320);
-            this.DataTables.TabIndex = 2;
-            this.DataTables.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataTables_CellContentClick);
-            // 
-            // btnOptimize
-            // 
-            this.btnOptimize.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOptimize.Location = new System.Drawing.Point(905, 28);
-            this.btnOptimize.Name = "btnOptimize";
-            this.btnOptimize.Size = new System.Drawing.Size(206, 43);
-            this.btnOptimize.TabIndex = 1;
-            this.btnOptimize.Text = "Optimize Database";
-            this.btnOptimize.UseVisualStyleBackColor = true;
-            this.btnOptimize.Click += new System.EventHandler(this.btnOptimize_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(28, 25);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(148, 26);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Database Tables";
-            // 
-            // plSystemUsers
-            // 
-            this.plSystemUsers.Controls.Add(this.button2);
-            this.plSystemUsers.Controls.Add(this.label5);
-            this.plSystemUsers.Location = new System.Drawing.Point(0, 85);
-            this.plSystemUsers.Name = "plSystemUsers";
-            this.plSystemUsers.Size = new System.Drawing.Size(1140, 447);
-            this.plSystemUsers.TabIndex = 4;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(618, 27);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Add User";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(18, 15);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(71, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "System Users";
-            // 
-            // panel3
-            // 
-            this.panel3.Controls.Add(this.plSystemOverView);
-            this.panel3.Controls.Add(this.button3);
-            this.panel3.Controls.Add(this.btnSystemUsers);
-            this.panel3.Controls.Add(this.btnOverView);
-            this.panel3.Controls.Add(this.btnDataBase);
-            this.panel3.Controls.Add(this.plDataBase);
-            this.panel3.Controls.Add(this.plSystemUsers);
-            this.panel3.Controls.Add(this.plBackUpRec);
-            this.panel3.Location = new System.Drawing.Point(28, 191);
-            this.panel3.Name = "panel3";
-            this.panel3.Padding = new System.Windows.Forms.Padding(25);
-            this.panel3.Size = new System.Drawing.Size(1140, 560);
-            this.panel3.TabIndex = 5;
-            // 
-            // plBackUpRec
-            // 
-            this.plBackUpRec.Controls.Add(this.groupBox1);
-            this.plBackUpRec.Controls.Add(this.label6);
-            this.plBackUpRec.Location = new System.Drawing.Point(0, 85);
-            this.plBackUpRec.Name = "plBackUpRec";
-            this.plBackUpRec.Size = new System.Drawing.Size(1140, 446);
-            this.plBackUpRec.TabIndex = 5;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.pictureBox1);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.button4);
-            this.groupBox1.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(29, 59);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1083, 351);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::WindowsFormsApp1.Properties.Resources.sync;
-            this.pictureBox1.Location = new System.Drawing.Point(475, 32);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(122, 102);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 3;
-            this.pictureBox1.TabStop = false;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(437, 143);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(193, 26);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "Backup and Recovery";
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(406, 172);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(248, 36);
-            this.button4.TabIndex = 1;
-            this.button4.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(28, 25);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(193, 26);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "Backup and Recovery";
-            // 
-            // button3
-            // 
-            this.button3.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(536, 28);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(214, 35);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Backup and Recovery";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
             // panelHeader
             // 
             this.panelHeader.BackColor = System.Drawing.SystemColors.AppWorkspace;
@@ -327,7 +123,7 @@
             this.panelHeader.Location = new System.Drawing.Point(302, 0);
             this.panelHeader.Margin = new System.Windows.Forms.Padding(2);
             this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Size = new System.Drawing.Size(1224, 81);
+            this.panelHeader.Size = new System.Drawing.Size(1244, 81);
             this.panelHeader.TabIndex = 175;
             // 
             // lbTitle
@@ -344,21 +140,449 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.panel3);
+            this.panel2.Controls.Add(this.panel4);
             this.panel2.Controls.Add(this.panel1);
-            this.panel2.Location = new System.Drawing.Point(319, 82);
+            this.panel2.Controls.Add(this.plSystemOverView);
+            this.panel2.Controls.Add(this.plDataBase);
+            this.panel2.Controls.Add(this.plBackupRecovery);
+            this.panel2.Location = new System.Drawing.Point(329, 82);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(25);
-            this.panel2.Size = new System.Drawing.Size(1196, 869);
+            this.panel2.Size = new System.Drawing.Size(1199, 715);
             this.panel2.TabIndex = 176;
+            // 
+            // plBackupRecovery
+            // 
+            this.plBackupRecovery.Controls.Add(this.btnBrowseRestore);
+            this.plBackupRecovery.Controls.Add(this.btnBrowseBackup);
+            this.plBackupRecovery.Controls.Add(this.label7);
+            this.plBackupRecovery.Controls.Add(this.label6);
+            this.plBackupRecovery.Controls.Add(this.tbRestoreFile);
+            this.plBackupRecovery.Controls.Add(this.tbBackupPath);
+            this.plBackupRecovery.Controls.Add(this.btnRestore);
+            this.plBackupRecovery.Controls.Add(this.btnBackups);
+            this.plBackupRecovery.Controls.Add(this.label5);
+            this.plBackupRecovery.Location = new System.Drawing.Point(0, 271);
+            this.plBackupRecovery.Name = "plBackupRecovery";
+            this.plBackupRecovery.Padding = new System.Windows.Forms.Padding(25);
+            this.plBackupRecovery.Size = new System.Drawing.Size(1199, 444);
+            this.plBackupRecovery.TabIndex = 7;
+            // 
+            // btnBrowseRestore
+            // 
+            this.btnBrowseRestore.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBrowseRestore.Location = new System.Drawing.Point(618, 224);
+            this.btnBrowseRestore.Name = "btnBrowseRestore";
+            this.btnBrowseRestore.Size = new System.Drawing.Size(105, 31);
+            this.btnBrowseRestore.TabIndex = 8;
+            this.btnBrowseRestore.Text = "Browse";
+            this.btnBrowseRestore.UseVisualStyleBackColor = true;
+            this.btnBrowseRestore.Click += new System.EventHandler(this.btnBrowseRestore_Click_1);
+            // 
+            // btnBrowseBackup
+            // 
+            this.btnBrowseBackup.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBrowseBackup.Location = new System.Drawing.Point(618, 128);
+            this.btnBrowseBackup.Name = "btnBrowseBackup";
+            this.btnBrowseBackup.Size = new System.Drawing.Size(105, 31);
+            this.btnBrowseBackup.TabIndex = 7;
+            this.btnBrowseBackup.Text = "Browse";
+            this.btnBrowseBackup.UseVisualStyleBackColor = true;
+            this.btnBrowseBackup.Click += new System.EventHandler(this.btnBrowseBackup_Click_1);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(42, 199);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(69, 23);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Restore";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(42, 102);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(66, 23);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "Backup";
+            // 
+            // tbRestoreFile
+            // 
+            this.tbRestoreFile.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbRestoreFile.Location = new System.Drawing.Point(37, 224);
+            this.tbRestoreFile.Name = "tbRestoreFile";
+            this.tbRestoreFile.Size = new System.Drawing.Size(522, 31);
+            this.tbRestoreFile.TabIndex = 4;
+            // 
+            // tbBackupPath
+            // 
+            this.tbBackupPath.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbBackupPath.Location = new System.Drawing.Point(37, 128);
+            this.tbBackupPath.Name = "tbBackupPath";
+            this.tbBackupPath.Size = new System.Drawing.Size(522, 31);
+            this.tbBackupPath.TabIndex = 3;
+            // 
+            // btnRestore
+            // 
+            this.btnRestore.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRestore.Location = new System.Drawing.Point(169, 328);
+            this.btnRestore.Name = "btnRestore";
+            this.btnRestore.Size = new System.Drawing.Size(105, 42);
+            this.btnRestore.TabIndex = 2;
+            this.btnRestore.Text = "Restore";
+            this.btnRestore.UseVisualStyleBackColor = true;
+            this.btnRestore.Click += new System.EventHandler(this.btnRestore_Click);
+            // 
+            // btnBackups
+            // 
+            this.btnBackups.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBackups.Location = new System.Drawing.Point(37, 328);
+            this.btnBackups.Name = "btnBackups";
+            this.btnBackups.Size = new System.Drawing.Size(105, 42);
+            this.btnBackups.TabIndex = 1;
+            this.btnBackups.Text = "Backup";
+            this.btnBackups.UseVisualStyleBackColor = true;
+            this.btnBackups.Click += new System.EventHandler(this.btnBackups_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(32, 35);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(198, 26);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Backup and Recovery";
+            // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.Color.White;
+            this.panel4.Controls.Add(this.btnBackupRecovery);
+            this.panel4.Controls.Add(this.btnDatabse);
+            this.panel4.Controls.Add(this.btnSystemOverview);
+            this.panel4.Location = new System.Drawing.Point(37, 174);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(1132, 81);
+            this.panel4.TabIndex = 256;
+            // 
+            // btnBackupRecovery
+            // 
+            this.btnBackupRecovery.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBackupRecovery.Location = new System.Drawing.Point(431, 21);
+            this.btnBackupRecovery.Name = "btnBackupRecovery";
+            this.btnBackupRecovery.Size = new System.Drawing.Size(184, 38);
+            this.btnBackupRecovery.TabIndex = 257;
+            this.btnBackupRecovery.Text = "Backup and Recovery";
+            this.btnBackupRecovery.UseVisualStyleBackColor = true;
+            this.btnBackupRecovery.Click += new System.EventHandler(this.btnBackupRecovery_Click);
+            // 
+            // btnDatabse
+            // 
+            this.btnDatabse.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDatabse.Location = new System.Drawing.Point(210, 21);
+            this.btnDatabse.Name = "btnDatabse";
+            this.btnDatabse.Size = new System.Drawing.Size(184, 38);
+            this.btnDatabse.TabIndex = 255;
+            this.btnDatabse.Text = "Database";
+            this.btnDatabse.UseVisualStyleBackColor = true;
+            this.btnDatabse.Click += new System.EventHandler(this.btnDatabse_Click);
+            // 
+            // btnSystemOverview
+            // 
+            this.btnSystemOverview.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSystemOverview.Location = new System.Drawing.Point(27, 21);
+            this.btnSystemOverview.Name = "btnSystemOverview";
+            this.btnSystemOverview.Size = new System.Drawing.Size(148, 38);
+            this.btnSystemOverview.TabIndex = 254;
+            this.btnSystemOverview.Text = "System Overview";
+            this.btnSystemOverview.UseVisualStyleBackColor = true;
+            this.btnSystemOverview.Click += new System.EventHandler(this.btnSystemOverview_Click);
+            // 
+            // plDataBase
+            // 
+            this.plDataBase.Controls.Add(this.btnOptimizeData);
+            this.plDataBase.Controls.Add(this.dtDatabase);
+            this.plDataBase.Controls.Add(this.label4);
+            this.plDataBase.Location = new System.Drawing.Point(0, 271);
+            this.plDataBase.Name = "plDataBase";
+            this.plDataBase.Padding = new System.Windows.Forms.Padding(25);
+            this.plDataBase.Size = new System.Drawing.Size(1199, 444);
+            this.plDataBase.TabIndex = 6;
+            // 
+            // btnOptimizeData
+            // 
+            this.btnOptimizeData.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOptimizeData.Location = new System.Drawing.Point(943, 28);
+            this.btnOptimizeData.Name = "btnOptimizeData";
+            this.btnOptimizeData.Size = new System.Drawing.Size(200, 49);
+            this.btnOptimizeData.TabIndex = 2;
+            this.btnOptimizeData.Text = "Optimize Database";
+            this.btnOptimizeData.UseVisualStyleBackColor = true;
+            this.btnOptimizeData.Click += new System.EventHandler(this.btnOptimizeData_Click);
+            // 
+            // dtDatabase
+            // 
+            this.dtDatabase.AllowUserToAddRows = false;
+            this.dtDatabase.AllowUserToDeleteRows = false;
+            this.dtDatabase.AllowUserToResizeColumns = false;
+            this.dtDatabase.AllowUserToResizeRows = false;
+            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle23.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle23.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle23.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle23.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle23.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dtDatabase.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle23;
+            this.dtDatabase.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dtDatabase.Location = new System.Drawing.Point(37, 94);
+            this.dtDatabase.Name = "dtDatabase";
+            dataGridViewCellStyle24.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtDatabase.RowsDefaultCellStyle = dataGridViewCellStyle24;
+            this.dtDatabase.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dtDatabase.Size = new System.Drawing.Size(1134, 307);
+            this.dtDatabase.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(32, 35);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(92, 26);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Database";
+            // 
+            // plSystemOverView
+            // 
+            this.plSystemOverView.Controls.Add(this.label3);
+            this.plSystemOverView.Location = new System.Drawing.Point(0, 271);
+            this.plSystemOverView.Name = "plSystemOverView";
+            this.plSystemOverView.Padding = new System.Windows.Forms.Padding(25);
+            this.plSystemOverView.Size = new System.Drawing.Size(1199, 444);
+            this.plSystemOverView.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(32, 35);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(226, 26);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Recent System Activities";
+            // 
+            // panel9
+            // 
+            this.panel9.Location = new System.Drawing.Point(-4, 107);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(302, 2);
+            this.panel9.TabIndex = 251;
+            // 
+            // btnContracts
+            // 
+            this.btnContracts.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnContracts.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnContracts.ForeColor = System.Drawing.Color.White;
+            this.btnContracts.Location = new System.Drawing.Point(24, 367);
+            this.btnContracts.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnContracts.Name = "btnContracts";
+            this.btnContracts.Size = new System.Drawing.Size(250, 50);
+            this.btnContracts.TabIndex = 249;
+            this.btnContracts.Text = "Contracts";
+            this.btnContracts.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnContracts.UseVisualStyleBackColor = false;
+            this.btnContracts.Click += new System.EventHandler(this.btnContracts_Click);
+            // 
+            // btnMaintenance
+            // 
+            this.btnMaintenance.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnMaintenance.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMaintenance.ForeColor = System.Drawing.Color.White;
+            this.btnMaintenance.Location = new System.Drawing.Point(24, 427);
+            this.btnMaintenance.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnMaintenance.Name = "btnMaintenance";
+            this.btnMaintenance.Size = new System.Drawing.Size(250, 50);
+            this.btnMaintenance.TabIndex = 250;
+            this.btnMaintenance.Text = "Maintenance";
+            this.btnMaintenance.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMaintenance.UseVisualStyleBackColor = false;
+            this.btnMaintenance.Click += new System.EventHandler(this.btnMaintenance_Click);
+            // 
+            // btnAdminAcc
+            // 
+            this.btnAdminAcc.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnAdminAcc.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAdminAcc.ForeColor = System.Drawing.Color.White;
+            this.btnAdminAcc.Location = new System.Drawing.Point(24, 487);
+            this.btnAdminAcc.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnAdminAcc.Name = "btnAdminAcc";
+            this.btnAdminAcc.Size = new System.Drawing.Size(250, 50);
+            this.btnAdminAcc.TabIndex = 243;
+            this.btnAdminAcc.Text = "Admin Account";
+            this.btnAdminAcc.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnAdminAcc.UseVisualStyleBackColor = false;
+            this.btnAdminAcc.Click += new System.EventHandler(this.btnAdminAcc_Click);
+            // 
+            // PicUserProfile
+            // 
+            this.PicUserProfile.Location = new System.Drawing.Point(41, 29);
+            this.PicUserProfile.Margin = new System.Windows.Forms.Padding(2);
+            this.PicUserProfile.Name = "PicUserProfile";
+            this.PicUserProfile.Size = new System.Drawing.Size(69, 52);
+            this.PicUserProfile.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.PicUserProfile.TabIndex = 240;
+            this.PicUserProfile.TabStop = false;
+            // 
+            // lbName
+            // 
+            this.lbName.AutoSize = true;
+            this.lbName.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbName.ForeColor = System.Drawing.Color.White;
+            this.lbName.Location = new System.Drawing.Point(114, 29);
+            this.lbName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lbName.Name = "lbName";
+            this.lbName.Size = new System.Drawing.Size(60, 24);
+            this.lbName.TabIndex = 241;
+            this.lbName.Text = "label1";
+            // 
+            // btnProperties
+            // 
+            this.btnProperties.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnProperties.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnProperties.ForeColor = System.Drawing.Color.White;
+            this.btnProperties.Location = new System.Drawing.Point(24, 247);
+            this.btnProperties.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnProperties.Name = "btnProperties";
+            this.btnProperties.Size = new System.Drawing.Size(250, 50);
+            this.btnProperties.TabIndex = 248;
+            this.btnProperties.Text = "Properties";
+            this.btnProperties.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnProperties.UseVisualStyleBackColor = false;
+            this.btnProperties.Click += new System.EventHandler(this.btnProperties_Click);
+            // 
+            // btnPaymentRec
+            // 
+            this.btnPaymentRec.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnPaymentRec.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPaymentRec.ForeColor = System.Drawing.Color.White;
+            this.btnPaymentRec.Location = new System.Drawing.Point(24, 307);
+            this.btnPaymentRec.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnPaymentRec.Name = "btnPaymentRec";
+            this.btnPaymentRec.Size = new System.Drawing.Size(250, 50);
+            this.btnPaymentRec.TabIndex = 247;
+            this.btnPaymentRec.Text = "Payment Record";
+            this.btnPaymentRec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPaymentRec.UseVisualStyleBackColor = false;
+            this.btnPaymentRec.Click += new System.EventHandler(this.btnPaymentRec_Click);
+            // 
+            // btnBackUp
+            // 
+            this.btnBackUp.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnBackUp.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBackUp.ForeColor = System.Drawing.Color.White;
+            this.btnBackUp.Location = new System.Drawing.Point(24, 607);
+            this.btnBackUp.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnBackUp.Name = "btnBackUp";
+            this.btnBackUp.Size = new System.Drawing.Size(250, 50);
+            this.btnBackUp.TabIndex = 246;
+            this.btnBackUp.Text = "Back up";
+            this.btnBackUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnBackUp.UseVisualStyleBackColor = false;
+            // 
+            // btnViewReport
+            // 
+            this.btnViewReport.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnViewReport.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnViewReport.ForeColor = System.Drawing.Color.White;
+            this.btnViewReport.Location = new System.Drawing.Point(24, 547);
+            this.btnViewReport.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnViewReport.Name = "btnViewReport";
+            this.btnViewReport.Size = new System.Drawing.Size(250, 50);
+            this.btnViewReport.TabIndex = 245;
+            this.btnViewReport.Text = "View Report";
+            this.btnViewReport.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnViewReport.UseVisualStyleBackColor = false;
+            this.btnViewReport.Click += new System.EventHandler(this.btnViewReport_Click);
+            // 
+            // btnTenant
+            // 
+            this.btnTenant.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnTenant.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTenant.ForeColor = System.Drawing.Color.White;
+            this.btnTenant.Location = new System.Drawing.Point(24, 187);
+            this.btnTenant.Margin = new System.Windows.Forms.Padding(15, 5, 15, 5);
+            this.btnTenant.Name = "btnTenant";
+            this.btnTenant.Size = new System.Drawing.Size(250, 50);
+            this.btnTenant.TabIndex = 244;
+            this.btnTenant.Text = "Tenants";
+            this.btnTenant.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnTenant.UseVisualStyleBackColor = false;
+            this.btnTenant.Click += new System.EventHandler(this.btnTenant_Click);
+            // 
+            // btnDashBoard
+            // 
+            this.btnDashBoard.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnDashBoard.Font = new System.Drawing.Font("Calibri", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDashBoard.ForeColor = System.Drawing.Color.White;
+            this.btnDashBoard.Location = new System.Drawing.Point(24, 127);
+            this.btnDashBoard.Margin = new System.Windows.Forms.Padding(15, 15, 15, 5);
+            this.btnDashBoard.Name = "btnDashBoard";
+            this.btnDashBoard.Size = new System.Drawing.Size(250, 50);
+            this.btnDashBoard.TabIndex = 242;
+            this.btnDashBoard.Text = "Dashboard";
+            this.btnDashBoard.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnDashBoard.UseVisualStyleBackColor = false;
+            this.btnDashBoard.Click += new System.EventHandler(this.btnDashBoard_Click);
+            // 
+            // btnlogout
+            // 
+            this.btnlogout.BackColor = System.Drawing.Color.White;
+            this.btnlogout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnlogout.Location = new System.Drawing.Point(24, 726);
+            this.btnlogout.Margin = new System.Windows.Forms.Padding(2);
+            this.btnlogout.Name = "btnlogout";
+            this.btnlogout.Size = new System.Drawing.Size(250, 50);
+            this.btnlogout.TabIndex = 239;
+            this.btnlogout.Text = "&Log out";
+            this.btnlogout.UseVisualStyleBackColor = false;
+            this.btnlogout.Click += new System.EventHandler(this.btnlogout_Click);
+            // 
+            // SideBarBakground
+            // 
+            this.SideBarBakground.BackColor = System.Drawing.Color.White;
+            this.SideBarBakground.Location = new System.Drawing.Point(0, 0);
+            this.SideBarBakground.Margin = new System.Windows.Forms.Padding(2);
+            this.SideBarBakground.Name = "SideBarBakground";
+            this.SideBarBakground.Size = new System.Drawing.Size(302, 797);
+            this.SideBarBakground.TabIndex = 238;
+            this.SideBarBakground.TabStop = false;
             // 
             // BackUp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1526, 845);
-            this.Controls.Add(this.panel2);
+            this.ClientSize = new System.Drawing.Size(1540, 799);
+            this.Controls.Add(this.panel9);
+            this.Controls.Add(this.btnContracts);
+            this.Controls.Add(this.btnMaintenance);
+            this.Controls.Add(this.btnAdminAcc);
+            this.Controls.Add(this.PicUserProfile);
+            this.Controls.Add(this.lbName);
+            this.Controls.Add(this.btnProperties);
+            this.Controls.Add(this.btnPaymentRec);
+            this.Controls.Add(this.btnBackUp);
+            this.Controls.Add(this.btnViewReport);
+            this.Controls.Add(this.btnTenant);
+            this.Controls.Add(this.btnDashBoard);
+            this.Controls.Add(this.btnlogout);
+            this.Controls.Add(this.SideBarBakground);
             this.Controls.Add(this.panelHeader);
+            this.Controls.Add(this.panel2);
             this.Name = "BackUp";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BackUp";
@@ -366,23 +590,21 @@
             this.Load += new System.EventHandler(this.BackUp_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.plSystemOverView.ResumeLayout(false);
-            this.plSystemOverView.PerformLayout();
-            this.plDataBase.ResumeLayout(false);
-            this.plDataBase.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DataTables)).EndInit();
-            this.plSystemUsers.ResumeLayout(false);
-            this.plSystemUsers.PerformLayout();
-            this.panel3.ResumeLayout(false);
-            this.plBackUpRec.ResumeLayout(false);
-            this.plBackUpRec.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             this.panel2.ResumeLayout(false);
+            this.plBackupRecovery.ResumeLayout(false);
+            this.plBackupRecovery.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.plDataBase.ResumeLayout(false);
+            this.plDataBase.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dtDatabase)).EndInit();
+            this.plSystemOverView.ResumeLayout(false);
+            this.plSystemOverView.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -391,28 +613,42 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnOverView;
-        private System.Windows.Forms.Button btnDataBase;
-        private System.Windows.Forms.Panel plSystemOverView;
-        private System.Windows.Forms.Button btnSystemUsers;
-        private System.Windows.Forms.Panel plDataBase;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnOptimize;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Panel plSystemUsers;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panelHeader;
         private System.Windows.Forms.Label lbTitle;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.DataGridView DataTables;
-        private System.Windows.Forms.Panel plBackUpRec;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel panel9;
+        private System.Windows.Forms.Button btnContracts;
+        private System.Windows.Forms.Button btnMaintenance;
+        private System.Windows.Forms.Button btnAdminAcc;
+        private System.Windows.Forms.PictureBox PicUserProfile;
+        private System.Windows.Forms.Label lbName;
+        private System.Windows.Forms.Button btnProperties;
+        private System.Windows.Forms.Button btnPaymentRec;
+        private System.Windows.Forms.Button btnBackUp;
+        private System.Windows.Forms.Button btnViewReport;
+        private System.Windows.Forms.Button btnTenant;
+        private System.Windows.Forms.Button btnDashBoard;
+        private System.Windows.Forms.Button btnlogout;
+        private System.Windows.Forms.PictureBox SideBarBakground;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Button btnBackupRecovery;
+        private System.Windows.Forms.Button btnDatabse;
+        private System.Windows.Forms.Button btnSystemOverview;
+        private System.Windows.Forms.Panel plDataBase;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnOptimizeData;
+        private System.Windows.Forms.DataGridView dtDatabase;
+        private System.Windows.Forms.Panel plBackupRecovery;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Panel plSystemOverView;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnBackups;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox tbRestoreFile;
+        private System.Windows.Forms.TextBox tbBackupPath;
+        private System.Windows.Forms.Button btnRestore;
+        private System.Windows.Forms.Button btnBrowseRestore;
+        private System.Windows.Forms.Button btnBrowseBackup;
     }
 }

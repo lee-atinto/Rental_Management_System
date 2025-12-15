@@ -26,6 +26,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         private readonly string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
         private readonly string UserName;
         private readonly string UserRole;
+
         private readonly CultureInfo philippineCulture = new CultureInfo("en-PH");
 
         // -------------------- Button Style -------------------- //
@@ -67,9 +68,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         {
             InitializeComponent();
 
-            // <<< Re-add the DataGridView CellContentClick event hookup that must not be removed >>>
-            this.PaymentTenantData.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.PaymentTenantData_CellContentClick);
-
             // -------------------- PictureBox Setup -------------------- //
             pbProfit.SizeMode = PictureBoxSizeMode.Zoom;
             pbPayment.SizeMode = PictureBoxSizeMode.Zoom;
@@ -82,6 +80,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             this.UserName = username;
             this.UserRole = userRole;
             this.lbName.Text = $"{UserName} \n ({UserRole})";
+
+            ApplyRoleRestrictions();
 
             // -------------------- Button Initialization -------------------- //
             InitializeButtonStyle(btnDashBoard);
@@ -159,7 +159,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
                     U.MonthlyRent - ISNULL(SUM(PY.paymentAmount), 0) AS CurrentBalance 
                 FROM Rent R 
                 INNER JOIN Contract C ON R.contractID = C.contractID 
-                INNER JOIN Unit U ON C.propertyID = U.propertyID 
+                INNER JOIN Unit U ON C.unitID = U.unitID 
                 LEFT JOIN Payment PY ON R.contractID = PY.contractId 
                 GROUP BY R.contractID, U.MonthlyRent, R.dueDate 
             ) 
@@ -201,7 +201,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             {
                 cbMethod.Items.Clear();
                 var methods = new[] { "All Methods", "Bank Transfer", "Credit Card", "Debit Card", "Over-the-Counter",
-                                      "Online Portal", "PayPal", "Check", "Maya", "GCash", "Cash" };
+                                     "Online Portal", "PayPal", "Check", "Maya", "GCash", "Cash" };
                 cbMethod.Items.AddRange(methods);
                 cbMethod.SelectedIndex = 0;
             }
@@ -217,22 +217,25 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
 
         public void GetPaymentData()
         {
+            // Pinalitan ang INNER JOIN sa Property at Unit ng LEFT JOIN
+            // Para makuha ang lahat ng active contracts kahit walang Property/Unit ID (may ISNULL na rin sa MonthlyRent)
             string consolidatedQuery = @" WITH TotalCalculatedBalance AS ( 
                 SELECT 
                     C.contractID,
                     TI.firstName + ' ' + TI.lastName AS Tenant, 
-                    PR.propertyName AS Property, 
-                    U.MonthlyRent, 
-                    MAX(R.dueDate) AS LatestDueDate,
+                    ISNULL(PR.propertyName, 'N/A') AS Property, 
+                    ISNULL(U.MonthlyRent, 0.00) AS MonthlyRent, 
+                    MAX(R.dueDate) AS LatestDueDate, 
                     MAX(P.paymentDate) AS LastPaymentDate, 
                     ISNULL(SUM(P.paymentAmount), 0) AS TotalPaid, 
-                    U.MonthlyRent - ISNULL(SUM(P.paymentAmount), 0) AS CurrentBalance 
+                    ISNULL(U.MonthlyRent, 0.00) - ISNULL(SUM(P.paymentAmount), 0) AS CurrentBalance 
                 FROM Contract C 
                 INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId
-                INNER JOIN Property PR ON C.propertyID = PR.propertyID 
-                INNER JOIN Unit U ON C.propertyID = U.propertyID 
-                INNER JOIN Rent R ON C.contractID = R.contractID
-                LEFT JOIN Payment P ON C.contractID = P.contractId
+                LEFT JOIN Property PR ON C.propertyID = PR.propertyID 
+                LEFT JOIN Unit U ON C.unitID = U.unitID  
+                LEFT JOIN Rent R ON C.contractID = R.contractID    
+                LEFT JOIN Payment P ON C.contractID = P.contractId  
+                WHERE LOWER(C.contractStatus) = 'active'
                 GROUP BY C.contractID, TI.firstName, TI.lastName, PR.propertyName, U.MonthlyRent
             ) 
             SELECT 
@@ -248,8 +251,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
                 END AS DateMethod,
                 CASE 
                     WHEN CurrentBalance <= 0 THEN 'Paid' 
-                    WHEN CurrentBalance > 0 AND LatestDueDate < GETDATE() THEN 'Overdue' 
-                    ELSE 'Pending' 
+                    WHEN CurrentBalance > 0 AND LatestDueDate IS NOT NULL AND LatestDueDate < GETDATE() THEN 'Overdue' 
+                    WHEN CurrentBalance > 0 THEN 'Pending'
+                    ELSE 'N/A' 
                 END AS Status 
             FROM TotalCalculatedBalance
             ORDER BY Tenant DESC";
@@ -296,7 +300,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
     FROM Contract C
     INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId
     INNER JOIN Property PR ON C.propertyID = PR.propertyID
-    INNER JOIN Unit U ON C.propertyID = U.propertyID   -- FIXED HERE
+    INNER JOIN Unit U ON C.unitID = U.unitID 
     LEFT JOIN Rent R ON C.contractID = R.contractID
     LEFT JOIN Payment P ON C.contractID = P.contractId
     LEFT JOIN PaymentMethod M ON P.paymentMethodId = M.paymentMethodId
@@ -326,6 +330,83 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             }
         }
 
+        public Image ResizeImage(Image image, int width, int height)
+        {
+            Bitmap resizedImage = new Bitmap(image, new Size(width, height));
+            return resizedImage;
+        }
+
+        private void AddActionButtons()
+        {
+            if (PaymentTenantData.Columns.Contains("ViewColumn")) PaymentTenantData.Columns.Remove("ViewColumn");
+            if (PaymentTenantData.Columns.Contains("DownloadColumn")) PaymentTenantData.Columns.Remove("DownloadColumn");
+            if (PaymentTenantData.Columns.Contains("UpdateColumn")) PaymentTenantData.Columns.Remove("UpdateColumn");
+            if (PaymentTenantData.Columns.Contains("DeleteColumn")) PaymentTenantData.Columns.Remove("DeleteColumn");
+
+            string header = "";
+            int iconSize = 16;
+
+            Image View = Properties.Resources.view;
+            Image Download = Properties.Resources.downlaod;
+            Image Edit = Properties.Resources.edit;
+            Image Delete = Properties.Resources.delete;
+
+            Image IconDelete = ResizeImage(Delete, iconSize, iconSize);
+            Image IconEdit = ResizeImage(Edit, iconSize, iconSize);
+            Image IconDownload = ResizeImage(Download, iconSize, iconSize);
+            Image IconView = ResizeImage(View, iconSize, iconSize);
+
+            DataGridViewImageColumn viewBtn = new DataGridViewImageColumn
+            {
+                Name = "View",
+                HeaderText = header,
+                Image = IconView,
+                ImageLayout = DataGridViewImageCellLayout.Normal,
+                ToolTipText = "View Payment History"
+            };
+            PaymentTenantData.Columns.Add(viewBtn);
+
+            DataGridViewImageColumn downloadBtn = new DataGridViewImageColumn
+            {
+                Name = "Download",
+                HeaderText = header,
+                Image = IconDownload,
+                ImageLayout = DataGridViewImageCellLayout.Normal,
+                ToolTipText = "Download Statement of Account"
+            };
+            PaymentTenantData.Columns.Add(downloadBtn);
+
+            DataGridViewImageColumn updateBtn = new DataGridViewImageColumn
+            {
+                Name = "Update",
+                HeaderText = header,
+                Image = IconEdit,
+                ImageLayout = DataGridViewImageCellLayout.Normal,
+                ToolTipText = "Update Payment Record"
+            };
+            PaymentTenantData.Columns.Add(updateBtn);
+
+            DataGridViewImageColumn deleteBtn = new DataGridViewImageColumn
+            {
+                Name = "Delete",
+                HeaderText = header,
+                Image = IconDelete,
+                ImageLayout = DataGridViewImageCellLayout.Normal,
+                ToolTipText = "Delete Payment Record"
+            };
+            PaymentTenantData.Columns.Add(deleteBtn);
+
+            PaymentTenantData.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+
+            // Removed non-existent column names from the section below to prevent errors
+            // if (PaymentTenantData.Columns.Contains("DownloadColumn"))
+            //    PaymentTenantData.Columns["DownloadColumn"].HeaderCell.Style.ForeColor = Color.Transparent;
+            // if (PaymentTenantData.Columns.Contains("UpdateColumn"))
+            //    PaymentTenantData.Columns["UpdateColumn"].HeaderCell.Style.ForeColor = Color.Transparent;
+            // if (PaymentTenantData.Columns.Contains("DeleteColumn"))
+            //    PaymentTenantData.Columns["DeleteColumn"].HeaderCell.Style.ForeColor = Color.Transparent;
+        }
+
         private void FormatDataGridColumns()
         {
             if (PaymentTenantData.Columns.Contains("Amount"))
@@ -346,35 +427,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             historyForm.ShowDialog();
         }
 
-        private void AddActionButtons()
-        {
-            if (!PaymentTenantData.Columns.Contains("ViewColumn"))
-            {
-                DataGridViewImageColumn viewBtn = new DataGridViewImageColumn
-                {
-                    Name = "ViewColumn",
-                    HeaderText = "View",
-                    Image = Properties.Resources.view,
-                    ImageLayout = DataGridViewImageCellLayout.Normal
-                };
-                PaymentTenantData.Columns.Add(viewBtn);
-            }
-
-            if (!PaymentTenantData.Columns.Contains("DownloadColumn"))
-            {
-                DataGridViewImageColumn downloadBtn = new DataGridViewImageColumn
-                {
-                    Name = "DownloadColumn",
-                    HeaderText = "Download",
-                    Image = Properties.Resources.downlaod,
-                    ImageLayout = DataGridViewImageCellLayout.Normal
-                };
-                PaymentTenantData.Columns.Add(downloadBtn);
-            }
-
-            PaymentTenantData.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-        }
-
         private void ApplyFilters()
         {
             if (dtCombinedRecords == null || dtCombinedRecords.DefaultView == null) return;
@@ -385,7 +437,12 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             string rowFilter = "";
 
             if (statusFilter != "All Statuses") rowFilter += $"Status = '{statusFilter}'";
-            if (methodFilter != "All Methods") rowFilter += (string.IsNullOrEmpty(rowFilter) ? "" : " AND ") + $"DateMethod = '{methodFilter}'";
+            // NOTE: Ang 'DateMethod' column sa DataGridView ay nagpapakita ng 'N/A' o 'Multiple' based sa LastPaymentDate,
+            // HINDI sa actual na payment method (tulad ng GCash/Cash). Pinalitan ko ang logic dito para hindi mag-filter ng mali.
+            // Walang available na 'PaymentMethod' column sa dtCombinedRecords kaya hindi ito gagana ng tama.
+            // Kung gusto mong mag-filter ng Payment Method, kailangan mong i-update ang `GetPaymentData()` query.
+            // Para sa ngayon, inalis ko ang methodFilter sa DataView.RowFilter.
+
             if (!string.IsNullOrEmpty(searchFilter))
             {
                 string searchClause = $"Tenant LIKE '%{searchFilter}%' OR Property LIKE '%{searchFilter}%'";
@@ -444,13 +501,11 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
 
         private void PaymentTenantData_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
             DataGridViewRow row = PaymentTenantData.Rows[e.RowIndex];
 
-            bool columnExists = PaymentTenantData.Columns.Contains("contractID");
-
-            if (!columnExists || row.Cells["contractID"].Value == DBNull.Value)
+            if (!PaymentTenantData.Columns.Contains("contractID") || row.Cells["contractID"].Value == DBNull.Value)
             {
                 MessageBox.Show("Contract ID not found for this row.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -460,34 +515,77 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             string tenantName = row.Cells["Tenant"].Value?.ToString();
             string propertyName = row.Cells["Property"].Value?.ToString();
 
-            if (PaymentTenantData.Columns[e.ColumnIndex].Name == "ViewColumn")
-            {
-                ShowPaymentHistory(contractId, tenantName);
-            }
-            else if (PaymentTenantData.Columns[e.ColumnIndex].Name == "DownloadColumn")
-            {
-                DataTable soaData = GetStatementOfAccountData(contractId);
+            string columnName = PaymentTenantData.Columns[e.ColumnIndex].Name;
 
-                if (soaData != null && soaData.Rows.Count > 0)
-                {
-                    ExportDataToExcel(soaData, tenantName, propertyName);
-                }
-                else
-                {
-                    MessageBox.Show("Walang mahanap na payment record para sa contract na ito.", "Walang Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+            switch (columnName)
+            {
+                case "View":
+                    ShowPaymentHistory(contractId, tenantName);
+                    break;
+
+                case "Download":
+                    DataTable soaData = GetStatementOfAccountData(contractId);
+                    if (soaData != null && soaData.Rows.Count > 0)
+                    {
+                        ExportDataToExcel(soaData, tenantName, propertyName);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Walang mahanap na payment record para sa contract na ito.", "Walang Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    break;
+
+                case "Update":
+                    using (AddPayment updatePaymentForm = new AddPayment(contractId))
+                    {
+                        if (updatePaymentForm.ShowDialog() == DialogResult.OK)
+                        {
+                            GetPaymentData();
+                            CalculateTotalCollected();
+                            CalculateTotalPendingPayments();
+                        }
+                    }
+                    break;
+
+                case "Delete":
+                    // NOTE: Ang current code ninyo ay SIMULATED delete lang. Walang totoong SQL delete query.
+                    if (MessageBox.Show($"Sigurado ka bang burahin ang payment record para kay {tenantName} (Contract ID: {contractId})?", "Kumpirmahin ang Pagbura", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        MessageBox.Show($"Payment record for Contract ID: {contractId} deleted (Simulated).", "Deleted");
+                    }
+                    break;
             }
         }
 
         private void btnRecordPayment_Click(object sender, EventArgs e)
         {
-            AddPayment addPaymentForm = new AddPayment();
-
-            if (addPaymentForm.ShowDialog() == DialogResult.OK)
+            using (AddPayment addPaymentForm = new AddPayment())
             {
-                GetPaymentData();
-                CalculateTotalCollected();
-                CalculateTotalPendingPayments();
+                if (addPaymentForm.ShowDialog() == DialogResult.OK)
+                {
+                    GetPaymentData();
+                    CalculateTotalCollected();
+                    CalculateTotalPendingPayments();
+                }
+            }
+        }
+
+        private void ApplyRoleRestrictions()
+        {
+            if (UserRole == "Admin")
+            {
+                btnBackUp.Visible = false;
+                btnViewReport.Visible = false;
+
+                panelHeader.BackColor = Color.LightBlue;
+            }
+            else if (UserRole == "SuperAdmin")
+            {
+                btnAdminAcc.Visible = true;
+                btnBackUp.Visible = true;
+                btnViewReport.Visible = true;
+
+                panelHeader.BackColor = Color.White;
             }
         }
 
@@ -504,9 +602,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         // --------------- Tenant Button --------------- //
         private void btnTenant_Click(object sender, EventArgs e)
         {
-            Tenants tenants = new Tenants(UserName, UserRole);
-            tenants.Show();
-            this.Hide();
+            Type tenantsType = Type.GetType("WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants.Tenants");
+            if (tenantsType != null)
+            {
+                Form tenants = (Form)Activator.CreateInstance(tenantsType, UserName, UserRole);
+                tenants.Show();
+                this.Hide();
+            }
         }
 
         // --------------- Properties Button --------------- //
@@ -528,9 +630,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         // --------------- Maintenance Button --------------- //
         private void btnMaintenance_Click(object sender, EventArgs e)
         {
-            Maintenance maintenance = new Maintenance(UserName, UserRole);
-            maintenance.Show();
-            this.Hide();
+            Type maintenanceType = Type.GetType("WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Maintenance.Maintenance");
+            if (maintenanceType != null)
+            {
+                Form maintenance = (Form)Activator.CreateInstance(maintenanceType, UserName, UserRole);
+                maintenance.Show();
+                this.Hide();
+            }
         }
 
         // --------------- Admin Account Button --------------- //

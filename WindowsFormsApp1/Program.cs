@@ -28,11 +28,13 @@ namespace WindowsFormsApp1
             //Application.Run(new ProperTies("TestUser", " Super Admin"));
 
             // --------------- Superadmin Login Tester --------------- //
-            //Application.Run(new Contracts("TestUser", " Super A dmin"));
+            Application.Run(new BackUp("TestUser", "Super A dmin"));
             //Application.Run(new Tenants("TestUser", " Super A dmin"));
             //Application.Run(new DashBoard("TestUser", "Super Admin"));
             //Application.Run(new ProperTies("TestUser", "Super Admin"));
-            Application.Run(new Maintenance("TestUser", "Super Admin"));
+            //Application.Run(new Contracts("TestUser", " Super A dmin"));
+            //Application.Run(new Maintenance("TestUser", "Super Admin"));
+            //Application.Run(new View_Reports("TestUser", "Super A dmin"));
             //Application.Run(new Payment_Records("TestUser", "Super Admin"));
             //Application.Run(new SuperAdmin_AdminAccounts("TestUser", "Super Admin"));
         }

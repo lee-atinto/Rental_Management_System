@@ -32,7 +32,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
             }
         }
 
-        private void AddTenants_Load(object sender, EventArgs e) 
+        private void AddTenants_Load(object sender, EventArgs e)
         {
             tbContactNum.MaxLength = 11;
         }
@@ -81,7 +81,14 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
 
                 try
                 {
-                    string sqlInsertTenant = @" INSERT INTO Tenant (tenantStatus, dateRegistered) OUTPUT INSERTED.tenantID VALUES ('Inactive', @date);";
+                    // HAKBANG 1: INSERT sa Tenant table at kunin ang auto-generated tenantID.
+                    // Idinagdag ang tenantID_New sa INSERT at binigyan ng temporary value (0) 
+                    // upang maiwasan ang NOT NULL error.
+                    string sqlInsertTenant = @" 
+                        INSERT INTO Tenant (tenantStatus, dateRegistered, tenantID_New) 
+                        OUTPUT INSERTED.tenantID 
+                        VALUES ('Inactive', @date, 0); 
+                    ";
 
                     int newTenantID;
 
@@ -96,7 +103,25 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
                         newTenantID = Convert.ToInt32(result);
                     }
 
-                    string sqlInsertPersonalInfo = @" INSERT INTO PersonalInformation (tenantID, firstName, middleName, lastName, contactNumber, email) VALUES (@id, @fn, @mn, @ln, @cn, @em);";
+                    // HAKBANG 2: I-UPDATE ang tenantID_New sa tamang value (newTenantID).
+                    string sqlUpdateTenantNewID = @" 
+                        UPDATE Tenant 
+                        SET tenantID_New = @NewID 
+                        WHERE tenantID = @NewID;
+                    ";
+
+                    using (SqlCommand cmd = new SqlCommand(sqlUpdateTenantNewID, con, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@NewID", newTenantID);
+                        cmd.ExecuteNonQuery();
+                    }
+
+
+                    // HAKBANG 3: INSERT sa PersonalInformation table gamit ang nakuha na TenantID.
+                    string sqlInsertPersonalInfo = @" 
+                        INSERT INTO PersonalInformation (tenantID, firstName, middleName, lastName, contactNumber, email) 
+                        VALUES (@id, @fn, @mn, @ln, @cn, @em);
+                    ";
 
                     using (SqlCommand cmd = new SqlCommand(sqlInsertPersonalInfo, con, transaction))
                     {

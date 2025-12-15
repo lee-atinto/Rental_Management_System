@@ -401,7 +401,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
         {
             if (UserRole == "Admin")
             {
-                btnAdminAcc.Visible = false;
                 btnBackUp.Visible = false;
                 btnViewReport.Visible = false;
 

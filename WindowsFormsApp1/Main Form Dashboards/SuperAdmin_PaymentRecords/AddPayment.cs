@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using System.Configuration; // Idagdag ito para sa ConfigurationManager
+using System.Configuration;
 
 namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
 {
@@ -10,9 +10,116 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
     {
         private readonly string DataConnection = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
+        private int contractId = -1;
+        private int paymentIdToUpdate = -1;
+
         public AddPayment()
         {
             InitializeComponent();
+        }
+
+        public AddPayment(int contractId)
+        {
+            InitializeComponent();
+
+            this.contractId = contractId;
+
+            // Assuming cbTenantName is the ComboBox for tenant names
+            cbTenantName.Enabled = false;
+
+            if (contractId > 0)
+            {
+                SetupFormForEdit(contractId);
+            }
+        }
+
+        private void SetupFormForEdit(int contractId)
+        {
+            this.Text = "I-update ang Payment Record (Contract ID: " + contractId + ")";
+            LoadExistingPaymentData(contractId);
+        }
+
+        private void LoadExistingPaymentData(int contractId)
+        {
+            string query = @"
+                SELECT TOP 1 
+                    P.paymentId, P.paymentAmount, P.paymentDate, P.paymentMethodId, P.paymentTypeId, T.tenantId,
+                    P.referenceID
+                FROM Payment P
+                INNER JOIN Contract C ON P.contractId = C.contractId
+                INNER JOIN PersonalInformation T ON C.tenantID = T.tenantId
+                WHERE P.contractId = @ContractId
+                ORDER BY P.paymentDate DESC, P.paymentId DESC";
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(DataConnection))
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ContractId", contractId);
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            paymentIdToUpdate = Convert.ToInt32(reader["paymentId"]);
+
+                            tbAmountPaid.Text = reader["paymentAmount"].ToString();
+                            dtpPaymentDate.Value = Convert.ToDateTime(reader["paymentDate"]);
+
+                            tbReferenceID.Text = reader["referenceID"] != DBNull.Value ? reader["referenceID"].ToString() : string.Empty;
+
+                            cbPaymentMethod.SelectedValue = reader["paymentMethodId"];
+                            cbPaymentType.SelectedValue = reader["paymentTypeId"];
+                            cbTenantName.SelectedValue = reader["tenantId"];
+                        }
+                        else
+                        {
+                            MessageBox.Show("Walang mahanap na payment record para sa contract na ito. Maaari ka lang mag-add ng BAGO.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            paymentIdToUpdate = -1;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading payment data: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetTenantAndUnitFromContractId(int contractId)
+        {
+            // INAYOS ANG JOIN DITO: Mula sa C.propertyID = U.propertyID ay ginawang C.UnitID = U.UnitID
+            string query = @"
+                SELECT U.UnitNumber, C.tenantId
+                FROM Contract C
+                INNER JOIN Unit U ON C.UnitID = U.UnitID
+                INNER JOIN PersonalInformation T ON C.tenantID = T.tenantID
+                WHERE C.contractID = @ContractID";
+
+            using (SqlConnection connection = new SqlConnection(DataConnection))
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@ContractID", contractId);
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        tbUnitNumber.Text = reader["UnitNumber"].ToString();
+                        tbUnitNumber.Tag = contractId;
+                        if (cbTenantName.DataSource is DataTable dtTenants)
+                        {
+                            DataRow[] rows = dtTenants.Select($"tenantId = {reader["tenantId"]}");
+                            if (rows.Length > 0)
+                            {
+                                cbTenantName.SelectedValue = reader["tenantId"];
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void AddPayment_Load(object sender, EventArgs e)
@@ -22,13 +129,18 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             LoadTenants();
             LoadPaymentMethods();
             LoadPaymentTypes();
+
+            if (contractId > 0)
+            {
+                SetTenantAndUnitFromContractId(contractId);
+            }
         }
 
         private void LoadTenants()
         {
             string query = @"
                 SELECT T.tenantId, 
-                       T.firstName + ' ' + COALESCE(T.middleName + ' ', '') + T.lastName AS TenantName
+                        T.firstName + ' ' + COALESCE(T.middleName + ' ', '') + T.lastName AS TenantName
                 FROM PersonalInformation T
                 INNER JOIN Contract C ON T.tenantId = C.tenantID
                 WHERE LOWER(C.contractStatus) = 'active'
@@ -98,6 +210,8 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
 
         private void cbTenantName_SelectedIndexChanged_1(object sender, EventArgs e)
         {
+            if (contractId > 0) return;
+
             if (cbTenantName.SelectedValue == null || !(cbTenantName.SelectedValue is int tenantId))
             {
                 tbUnitNumber.Text = string.Empty;
@@ -105,10 +219,11 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                 return;
             }
 
+            // INAYOS ANG JOIN DITO: Mula sa C.propertyID = U.propertyID ay ginawang C.UnitID = U.UnitID
             string query = @"
                 SELECT U.UnitNumber, C.contractID
                 FROM Contract C
-                INNER JOIN Unit U ON C.propertyID = U.propertyID
+                INNER JOIN Unit U ON C.UnitID = U.UnitID
                 WHERE C.tenantID = @TenantID AND LOWER(C.contractStatus) = 'active'";
 
             try
@@ -144,43 +259,99 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
         {
             if (!ValidateInput()) return;
 
-            if (cbTenantName.SelectedValue == null ||
-                tbUnitNumber.Tag == null ||
-                cbPaymentMethod.SelectedValue == null ||
-                cbPaymentType.SelectedValue == null)
+            // In ADD mode, get selected Tenant ID and Contract ID from the Tag
+            int currentTenantId;
+            int currentContractId;
+
+            if (contractId > 0)
             {
-                MessageBox.Show("Please complete all required fields (Tenant, Unit, Method, Type).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // EDIT mode: contractId is known, tenantId is already loaded/selected (and disabled)
+                currentContractId = contractId;
+                currentTenantId = (int)cbTenantName.SelectedValue;
+            }
+            else
+            {
+                // ADD mode: get IDs from selections
+                if (cbTenantName.SelectedValue == null || tbUnitNumber.Tag == null)
+                {
+                    MessageBox.Show("Missing tenant or contract information.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                currentTenantId = (int)cbTenantName.SelectedValue;
+                currentContractId = (int)tbUnitNumber.Tag;
+            }
+
+            if (currentContractId <= 0 || cbPaymentMethod.SelectedValue == null || cbPaymentType.SelectedValue == null)
+            {
+                MessageBox.Show("Missing contract or payment details.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int tenantId = (int)cbTenantName.SelectedValue;
-            int contractId = (int)tbUnitNumber.Tag;
             int paymentMethodId = (int)cbPaymentMethod.SelectedValue;
             int paymentTypeId = (int)cbPaymentType.SelectedValue;
-
             decimal paymentAmount = Convert.ToDecimal(tbAmountPaid.Text);
             DateTime paymentDate = dtpPaymentDate.Value.Date;
 
-            string insertQuery = @"
-        INSERT INTO Payment (tenantId, contractId, paymentMethodId, paymentTypeId, paymentAmount, paymentDate)
-        VALUES (@TenantId, @ContractId, @PaymentMethodId, @PaymentTypeId, @PaymentAmount, @PaymentDate)";
+            string referenceId = tbReferenceID.Text.Trim();
+            string paymentStatus = "Paid"; // Defaulting to 'Paid' since the control was removed.
+
+            string sqlQuery;
+
+            if (paymentIdToUpdate > 0)
+            {
+                // UPDATE query (Removed paymentStatus update)
+                sqlQuery = @"
+                    UPDATE Payment 
+                    SET paymentAmount = @PaymentAmount,
+                        paymentDate = @PaymentDate,
+                        paymentMethodId = @PaymentMethodId,
+                        paymentTypeId = @PaymentTypeId,
+                        referenceID = @ReferenceId
+                    WHERE paymentId = @PaymentIdToUpdate";
+            }
+            else
+            {
+                // INSERT query (Hardcoded paymentStatus to 'Paid')
+                sqlQuery = @"
+                    INSERT INTO Payment (tenantId, contractId, paymentMethodId, paymentTypeId, paymentAmount, paymentDate, referenceID, paymentStatus)
+                    VALUES (@TenantId, @ContractId, @PaymentMethodId, @PaymentTypeId, @PaymentAmount, @PaymentDate, @ReferenceId, @PaymentStatus)";
+            }
+
 
             try
             {
                 using (SqlConnection connection = new SqlConnection(DataConnection))
-                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
-                    command.Parameters.AddWithValue("@TenantId", tenantId);
-                    command.Parameters.AddWithValue("@ContractId", contractId);
-                    command.Parameters.AddWithValue("@PaymentMethodId", paymentMethodId);
-                    command.Parameters.AddWithValue("@PaymentTypeId", paymentTypeId);
                     command.Parameters.AddWithValue("@PaymentAmount", paymentAmount);
                     command.Parameters.AddWithValue("@PaymentDate", paymentDate);
+                    command.Parameters.AddWithValue("@PaymentMethodId", paymentMethodId);
+                    command.Parameters.AddWithValue("@PaymentTypeId", paymentTypeId);
+
+                    command.Parameters.AddWithValue("@ReferenceId", referenceId);
+
+                    // Only pass PaymentStatus parameter if INSERTING or if you want to explicitly update it to 'Paid'
+                    if (paymentIdToUpdate <= 0)
+                    {
+                        command.Parameters.AddWithValue("@PaymentStatus", paymentStatus);
+                    }
+
+
+                    if (paymentIdToUpdate > 0)
+                    {
+                        command.Parameters.AddWithValue("@PaymentIdToUpdate", paymentIdToUpdate);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@TenantId", currentTenantId);
+                        command.Parameters.AddWithValue("@ContractId", currentContractId);
+                    }
 
                     connection.Open();
                     command.ExecuteNonQuery();
 
-                    MessageBox.Show("Payment recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string message = (paymentIdToUpdate > 0) ? "Payment updated successfully!" : "Payment recorded successfully!";
+                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
@@ -219,6 +390,12 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             if (!decimal.TryParse(tbAmountPaid.Text, out decimal amount) || amount <= 0)
             {
                 MessageBox.Show("Please enter a valid positive numeric value for Amount Paid.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(tbReferenceID.Text))
+            {
+                MessageBox.Show("Please enter a Reference ID.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 

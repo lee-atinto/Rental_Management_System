@@ -18,6 +18,10 @@ using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Super_Admin_Account;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
+// NOTE: You must ensure that the namespace 'WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract' 
+// and the referenced forms (e.g., DashBoard, Tenants, AddContract, etc.) are correctly implemented 
+// and accessible in your project.
+
 namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
 {
     public partial class Contracts : Form
@@ -30,6 +34,10 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
 
         private readonly Color activeColor = Color.FromArgb(56, 55, 83);
         private readonly Color defaultBackColor = Color.FromArgb(240, 240, 240);
+
+        // Assume AddContract and Maintenance forms exist in your project structure
+        // using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract.AddContract;
+        // using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Maintenance.Maintenance;
 
         public Contracts(string username, string userRole)
         {
@@ -107,19 +115,20 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
         {
             if (UserRole == "Admin")
             {
-                btnAdminAcc.Visible = false;
+                // Admins typically shouldn't access full reports or backups
                 btnBackUp.Visible = false;
                 btnViewReport.Visible = false;
 
-                panelHeader.BackColor = Color.LightBlue;
+                panelHeader.BackColor = Color.LightBlue; // Example role-based styling
             }
             else if (UserRole == "SuperAdmin")
             {
+                // SuperAdmins see everything
                 btnAdminAcc.Visible = true;
                 btnBackUp.Visible = true;
                 btnViewReport.Visible = true;
 
-                panelHeader.BackColor = Color.White;
+                panelHeader.BackColor = Color.White; // Example role-based styling
             }
         }
 
@@ -151,6 +160,13 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
 
         private void LoadContractsData()
         {
+            // Ensure controls exist before accessing properties
+            if (cbStatus?.SelectedItem == null)
+            {
+                // Handle case where form is loading but filter hasn't initialized
+                return;
+            }
+
             string selectedStatus = cbStatus.SelectedItem.ToString();
             string searchTerm = tbSearch.Text.Trim();
 
@@ -177,27 +193,29 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
                 {
                     con.Open();
 
-                    string query = @" 
+                    // --- REFINED SQL QUERY ---
+                    string query = @"
                         SELECT
-                            C.contractID, 
-                            C.startDate, 
-                            C.endDate, 
+                            C.contractID,
+                            C.startDate,
+                            C.endDate,
                             U.MonthlyRent,
-                            C.contractStatus AS Status, 
+                            C.contractStatus AS Status,
                             P.propertyName,
                             U.UnitNumber,
-                            PI.firstName AS TenantFirstName, 
-                            PI.lastName AS TenantLastName, 
+                            PI.firstName AS TenantFirstName,
+                            PI.lastName AS TenantLastName,
                             PI.contactNumber AS TenantContact
                         FROM Contract C
-                        INNER JOIN Unit U 
+                        INNER JOIN Unit U
                             ON C.UnitID = U.UnitID
-                        INNER JOIN Property P 
+                        INNER JOIN Property P
                             ON U.PropertyID = P.propertyID
-                        INNER JOIN Tenant T 
+                        INNER JOIN Tenant T
                             ON C.tenantID = T.tenantID
-                        INNER JOIN PersonalInformation PI 
+                        INNER JOIN PersonalInformation PI
                             ON T.tenantID = PI.tenantID ";
+                    // -------------------------
 
                     string whereClause = "";
 
@@ -213,6 +231,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
                             whereClause += " AND ";
                         }
 
+                        // Search by property name (case-insensitive search)
                         whereClause += " P.propertyName LIKE @SearchTerm ";
                     }
 
@@ -221,7 +240,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
                         query += " WHERE " + whereClause;
                     }
 
-                    query += " ORDER BY C.endDate DESC;";
+                    query += " ORDER BY C.endDate DESC;"; // Sort by end date
 
                     SqlCommand cmd = new SqlCommand(query, con);
 
@@ -265,6 +284,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             {
                 try
                 {
+                    // Safe conversion and type checking
                     int contractID = Convert.ToInt32(row["contractID"]);
                     string propertyName = row["PropertyName"].ToString();
                     string unitNumber = row["UnitNumber"].ToString();
@@ -329,6 +349,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
                     break;
             }
 
+            // Status Label
             Label lbStatus = new Label();
             lbStatus.Text = status;
             lbStatus.AutoSize = false;
@@ -341,6 +362,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbStatus.BorderStyle = BorderStyle.None;
             ContractCards.Controls.Add(lbStatus);
 
+            // Property Name
             Label lbProperty = new Label();
             lbProperty.AutoSize = false;
             lbProperty.Size = new Size(225, 30);
@@ -349,6 +371,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbProperty.Location = new Point(30, 15);
             ContractCards.Controls.Add(lbProperty);
 
+            // Unit Number
             Label lbUnit = new Label();
             lbUnit.Text = $"Unit: {unitNumber}";
             lbUnit.AutoSize = true;
@@ -357,6 +380,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbUnit.ForeColor = Color.DarkSlateGray;
             ContractCards.Controls.Add(lbUnit);
 
+            // Tenant Title
             Label lbTenantTitle = new Label();
             lbTenantTitle.Text = "Tenant:";
             lbTenantTitle.AutoSize = true;
@@ -364,6 +388,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbTenantTitle.Location = new Point(30, 85);
             ContractCards.Controls.Add(lbTenantTitle);
 
+            // Tenant Name
             Label lbTenant = new Label();
             lbTenant.Text = tenantName;
             lbTenant.AutoSize = true;
@@ -371,6 +396,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbTenant.Location = new Point(90, 85);
             ContractCards.Controls.Add(lbTenant);
 
+            // Tenant Contact
             Label lbContact = new Label();
             lbContact.Text = $"Contact: {tenantContact}";
             lbContact.AutoSize = true;
@@ -379,6 +405,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbContact.ForeColor = Color.Gray;
             ContractCards.Controls.Add(lbContact);
 
+            // Rate Title
             Label lbRateTitle = new Label();
             lbRateTitle.Text = "Monthly Rate:";
             lbRateTitle.AutoSize = true;
@@ -386,6 +413,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbRateTitle.Location = new Point(30, 145);
             ContractCards.Controls.Add(lbRateTitle);
 
+            // Monthly Rate
             Label lbRate = new Label();
             lbRate.Text = $"₱{monthlyRate:N2}";
             lbRate.AutoSize = true;
@@ -394,6 +422,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbRate.Location = new Point(30, 165);
             ContractCards.Controls.Add(lbRate);
 
+            // Duration
             Label lbDuration = new Label();
             lbDuration.Text = $"Duration: {startDate.ToShortDateString()} - {endDate.ToShortDateString()}";
             lbDuration.AutoSize = true;
@@ -402,12 +431,14 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             lbDuration.ForeColor = Color.DarkSlateGray;
             ContractCards.Controls.Add(lbDuration);
 
+            // Separator
             Panel separator = new Panel();
             separator.BackColor = Color.LightGray;
             separator.Size = new Size(ContractCards.Width - 60, 1);
             separator.Location = new Point(30, 250);
             ContractCards.Controls.Add(separator);
 
+            // Style setup for action buttons
             Action<Button> SetActionButtonStyle = (btn) =>
             {
                 btn.Size = new Size(100, 30);
@@ -416,9 +447,11 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
                 btn.FlatAppearance.BorderSize = 0;
                 btn.BackColor = Color.White;
                 btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+                // Attach the contractID to the button's Tag
                 btn.Tag = contractID;
             };
 
+            // View Button
             Button btnView = new Button();
             btnView.Text = "VIEW";
             btnView.Location = new Point(10, 270);
@@ -428,6 +461,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             btnView.Click += new EventHandler(BtnAction_Click);
             ContractCards.Controls.Add(btnView);
 
+            // Edit Button
             Button btnEdit = new Button();
             btnEdit.Text = "EDIT";
             btnEdit.Location = new Point(130, 270);
@@ -437,6 +471,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             btnEdit.Click += new EventHandler(BtnAction_Click);
             ContractCards.Controls.Add(btnEdit);
 
+            // Terminate Button
             Button btnTerminate = new Button();
             btnTerminate.Text = "TERMINATE";
             btnTerminate.Location = new Point(240, 270);
@@ -453,6 +488,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
         {
             Button clickedButton = (Button)sender;
 
+            // Type check and null check for the Tag
             if (clickedButton.Tag == null || !(clickedButton.Tag is int))
             {
                 MessageBox.Show("Error: No Contract ID is attached to the button.", "Error");
@@ -465,16 +501,21 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             switch (action)
             {
                 case "VIEW":
+                    // TODO: Implement actual view logic, e.g., open a detailed view form
                     MessageBox.Show($"View Contract ID: {contractID}", "Action");
                     break;
                 case "EDIT":
+                    // TODO: Implement actual edit logic, e.g., open an edit form
                     MessageBox.Show($"Edit Contract ID: {contractID}", "Action");
                     break;
                 case "TERMINATE":
+                    // Termination confirmation and simulation
                     if (MessageBox.Show($"Are you sure you want to Terminate Contract ID {contractID}? This cannot be undone.", "Confirm Termination", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
+                        // TODO: Implement actual termination logic (Database UPDATE of contractStatus)
+                        // Example: ExecuteNonQuery to set contractStatus to 'Expired' or 'Terminated'
                         MessageBox.Show($"Contract ID {contractID} terminated (Simulation).", "Success");
-                        LoadContractsData();
+                        LoadContractsData(); // Refresh list after action
                     }
                     break;
             }
@@ -489,10 +530,11 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
         {
             LoadContractsData();
         }
-        
+
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            // NOTE: Assumes you have a separate form named 'AddContract'
             using (var addContractForm = new AddContract())
             {
                 DialogResult result = addContractForm.ShowDialog();
@@ -505,7 +547,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             }
         }
 
-        // -------------------- Button Side Bar -------------------- //
+        // -------------------- Button Side Bar Navigation -------------------- //
 
         // --------------- Dashboard Button --------------- //
         private void btnDashBoard_Click(object sender, EventArgs e)
@@ -542,6 +584,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
         // --------------- Maintenance Button --------------- //
         private void btnMaintenance_Click(object sender, EventArgs e)
         {
+            // NOTE: Assumes you have a separate form named 'Maintenance'
             Maintenance maintenance = new Maintenance(UserName, UserRole);
             maintenance.Show();
             this.Hide();
@@ -555,12 +598,12 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             this.Hide();
         }
 
-        // --------------- View Reports Button --------------- //
+        // --------------- View Reports Button (SuperAdmin Only) --------------- //
         private void btnViewReport_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
             {
-
+                // TODO: Implement report viewing logic
             }
             else
             {
@@ -568,12 +611,12 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             }
         }
 
-        // --------------- Backup Button --------------- //
+        // --------------- Backup Button (SuperAdmin Only) --------------- //
         private void btnBackUp_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
             {
-
+                // TODO: Implement database backup logic
             }
             else
             {
@@ -584,17 +627,24 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
         // --------------- Logout Button --------------- //
         private void btnlogout_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(DataConnection))
+            try
             {
-                string query = "UPDATE Account SET active = 0 WHERE username=@u";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", this.UserName);
-                conn.Open();
-                cmd.ExecuteNonQuery();
-            }
+                using (SqlConnection conn = new SqlConnection(DataConnection))
+                {
+                    string query = "UPDATE Account SET active = 0 WHERE username=@u";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@u", this.UserName);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
 
-            this.Hide();
-            new LoginPage().Show();
+                this.Hide();
+                new LoginPage().Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Logout failed: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
