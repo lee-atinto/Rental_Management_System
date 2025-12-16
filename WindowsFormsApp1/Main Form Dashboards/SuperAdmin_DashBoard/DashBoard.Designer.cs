@@ -40,14 +40,12 @@
             this.btnMaintenance = new System.Windows.Forms.Button();
             this.panel15 = new System.Windows.Forms.Panel();
             this.plRecentPayments = new System.Windows.Forms.Panel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.panel17 = new System.Windows.Forms.Panel();
+            this.DataPaymentRecent = new System.Windows.Forms.DataGridView();
             this.label6 = new System.Windows.Forms.Label();
             this.panel13 = new System.Windows.Forms.Panel();
             this.plUpcomingRenewals = new System.Windows.Forms.Panel();
-            this.panel16 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.DataRecentMaintenanceRequests = new System.Windows.Forms.DataGridView();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel12 = new System.Windows.Forms.Panel();
             this.panel11 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
@@ -88,11 +86,10 @@
             this.PicUserProfile = new System.Windows.Forms.PictureBox();
             this.SideBarBakground = new System.Windows.Forms.PictureBox();
             this.plRecentPayments.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.panel17.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataPaymentRecent)).BeginInit();
             this.plUpcomingRenewals.SuspendLayout();
-            this.panel16.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataRecentMaintenanceRequests)).BeginInit();
+            this.panel12.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.num4.SuspendLayout();
@@ -210,20 +207,21 @@
             // 
             // plRecentPayments
             // 
-            this.plRecentPayments.Controls.Add(this.dataGridView1);
-            this.plRecentPayments.Controls.Add(this.panel17);
+            this.plRecentPayments.Controls.Add(this.DataPaymentRecent);
             this.plRecentPayments.Location = new System.Drawing.Point(653, 255);
             this.plRecentPayments.Name = "plRecentPayments";
             this.plRecentPayments.Size = new System.Drawing.Size(512, 450);
             this.plRecentPayments.TabIndex = 183;
             // 
-            // dataGridView1
+            // DataPaymentRecent
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToOrderColumns = true;
-            this.dataGridView1.AllowUserToResizeColumns = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
+            this.DataPaymentRecent.AllowUserToAddRows = false;
+            this.DataPaymentRecent.AllowUserToDeleteRows = false;
+            this.DataPaymentRecent.AllowUserToOrderColumns = true;
+            this.DataPaymentRecent.AllowUserToResizeColumns = false;
+            this.DataPaymentRecent.AllowUserToResizeRows = false;
+            this.DataPaymentRecent.BackgroundColor = System.Drawing.Color.White;
+            this.DataPaymentRecent.BorderStyle = System.Windows.Forms.BorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -232,31 +230,22 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 69);
-            this.dataGridView1.Name = "dataGridView1";
+            this.DataPaymentRecent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.DataPaymentRecent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataPaymentRecent.Location = new System.Drawing.Point(0, 0);
+            this.DataPaymentRecent.Name = "DataPaymentRecent";
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(20);
-            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(506, 378);
-            this.dataGridView1.TabIndex = 3;
-            // 
-            // panel17
-            // 
-            this.panel17.BackColor = System.Drawing.Color.White;
-            this.panel17.Controls.Add(this.label6);
-            this.panel17.Location = new System.Drawing.Point(3, 3);
-            this.panel17.Name = "panel17";
-            this.panel17.Size = new System.Drawing.Size(506, 60);
-            this.panel17.TabIndex = 1;
+            this.DataPaymentRecent.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.DataPaymentRecent.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DataPaymentRecent.Size = new System.Drawing.Size(512, 450);
+            this.DataPaymentRecent.TabIndex = 3;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(63, 18);
+            this.label6.Location = new System.Drawing.Point(852, 9);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(142, 23);
             this.label6.TabIndex = 1;
@@ -271,31 +260,11 @@
             // 
             // plUpcomingRenewals
             // 
-            this.plUpcomingRenewals.Controls.Add(this.panel16);
             this.plUpcomingRenewals.Controls.Add(this.DataRecentMaintenanceRequests);
             this.plUpcomingRenewals.Location = new System.Drawing.Point(29, 255);
             this.plUpcomingRenewals.Name = "plUpcomingRenewals";
             this.plUpcomingRenewals.Size = new System.Drawing.Size(512, 450);
             this.plUpcomingRenewals.TabIndex = 182;
-            // 
-            // panel16
-            // 
-            this.panel16.BackColor = System.Drawing.Color.White;
-            this.panel16.Controls.Add(this.label1);
-            this.panel16.Location = new System.Drawing.Point(3, 3);
-            this.panel16.Name = "panel16";
-            this.panel16.Size = new System.Drawing.Size(506, 60);
-            this.panel16.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(63, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(240, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Recent Maintenance Requests";
             // 
             // DataRecentMaintenanceRequests
             // 
@@ -304,6 +273,8 @@
             this.DataRecentMaintenanceRequests.AllowUserToOrderColumns = true;
             this.DataRecentMaintenanceRequests.AllowUserToResizeColumns = false;
             this.DataRecentMaintenanceRequests.AllowUserToResizeRows = false;
+            this.DataRecentMaintenanceRequests.BackgroundColor = System.Drawing.Color.White;
+            this.DataRecentMaintenanceRequests.BorderStyle = System.Windows.Forms.BorderStyle.None;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -314,18 +285,29 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.DataRecentMaintenanceRequests.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.DataRecentMaintenanceRequests.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DataRecentMaintenanceRequests.Location = new System.Drawing.Point(3, 69);
+            this.DataRecentMaintenanceRequests.Location = new System.Drawing.Point(0, 0);
             this.DataRecentMaintenanceRequests.Name = "DataRecentMaintenanceRequests";
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle4.Padding = new System.Windows.Forms.Padding(20);
             this.DataRecentMaintenanceRequests.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.DataRecentMaintenanceRequests.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.DataRecentMaintenanceRequests.Size = new System.Drawing.Size(506, 378);
-            this.DataRecentMaintenanceRequests.TabIndex = 0;
-            this.DataRecentMaintenanceRequests.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataRecentMaintenanceRequests_CellContentClick);
+            this.DataRecentMaintenanceRequests.Size = new System.Drawing.Size(512, 450);
+            this.DataRecentMaintenanceRequests.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(147, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(240, 23);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Recent Maintenance Requests";
             // 
             // panel12
             // 
+            this.panel12.Controls.Add(this.label6);
+            this.panel12.Controls.Add(this.label1);
             this.panel12.Location = new System.Drawing.Point(3, 211);
             this.panel12.Name = "panel12";
             this.panel12.Size = new System.Drawing.Size(1188, 38);
@@ -752,13 +734,11 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.DashBoard_Load);
             this.plRecentPayments.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.panel17.ResumeLayout(false);
-            this.panel17.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataPaymentRecent)).EndInit();
             this.plUpcomingRenewals.ResumeLayout(false);
-            this.panel16.ResumeLayout(false);
-            this.panel16.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataRecentMaintenanceRequests)).EndInit();
+            this.panel12.ResumeLayout(false);
+            this.panel12.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
@@ -839,12 +819,10 @@
         private System.Windows.Forms.Label lbName;
         private System.Windows.Forms.PictureBox PicUserProfile;
         private System.Windows.Forms.Panel panel9;
-        private System.Windows.Forms.Panel panel17;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Panel panel16;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridView DataRecentMaintenanceRequests;
         private System.Windows.Forms.Panel panel14;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView DataPaymentRecent;
+        private System.Windows.Forms.DataGridView DataRecentMaintenanceRequests;
+        private System.Windows.Forms.Label label1;
     }
 }

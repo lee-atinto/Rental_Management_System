@@ -57,20 +57,20 @@
             this.tbProvince = new System.Windows.Forms.TextBox();
             this.panel5 = new System.Windows.Forms.Panel();
             this.lbPropertyName = new System.Windows.Forms.Label();
-            this.lbUnitNumber = new System.Windows.Forms.Label();
             this.tbPropertyName = new System.Windows.Forms.TextBox();
-            this.tbUnitNumber = new System.Windows.Forms.TextBox();
-            this.lbMonthlyRent = new System.Windows.Forms.Label();
-            this.tbMonthlyRent = new System.Windows.Forms.TextBox();
             this.panel6 = new System.Windows.Forms.Panel();
             this.panel7 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.lbProperty = new System.Windows.Forms.Label();
-            this.lbUnitType = new System.Windows.Forms.Label();
-            this.cbUnitType = new System.Windows.Forms.ComboBox();
+            this.tbMonthlyRent = new System.Windows.Forms.TextBox();
+            this.lbMonthlyRent = new System.Windows.Forms.Label();
             this.cbUnitStatus = new System.Windows.Forms.ComboBox();
             this.lbUnitStatus = new System.Windows.Forms.Label();
+            this.cbUnitType = new System.Windows.Forms.ComboBox();
+            this.lbUnitType = new System.Windows.Forms.Label();
+            this.lbProperty = new System.Windows.Forms.Label();
+            this.lbUnitNumber = new System.Windows.Forms.Label();
+            this.tbUnitNumber = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -142,7 +142,7 @@
             this.panel1.Controls.Add(this.panel8);
             this.panel1.Location = new System.Drawing.Point(13, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(956, 573);
+            this.panel1.Size = new System.Drawing.Size(956, 561);
             this.panel1.TabIndex = 67;
             // 
             // label1
@@ -170,10 +170,10 @@
             this.lbFirstName.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbFirstName.Location = new System.Drawing.Point(27, 75);
             this.lbFirstName.Name = "lbFirstName";
-            this.lbFirstName.Padding = new System.Windows.Forms.Padding(0, 15, 213, 0);
-            this.lbFirstName.Size = new System.Drawing.Size(306, 38);
+            this.lbFirstName.Padding = new System.Windows.Forms.Padding(0, 15, 113, 0);
+            this.lbFirstName.Size = new System.Drawing.Size(220, 38);
             this.lbFirstName.TabIndex = 68;
-            this.lbFirstName.Text = "First Name";
+            this.lbFirstName.Text = "First Name:*";
             // 
             // lbLastName
             // 
@@ -181,10 +181,10 @@
             this.lbLastName.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLastName.Location = new System.Drawing.Point(339, 75);
             this.lbLastName.Name = "lbLastName";
-            this.lbLastName.Padding = new System.Windows.Forms.Padding(0, 15, 210, 0);
-            this.lbLastName.Size = new System.Drawing.Size(300, 38);
+            this.lbLastName.Padding = new System.Windows.Forms.Padding(0, 15, 110, 0);
+            this.lbLastName.Size = new System.Drawing.Size(214, 38);
             this.lbLastName.TabIndex = 70;
-            this.lbLastName.Text = "Last Name";
+            this.lbLastName.Text = "Last Name:*";
             // 
             // lbMiddleName
             // 
@@ -230,10 +230,10 @@
             this.lbContactNumber.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbContactNumber.Location = new System.Drawing.Point(27, 150);
             this.lbContactNumber.Name = "lbContactNumber";
-            this.lbContactNumber.Padding = new System.Windows.Forms.Padding(0, 20, 225, 0);
-            this.lbContactNumber.Size = new System.Drawing.Size(307, 43);
+            this.lbContactNumber.Padding = new System.Windows.Forms.Padding(0, 20, 125, 0);
+            this.lbContactNumber.Size = new System.Drawing.Size(269, 43);
             this.lbContactNumber.TabIndex = 74;
-            this.lbContactNumber.Text = "Contact #";
+            this.lbContactNumber.Text = "Mobile Number:*";
             // 
             // lbEmail
             // 
@@ -279,10 +279,10 @@
             this.lbStreet.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbStreet.Location = new System.Drawing.Point(27, 284);
             this.lbStreet.Name = "lbStreet";
-            this.lbStreet.Padding = new System.Windows.Forms.Padding(0, 20, 215, 0);
-            this.lbStreet.Size = new System.Drawing.Size(271, 43);
+            this.lbStreet.Padding = new System.Windows.Forms.Padding(0, 20, 115, 0);
+            this.lbStreet.Size = new System.Drawing.Size(185, 43);
             this.lbStreet.TabIndex = 83;
-            this.lbStreet.Text = "Street";
+            this.lbStreet.Text = "Street:*";
             // 
             // lbBarangay
             // 
@@ -290,10 +290,10 @@
             this.lbBarangay.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbBarangay.Location = new System.Drawing.Point(304, 284);
             this.lbBarangay.Name = "lbBarangay";
-            this.lbBarangay.Padding = new System.Windows.Forms.Padding(0, 20, 200, 0);
-            this.lbBarangay.Size = new System.Drawing.Size(282, 43);
+            this.lbBarangay.Padding = new System.Windows.Forms.Padding(0, 20, 100, 0);
+            this.lbBarangay.Size = new System.Drawing.Size(196, 43);
             this.lbBarangay.TabIndex = 85;
-            this.lbBarangay.Text = "Barangay";
+            this.lbBarangay.Text = "Barangay:*";
             // 
             // lbCity
             // 
@@ -302,9 +302,9 @@
             this.lbCity.Location = new System.Drawing.Point(592, 284);
             this.lbCity.Name = "lbCity";
             this.lbCity.Padding = new System.Windows.Forms.Padding(0, 20, 200, 0);
-            this.lbCity.Size = new System.Drawing.Size(239, 43);
+            this.lbCity.Size = new System.Drawing.Size(253, 43);
             this.lbCity.TabIndex = 87;
-            this.lbCity.Text = "City";
+            this.lbCity.Text = "City:*";
             // 
             // tbStreet
             // 
@@ -339,10 +339,10 @@
             this.lbProvince.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbProvince.Location = new System.Drawing.Point(27, 364);
             this.lbProvince.Name = "lbProvince";
-            this.lbProvince.Padding = new System.Windows.Forms.Padding(0, 20, 200, 0);
-            this.lbProvince.Size = new System.Drawing.Size(277, 43);
+            this.lbProvince.Padding = new System.Windows.Forms.Padding(0, 20, 100, 0);
+            this.lbProvince.Size = new System.Drawing.Size(191, 43);
             this.lbProvince.TabIndex = 89;
-            this.lbProvince.Text = "Province";
+            this.lbProvince.Text = "Province:*";
             // 
             // lbPostalCode
             // 
@@ -351,9 +351,9 @@
             this.lbPostalCode.Location = new System.Drawing.Point(310, 364);
             this.lbPostalCode.Name = "lbPostalCode";
             this.lbPostalCode.Padding = new System.Windows.Forms.Padding(0, 20, 200, 0);
-            this.lbPostalCode.Size = new System.Drawing.Size(300, 43);
+            this.lbPostalCode.Size = new System.Drawing.Size(314, 43);
             this.lbPostalCode.TabIndex = 91;
-            this.lbPostalCode.Text = "Postal Code";
+            this.lbPostalCode.Text = "Postal Code:*";
             // 
             // tbPostalCode
             // 
@@ -388,20 +388,9 @@
             this.lbPropertyName.Location = new System.Drawing.Point(27, 501);
             this.lbPropertyName.Name = "lbPropertyName";
             this.lbPropertyName.Padding = new System.Windows.Forms.Padding(0, 20, 400, 0);
-            this.lbPropertyName.Size = new System.Drawing.Size(527, 43);
+            this.lbPropertyName.Size = new System.Drawing.Size(541, 43);
             this.lbPropertyName.TabIndex = 97;
-            this.lbPropertyName.Text = "Property Name";
-            // 
-            // lbUnitNumber
-            // 
-            this.lbUnitNumber.AutoSize = true;
-            this.lbUnitNumber.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbUnitNumber.Location = new System.Drawing.Point(14, 117);
-            this.lbUnitNumber.Name = "lbUnitNumber";
-            this.lbUnitNumber.Padding = new System.Windows.Forms.Padding(0, 20, 200, 0);
-            this.lbUnitNumber.Size = new System.Drawing.Size(309, 43);
-            this.lbUnitNumber.TabIndex = 99;
-            this.lbUnitNumber.Text = "Unit Number";
+            this.lbPropertyName.Text = "Property Name:*";
             // 
             // tbPropertyName
             // 
@@ -409,37 +398,8 @@
             this.tbPropertyName.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbPropertyName.Location = new System.Drawing.Point(27, 547);
             this.tbPropertyName.Name = "tbPropertyName";
-            this.tbPropertyName.Size = new System.Drawing.Size(527, 31);
+            this.tbPropertyName.Size = new System.Drawing.Size(310, 31);
             this.tbPropertyName.TabIndex = 98;
-            // 
-            // tbUnitNumber
-            // 
-            this.tbUnitNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tbUnitNumber.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbUnitNumber.Location = new System.Drawing.Point(14, 163);
-            this.tbUnitNumber.Name = "tbUnitNumber";
-            this.tbUnitNumber.Size = new System.Drawing.Size(176, 31);
-            this.tbUnitNumber.TabIndex = 100;
-            // 
-            // lbMonthlyRent
-            // 
-            this.lbMonthlyRent.AutoSize = true;
-            this.lbMonthlyRent.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbMonthlyRent.Location = new System.Drawing.Point(603, 116);
-            this.lbMonthlyRent.Name = "lbMonthlyRent";
-            this.lbMonthlyRent.Padding = new System.Windows.Forms.Padding(0, 20, 100, 0);
-            this.lbMonthlyRent.Size = new System.Drawing.Size(214, 43);
-            this.lbMonthlyRent.TabIndex = 105;
-            this.lbMonthlyRent.Text = "Monthly Rent";
-            // 
-            // tbMonthlyRent
-            // 
-            this.tbMonthlyRent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tbMonthlyRent.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbMonthlyRent.Location = new System.Drawing.Point(603, 162);
-            this.tbMonthlyRent.Name = "tbMonthlyRent";
-            this.tbMonthlyRent.Size = new System.Drawing.Size(188, 31);
-            this.tbMonthlyRent.TabIndex = 106;
             // 
             // panel6
             // 
@@ -485,38 +445,29 @@
             this.panel8.Size = new System.Drawing.Size(911, 224);
             this.panel8.TabIndex = 109;
             // 
-            // lbProperty
+            // tbMonthlyRent
             // 
-            this.lbProperty.AutoSize = true;
-            this.lbProperty.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbProperty.Location = new System.Drawing.Point(13, 6);
-            this.lbProperty.Name = "lbProperty";
-            this.lbProperty.Size = new System.Drawing.Size(103, 26);
-            this.lbProperty.TabIndex = 93;
-            this.lbProperty.Text = "PROPERTY";
+            this.tbMonthlyRent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tbMonthlyRent.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbMonthlyRent.Location = new System.Drawing.Point(603, 162);
+            this.tbMonthlyRent.Name = "tbMonthlyRent";
+            this.tbMonthlyRent.Size = new System.Drawing.Size(188, 31);
+            this.tbMonthlyRent.TabIndex = 106;
             // 
-            // lbUnitType
+            // lbMonthlyRent
             // 
-            this.lbUnitType.AutoSize = true;
-            this.lbUnitType.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbUnitType.Location = new System.Drawing.Point(225, 117);
-            this.lbUnitType.Name = "lbUnitType";
-            this.lbUnitType.Padding = new System.Windows.Forms.Padding(0, 20, 200, 0);
-            this.lbUnitType.Size = new System.Drawing.Size(282, 43);
-            this.lbUnitType.TabIndex = 101;
-            this.lbUnitType.Text = "Unit Type";
-            // 
-            // cbUnitType
-            // 
-            this.cbUnitType.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbUnitType.FormattingEnabled = true;
-            this.cbUnitType.Location = new System.Drawing.Point(224, 163);
-            this.cbUnitType.Name = "cbUnitType";
-            this.cbUnitType.Size = new System.Drawing.Size(158, 31);
-            this.cbUnitType.TabIndex = 102;
+            this.lbMonthlyRent.AutoSize = true;
+            this.lbMonthlyRent.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbMonthlyRent.Location = new System.Drawing.Point(603, 116);
+            this.lbMonthlyRent.Name = "lbMonthlyRent";
+            this.lbMonthlyRent.Padding = new System.Windows.Forms.Padding(0, 20, 100, 0);
+            this.lbMonthlyRent.Size = new System.Drawing.Size(228, 43);
+            this.lbMonthlyRent.TabIndex = 105;
+            this.lbMonthlyRent.Text = "Monthly Rent:*";
             // 
             // cbUnitStatus
             // 
+            this.cbUnitStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbUnitStatus.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbUnitStatus.FormattingEnabled = true;
             this.cbUnitStatus.Location = new System.Drawing.Point(425, 163);
@@ -530,10 +481,61 @@
             this.lbUnitStatus.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbUnitStatus.Location = new System.Drawing.Point(426, 117);
             this.lbUnitStatus.Name = "lbUnitStatus";
-            this.lbUnitStatus.Padding = new System.Windows.Forms.Padding(0, 20, 200, 0);
-            this.lbUnitStatus.Size = new System.Drawing.Size(258, 43);
+            this.lbUnitStatus.Padding = new System.Windows.Forms.Padding(0, 20, 100, 0);
+            this.lbUnitStatus.Size = new System.Drawing.Size(172, 43);
             this.lbUnitStatus.TabIndex = 103;
-            this.lbUnitStatus.Text = "Status";
+            this.lbUnitStatus.Text = "Status:*";
+            // 
+            // cbUnitType
+            // 
+            this.cbUnitType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbUnitType.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbUnitType.FormattingEnabled = true;
+            this.cbUnitType.Location = new System.Drawing.Point(224, 163);
+            this.cbUnitType.Name = "cbUnitType";
+            this.cbUnitType.Size = new System.Drawing.Size(158, 31);
+            this.cbUnitType.TabIndex = 102;
+            // 
+            // lbUnitType
+            // 
+            this.lbUnitType.AutoSize = true;
+            this.lbUnitType.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbUnitType.Location = new System.Drawing.Point(225, 117);
+            this.lbUnitType.Name = "lbUnitType";
+            this.lbUnitType.Padding = new System.Windows.Forms.Padding(0, 20, 100, 0);
+            this.lbUnitType.Size = new System.Drawing.Size(196, 43);
+            this.lbUnitType.TabIndex = 101;
+            this.lbUnitType.Text = "Unit Type:*";
+            // 
+            // lbProperty
+            // 
+            this.lbProperty.AutoSize = true;
+            this.lbProperty.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbProperty.Location = new System.Drawing.Point(13, 6);
+            this.lbProperty.Name = "lbProperty";
+            this.lbProperty.Size = new System.Drawing.Size(103, 26);
+            this.lbProperty.TabIndex = 93;
+            this.lbProperty.Text = "PROPERTY";
+            // 
+            // lbUnitNumber
+            // 
+            this.lbUnitNumber.AutoSize = true;
+            this.lbUnitNumber.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbUnitNumber.Location = new System.Drawing.Point(14, 117);
+            this.lbUnitNumber.Name = "lbUnitNumber";
+            this.lbUnitNumber.Padding = new System.Windows.Forms.Padding(0, 20, 100, 0);
+            this.lbUnitNumber.Size = new System.Drawing.Size(223, 43);
+            this.lbUnitNumber.TabIndex = 99;
+            this.lbUnitNumber.Text = "Unit Number:*";
+            // 
+            // tbUnitNumber
+            // 
+            this.tbUnitNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tbUnitNumber.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbUnitNumber.Location = new System.Drawing.Point(14, 163);
+            this.tbUnitNumber.Name = "tbUnitNumber";
+            this.tbUnitNumber.Size = new System.Drawing.Size(176, 31);
+            this.tbUnitNumber.TabIndex = 100;
             // 
             // AddProperties
             // 

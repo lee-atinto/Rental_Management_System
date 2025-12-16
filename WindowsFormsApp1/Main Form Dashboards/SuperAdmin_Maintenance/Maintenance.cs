@@ -28,14 +28,11 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
 
         public Maintenance(string username, string userRole)
         {
-            // ITO ANG PINAKA-IMPORTANTE: Kailangan itong tawagin una sa lahat
-            // upang i-instantiate ang lahat ng controls (tulad ng 'lbName').
             InitializeComponent();
 
             this.UserName = username;
             this.UserRole = userRole;
 
-            // Ngayon, ang 'lbName' ay mayroon nang object at hindi na magiging NULL.
             lbName.Text = $"{username} \n{userRole}";
 
             LoadPropertyCards();

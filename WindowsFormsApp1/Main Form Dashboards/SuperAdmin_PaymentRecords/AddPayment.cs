@@ -1,17 +1,22 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
 
 namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
 {
     public partial class AddPayment : Form
     {
         private readonly string DataConnection = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
-
         private int contractId = -1;
         private int paymentIdToUpdate = -1;
+
+        // Idinagdag para makuha ang amount mula sa Payment_Records
+        public decimal NewAmount { get; private set; }
+        // Idinagdag para sa concurrency check ng dalawang admin
+        private byte[] originalRowVersion;
 
         public AddPayment()
         {
@@ -21,10 +26,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
         public AddPayment(int contractId)
         {
             InitializeComponent();
-
             this.contractId = contractId;
-
-            // Assuming cbTenantName is the ComboBox for tenant names
             cbTenantName.Enabled = false;
 
             if (contractId > 0)
@@ -33,9 +35,15 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             }
         }
 
+        // Overloaded constructor para sa concurrency safety
+        public AddPayment(int contractId, byte[] rowVersion) : this(contractId)
+        {
+            this.originalRowVersion = rowVersion;
+        }
+
         private void SetupFormForEdit(int contractId)
         {
-            this.Text = "I-update ang Payment Record (Contract ID: " + contractId + ")";
+            this.Text = "Update Payment Record (Contract ID: " + contractId + ")";
             LoadExistingPaymentData(contractId);
         }
 
@@ -44,7 +52,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             string query = @"
                 SELECT TOP 1 
                     P.paymentId, P.paymentAmount, P.paymentDate, P.paymentMethodId, P.paymentTypeId, T.tenantId,
-                    P.referenceID
+                    P.referenceID, P.RowVersion
                 FROM Payment P
                 INNER JOIN Contract C ON P.contractId = C.contractId
                 INNER JOIN PersonalInformation T ON C.tenantID = T.tenantId
@@ -64,19 +72,22 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                         if (reader.Read())
                         {
                             paymentIdToUpdate = Convert.ToInt32(reader["paymentId"]);
-
                             tbAmountPaid.Text = reader["paymentAmount"].ToString();
                             dtpPaymentDate.Value = Convert.ToDateTime(reader["paymentDate"]);
-
                             tbReferenceID.Text = reader["referenceID"] != DBNull.Value ? reader["referenceID"].ToString() : string.Empty;
-
                             cbPaymentMethod.SelectedValue = reader["paymentMethodId"];
                             cbPaymentType.SelectedValue = reader["paymentTypeId"];
                             cbTenantName.SelectedValue = reader["tenantId"];
+
+                            // Kunin ang RowVersion mula sa database kung wala pang naipasa
+                            if (originalRowVersion == null && reader["RowVersion"] != DBNull.Value)
+                            {
+                                originalRowVersion = (byte[])reader["RowVersion"];
+                            }
                         }
                         else
                         {
-                            MessageBox.Show("Walang mahanap na payment record para sa contract na ito. Maaari ka lang mag-add ng BAGO.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("No payment record found. You can only add a NEW one.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             paymentIdToUpdate = -1;
                         }
                     }
@@ -84,13 +95,59 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading payment data: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading data: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public async Task<bool> UpdatePaymentWithTransaction(int contractId, decimal newAmount, byte[] originalRowVersion)
+        {
+            using (SqlConnection connection = new SqlConnection(DataConnection))
+            {
+                await connection.OpenAsync();
+                SqlTransaction transaction = connection.BeginTransaction();
+
+                try
+                {
+                    // DELAY para sa safety ng transaction ng dalawang admin
+                    await Task.Delay(3000);
+
+                    string updateQuery = @"
+                UPDATE Payment 
+                SET paymentAmount = @amount 
+                WHERE contractId = @contractId AND RowVersion = @originalRowVersion";
+
+                    using (SqlCommand command = new SqlCommand(updateQuery, connection, transaction))
+                    {
+                        command.Parameters.AddWithValue("@amount", newAmount);
+                        command.Parameters.AddWithValue("@contractId", contractId);
+                        command.Parameters.AddWithValue("@originalRowVersion", originalRowVersion);
+
+                        int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            transaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            MessageBox.Show("Conflict Detected: May ibang admin na naunang mag-update sa record na ito. Paki-refresh ang data.", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show($"Transaction Rolled Back: {ex.Message}");
+                    return false;
+                }
             }
         }
 
         private void SetTenantAndUnitFromContractId(int contractId)
         {
-            // INAYOS ANG JOIN DITO: Mula sa C.propertyID = U.propertyID ay ginawang C.UnitID = U.UnitID
             string query = @"
                 SELECT U.UnitNumber, C.tenantId
                 FROM Contract C
@@ -124,8 +181,8 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
 
         private void AddPayment_Load(object sender, EventArgs e)
         {
+            dtpPaymentDate.MinDate = DateTime.Today;
             dtpPaymentDate.Value = DateTime.Today;
-
             LoadTenants();
             LoadPaymentMethods();
             LoadPaymentTypes();
@@ -153,7 +210,6 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                 {
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-
                     cbTenantName.DataSource = dt;
                     cbTenantName.DisplayMember = "TenantName";
                     cbTenantName.ValueMember = "tenantId";
@@ -163,14 +219,13 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading tenants: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
 
         private void LoadPaymentMethods()
         {
             string query = "SELECT paymentMethodId, methodName FROM PaymentMethod ORDER BY methodName";
-
             try
             {
                 using (SqlConnection connection = new SqlConnection(DataConnection))
@@ -178,7 +233,6 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                 {
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-
                     cbPaymentMethod.DataSource = dt;
                     cbPaymentMethod.DisplayMember = "methodName";
                     cbPaymentMethod.ValueMember = "paymentMethodId";
@@ -188,7 +242,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading payment methods: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
 
@@ -196,12 +250,10 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
         {
             string query = "SELECT paymentTypeID, typeName FROM PaymentType";
             using (SqlConnection connection = new SqlConnection(DataConnection))
-            using (SqlCommand command = new SqlCommand(query, connection))
-            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(query, connection))
             {
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
-
                 cbPaymentType.DataSource = dt;
                 cbPaymentType.DisplayMember = "typeName";
                 cbPaymentType.ValueMember = "paymentTypeID";
@@ -219,7 +271,6 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                 return;
             }
 
-            // INAYOS ANG JOIN DITO: Mula sa C.propertyID = U.propertyID ay ginawang C.UnitID = U.UnitID
             string query = @"
                 SELECT U.UnitNumber, C.contractID
                 FROM Contract C
@@ -233,7 +284,6 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                 {
                     command.Parameters.AddWithValue("@TenantID", tenantId);
                     connection.Open();
-
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
@@ -251,7 +301,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error retrieving unit details: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
 
@@ -259,64 +309,43 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
         {
             if (!ValidateInput()) return;
 
-            // In ADD mode, get selected Tenant ID and Contract ID from the Tag
+            // I-set ang NewAmount para makuha ng Payment_Records form
+            this.NewAmount = Convert.ToDecimal(tbAmountPaid.Text);
+
             int currentTenantId;
             int currentContractId;
 
             if (contractId > 0)
             {
-                // EDIT mode: contractId is known, tenantId is already loaded/selected (and disabled)
                 currentContractId = contractId;
                 currentTenantId = (int)cbTenantName.SelectedValue;
             }
             else
             {
-                // ADD mode: get IDs from selections
-                if (cbTenantName.SelectedValue == null || tbUnitNumber.Tag == null)
-                {
-                    MessageBox.Show("Missing tenant or contract information.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
                 currentTenantId = (int)cbTenantName.SelectedValue;
                 currentContractId = (int)tbUnitNumber.Tag;
             }
 
-            if (currentContractId <= 0 || cbPaymentMethod.SelectedValue == null || cbPaymentType.SelectedValue == null)
-            {
-                MessageBox.Show("Missing contract or payment details.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            int paymentMethodId = (int)cbPaymentMethod.SelectedValue;
-            int paymentTypeId = (int)cbPaymentType.SelectedValue;
             decimal paymentAmount = Convert.ToDecimal(tbAmountPaid.Text);
             DateTime paymentDate = dtpPaymentDate.Value.Date;
-
+            int paymentMethodId = (int)cbPaymentMethod.SelectedValue;
+            int paymentTypeId = (int)cbPaymentType.SelectedValue;
             string referenceId = tbReferenceID.Text.Trim();
-            string paymentStatus = "Paid"; // Defaulting to 'Paid' since the control was removed.
 
             string sqlQuery;
-
             if (paymentIdToUpdate > 0)
             {
-                // UPDATE query (Removed paymentStatus update)
-                sqlQuery = @"
-                    UPDATE Payment 
-                    SET paymentAmount = @PaymentAmount,
-                        paymentDate = @PaymentDate,
-                        paymentMethodId = @PaymentMethodId,
-                        paymentTypeId = @PaymentTypeId,
-                        referenceID = @ReferenceId
-                    WHERE paymentId = @PaymentIdToUpdate";
+                sqlQuery = @"UPDATE Payment SET paymentAmount = @PaymentAmount, paymentDate = @PaymentDate, 
+                     paymentMethodId = @PaymentMethodId, paymentTypeId = @PaymentTypeId, 
+                     referenceID = @ReferenceId WHERE paymentId = @PaymentIdToUpdate";
             }
             else
             {
-                // INSERT query (Hardcoded paymentStatus to 'Paid')
-                sqlQuery = @"
-                    INSERT INTO Payment (tenantId, contractId, paymentMethodId, paymentTypeId, paymentAmount, paymentDate, referenceID, paymentStatus)
-                    VALUES (@TenantId, @ContractId, @PaymentMethodId, @PaymentTypeId, @PaymentAmount, @PaymentDate, @ReferenceId, @PaymentStatus)";
+                sqlQuery = @"INSERT INTO Payment (tenantId, contractId, paymentMethodId, paymentTypeId, 
+                     paymentAmount, paymentDate, referenceID, paymentStatus)
+                     VALUES (@TenantId, @ContractId, @PaymentMethodId, @PaymentTypeId, 
+                     @PaymentAmount, @PaymentDate, @ReferenceId, 'Paid')";
             }
-
 
             try
             {
@@ -327,20 +356,10 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                     command.Parameters.AddWithValue("@PaymentDate", paymentDate);
                     command.Parameters.AddWithValue("@PaymentMethodId", paymentMethodId);
                     command.Parameters.AddWithValue("@PaymentTypeId", paymentTypeId);
-
                     command.Parameters.AddWithValue("@ReferenceId", referenceId);
 
-                    // Only pass PaymentStatus parameter if INSERTING or if you want to explicitly update it to 'Paid'
-                    if (paymentIdToUpdate <= 0)
-                    {
-                        command.Parameters.AddWithValue("@PaymentStatus", paymentStatus);
-                    }
-
-
                     if (paymentIdToUpdate > 0)
-                    {
                         command.Parameters.AddWithValue("@PaymentIdToUpdate", paymentIdToUpdate);
-                    }
                     else
                     {
                         command.Parameters.AddWithValue("@TenantId", currentTenantId);
@@ -350,22 +369,17 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                     connection.Open();
                     command.ExecuteNonQuery();
 
-                    string message = (paymentIdToUpdate > 0) ? "Payment updated successfully!" : "Payment recorded successfully!";
-                    MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Payment record saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
             }
-            catch (SqlException sqlex)
-            {
-                MessageBox.Show($"Database Error saving payment: {sqlex.Message}", "SQL Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving payment: {ex.Message}", "General Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while saving: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private bool ValidateInput()
         {
@@ -377,25 +391,19 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
 
             if (tbUnitNumber.Tag == null)
             {
-                MessageBox.Show("Could not find an active contract/unit for the selected tenant.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("No active contract found for this tenant.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
-            if (dtpPaymentDate.Value.Date > DateTime.Today.Date)
+            if (string.IsNullOrWhiteSpace(tbAmountPaid.Text) || !decimal.TryParse(tbAmountPaid.Text, out decimal amount) || amount <= 0)
             {
-                MessageBox.Show("Date of Payment cannot be a future date.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
-
-            if (!decimal.TryParse(tbAmountPaid.Text, out decimal amount) || amount <= 0)
-            {
-                MessageBox.Show("Please enter a valid positive numeric value for Amount Paid.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter a valid Amount Paid.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(tbReferenceID.Text))
             {
-                MessageBox.Show("Please enter a Reference ID.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Reference ID is required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 

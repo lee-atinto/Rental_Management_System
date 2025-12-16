@@ -9,8 +9,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
 {
     public partial class AddTenants : Form
     {
-        private readonly string DataConnection =
-            @"Data Source=LEEANTHONYDATIN\SQLEXPRESS; Initial Catalog=RentalManagementSystem;Integrated Security=True";
+        private readonly string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
         private Tenants parentForm;
         private int tenantIDToEdit = -1;
@@ -72,6 +71,75 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
             }
         }
 
+        private void ActivateTenantAndAssignUnit(int tenantID)
+        {
+            int assignedUnitIDValue = tenantID;
+            string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+
+            string sql = @"
+                UPDATE Tenant
+                SET tenantStatus = 'Active', 
+                    UnitID = @UnitIDValue 
+                WHERE tenantID = @TenantID 
+                AND tenantStatus = 'Inactive';
+            ";
+
+            using (SqlConnection con = new SqlConnection(DataConnection))
+            using (SqlCommand cmd = new SqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@UnitIDValue", assignedUnitIDValue);
+                cmd.Parameters.AddWithValue("@TenantID", tenantID);
+
+                try
+                {
+                    con.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show($"Tenant ID {tenantID} successfully activated and assigned Unit ID {assignedUnitIDValue}.",
+                                        "Activation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Activation failed for Tenant ID {tenantID}. Tenant may already be active or record not found.",
+                                        "Activation Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Database error during tenant activation: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private bool IsDuplicateTenant(string fn, string ln, int currentTenantId)
+        {
+            string sql = @"
+                SELECT COUNT(*) FROM PersonalInformation 
+                WHERE firstName = @fn AND lastName = @ln AND tenantID != @id";
+
+            using (SqlConnection con = new SqlConnection(DataConnection))
+            using (SqlCommand cmd = new SqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@fn", fn);
+                cmd.Parameters.AddWithValue("@ln", ln);
+                cmd.Parameters.AddWithValue("@id", currentTenantId);
+
+                try
+                {
+                    con.Open();
+                    int count = (int)cmd.ExecuteScalar();
+                    return count > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Database check for duplicate failed: {ex.Message}");
+                }
+            }
+        }
+
+
         private void InsertNewTenant(string fn, string mn, string ln, string cn, string em)
         {
             using (SqlConnection con = new SqlConnection(DataConnection))
@@ -81,13 +149,10 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
 
                 try
                 {
-                    // HAKBANG 1: INSERT sa Tenant table at kunin ang auto-generated tenantID.
-                    // Idinagdag ang tenantID_New sa INSERT at binigyan ng temporary value (0) 
-                    // upang maiwasan ang NOT NULL error.
                     string sqlInsertTenant = @" 
-                        INSERT INTO Tenant (tenantStatus, dateRegistered, tenantID_New) 
+                        INSERT INTO Tenant (tenantStatus, dateRegistered, UnitID, tenantID_New) 
                         OUTPUT INSERTED.tenantID 
-                        VALUES ('Inactive', @date, 0); 
+                        VALUES ('Inactive', @date, NULL, 0); 
                     ";
 
                     int newTenantID;
@@ -98,12 +163,11 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
 
                         object result = cmd.ExecuteScalar();
                         if (result == null || result == DBNull.Value)
-                            throw new Exception("Failed to get new tenantID.");
+                            throw new Exception("Failed to get new tenantID. Check if tenantID column is an IDENTITY column.");
 
                         newTenantID = Convert.ToInt32(result);
                     }
 
-                    // HAKBANG 2: I-UPDATE ang tenantID_New sa tamang value (newTenantID).
                     string sqlUpdateTenantNewID = @" 
                         UPDATE Tenant 
                         SET tenantID_New = @NewID 
@@ -116,8 +180,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
                         cmd.ExecuteNonQuery();
                     }
 
-
-                    // HAKBANG 3: INSERT sa PersonalInformation table gamit ang nakuha na TenantID.
                     string sqlInsertPersonalInfo = @" 
                         INSERT INTO PersonalInformation (tenantID, firstName, middleName, lastName, contactNumber, email) 
                         VALUES (@id, @fn, @mn, @ln, @cn, @em);
@@ -144,7 +206,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
                 }
             }
         }
-
 
         private void UpdateTenant(int id, string fn, string mn, string ln, string cn, string em)
         {
@@ -176,6 +237,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
             string cn = tbContactNum.Text.Trim();
             string em = tbEmail.Text.Trim();
 
+            if (string.IsNullOrEmpty(fn) || string.IsNullOrEmpty(ln) || string.IsNullOrEmpty(cn))
+            {
+                MessageBox.Show("First Name, Last Name, and Contact Number are required fields.",
+                    "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (!long.TryParse(cn, out _))
             {
                 MessageBox.Show("Contact number must contain numbers only.", "Invalid Input",
@@ -190,26 +258,28 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
                 return;
             }
 
-            if (string.IsNullOrEmpty(fn) || string.IsNullOrEmpty(ln) || string.IsNullOrEmpty(cn))
-            {
-                MessageBox.Show("First Name, Last Name, and Contact Number are required.",
-                    "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             try
             {
+                if (IsDuplicateTenant(fn, ln, tenantIDToEdit))
+                {
+                    MessageBox.Show($"A tenant with the name '{fn} {ln}' already exists. Please check the name or if the tenant is already in the system.",
+                        "Duplicate Record", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 if (tenantIDToEdit == -1)
                 {
                     InsertNewTenant(fn, mn, ln, cn, em);
-                    MessageBox.Show("Tenant added successfully!");
+                    MessageBox.Show("Tenant added successfully!", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     parentForm.LoadTenantsData("All", parentForm.CurrentSearchText);
                 }
                 else
                 {
                     UpdateTenant(tenantIDToEdit, fn, mn, ln, cn, em);
-                    MessageBox.Show("Tenant updated successfully!");
+                    MessageBox.Show("Tenant updated successfully!", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     parentForm.LoadTenantsData(parentForm.CurrentStatusFilter, parentForm.CurrentSearchText);
                 }
@@ -219,7 +289,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Tenants
             catch (Exception ex)
             {
                 string action = tenantIDToEdit == -1 ? "adding" : "updating";
-                MessageBox.Show($"An error occurred while {action} the tenant: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while {action} the tenant: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

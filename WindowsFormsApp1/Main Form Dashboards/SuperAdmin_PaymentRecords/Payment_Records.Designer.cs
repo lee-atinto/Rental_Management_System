@@ -89,11 +89,11 @@
             this.PaymentTenantData.AllowUserToDeleteRows = false;
             this.PaymentTenantData.AllowUserToResizeColumns = false;
             this.PaymentTenantData.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(20);
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(0, 20, 0, 20);
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
@@ -120,6 +120,7 @@
             // 
             // cbStatus
             // 
+            this.cbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStatus.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbStatus.FormattingEnabled = true;
             this.cbStatus.Location = new System.Drawing.Point(843, 27);
@@ -130,6 +131,7 @@
             // 
             // cbMethod
             // 
+            this.cbMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbMethod.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbMethod.FormattingEnabled = true;
             this.cbMethod.Location = new System.Drawing.Point(1000, 27);
@@ -348,9 +350,9 @@
             this.lbTitle.Location = new System.Drawing.Point(22, 26);
             this.lbTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lbTitle.Name = "lbTitle";
-            this.lbTitle.Size = new System.Drawing.Size(100, 27);
+            this.lbTitle.Size = new System.Drawing.Size(181, 27);
             this.lbTitle.TabIndex = 143;
-            this.lbTitle.Text = "PAYMENT";
+            this.lbTitle.Text = "PAYMENT RECORD";
             // 
             // panelHeader
             // 

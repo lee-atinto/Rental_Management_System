@@ -137,6 +137,12 @@
     <Compile Include="Main Form Dashboards\SuperAdmin_Properties\ProperTies.Designer.cs">
       <DependentUpon>ProperTies.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_Properties\View Properties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main Form Dashboards\SuperAdmin_Properties\View Properties.Designer.cs">
+      <DependentUpon>View Properties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main Form Dashboards\SuperAdmin_Tenants\AddTenants.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -222,6 +228,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Properties\ProperTies.resx">
       <DependentUpon>ProperTies.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Properties\View Properties.resx">
+      <DependentUpon>View Properties.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main Form Dashboards\SuperAdmin_Tenants\AddTenants.resx">
       <DependentUpon>AddTenants.cs</DependentUpon>

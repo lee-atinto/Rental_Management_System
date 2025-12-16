@@ -9,7 +9,8 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
 {
     public partial class ViewPaymentHistory : Form
     {
-        private readonly string DataConnection;
+        private readonly string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+
         private readonly int ContractID;
         private readonly CultureInfo philippineCulture = new CultureInfo("en-PH");
 
@@ -48,27 +49,19 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
         private void LoadSummary()
         {
             string summaryQuery = @"
-                ;WITH LatestPayment AS (
-                    SELECT TOP 1 
-                        paymentAmount 
-                    FROM Payment 
-                    WHERE contractId = @ContractId 
-                    ORDER BY paymentDate DESC
-                )
-                SELECT 
-                    C.startDate,
-                    MAX(R.dueDate) AS LatestDueDate,
-                    -- Total Paid: Sum ng lahat ng paymentAmount
-                    ISNULL((SELECT SUM(paymentAmount) FROM Payment WHERE contractId = @ContractId), 0) AS TotalPaid,
-                    -- Months Paid: Count ng payments
-                    ISNULL((SELECT COUNT(paymentId) FROM Payment WHERE contractId = @ContractId), 0) AS MonthsPaid,
-                    -- Latest Payment Amount (para sa label1)
-                    ISNULL((SELECT paymentAmount FROM LatestPayment), 0) AS LatestPaymentAmount
-                FROM Contract C
-                INNER JOIN Rent R ON C.contractID = R.contractID
-                WHERE C.contractID = @ContractId
-                GROUP BY C.startDate;
-            ";
+        ;WITH LatestPayment AS (
+            SELECT TOP 1 
+                paymentAmount 
+            FROM Payment 
+            WHERE contractId = @ContractId 
+            ORDER BY paymentDate DESC -- Kinukuha ang pinaka-latest na date
+        )
+        SELECT 
+            ISNULL((SELECT SUM(paymentAmount) FROM Payment WHERE contractId = @ContractId), 0) AS TotalPaid,
+            ISNULL((SELECT paymentAmount FROM LatestPayment), 0) AS LatestPaymentAmount
+        FROM Contract C
+        WHERE C.contractID = @ContractId;
+    ";
 
             using (SqlConnection connection = new SqlConnection(DataConnection))
             using (SqlCommand command = new SqlCommand(summaryQuery, connection))
@@ -82,34 +75,19 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_PaymentRecords
                     {
                         if (reader.Read())
                         {
-                            decimal latestPaymentAmount = reader.GetDecimal(reader.GetOrdinal("LatestPaymentAmount"));
-                            DateTime startDate = reader.GetDateTime(reader.GetOrdinal("startDate"));
-                            DateTime latestDueDate = reader.GetDateTime(reader.GetOrdinal("LatestDueDate"));
                             decimal totalPaid = reader.GetDecimal(reader.GetOrdinal("TotalPaid"));
-                            int monthsPaid = reader.GetInt32(reader.GetOrdinal("MonthsPaid"));
+                            decimal latestPayment = reader.GetDecimal(reader.GetOrdinal("LatestPaymentAmount"));
 
                             if (label1 != null)
-                                label1.Text = latestPaymentAmount.ToString("C", philippineCulture);
-
-                            if (label2 != null)
-                                label2.Text = monthsPaid.ToString();
+                                label1.Text = latestPayment.ToString("C", philippineCulture);
 
                             if (label3 != null)
                                 label3.Text = totalPaid.ToString("C", philippineCulture);
-
-                            if (label4 != null)
-                                label4.Text = startDate.ToShortDateString();
-
-                            if (label5 != null)
-                                label5.Text = latestDueDate.ToShortDateString();
                         }
                         else
                         {
                             if (label1 != null) label1.Text = (0m).ToString("C", philippineCulture);
-                            if (label2 != null) label2.Text = "0";
                             if (label3 != null) label3.Text = (0m).ToString("C", philippineCulture);
-                            if (label4 != null) label4.Text = "N/A";
-                            if (label5 != null) label5.Text = "N/A";
                         }
                     }
                 }

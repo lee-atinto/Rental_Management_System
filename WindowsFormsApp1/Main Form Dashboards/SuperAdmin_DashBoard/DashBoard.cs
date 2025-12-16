@@ -46,6 +46,8 @@ namespace WindowsFormsApp1.Super_Admin_Account
             InitializeButtonStyle(btnMaintenance);
 
             ApplyRoleRestrictions();
+            GetRecentMaintenance();
+            LoadRecentPayments();
 
             DataRecentMaintenanceRequests.CellFormatting += new DataGridViewCellFormattingEventHandler(dgv_CellFormatting);
 
@@ -109,6 +111,20 @@ namespace WindowsFormsApp1.Super_Admin_Account
             DataRecentMaintenanceRequests.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             DataRecentMaintenanceRequests.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             DataRecentMaintenanceRequests.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            DataRecentMaintenanceRequests.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+
+            DataPaymentRecent.ReadOnly = true;
+            DataPaymentRecent.Dock = DockStyle.Fill;
+            DataPaymentRecent.RowHeadersVisible = false;
+            DataPaymentRecent.ColumnHeadersVisible = false;
+            DataPaymentRecent.BorderStyle = BorderStyle.None;
+            DataPaymentRecent.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            DataPaymentRecent.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            DataPaymentRecent.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            DataPaymentRecent.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            DataPaymentRecent.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
         }
 
         public void LoadMaintenanceData()
@@ -118,42 +134,152 @@ namespace WindowsFormsApp1.Super_Admin_Account
                 using (SqlConnection conn = new SqlConnection(DataConnection))
                 {
                     string query = @"SELECT CONCAT(
-                                CONCAT(PI.firstName, ' ', PI.middleName, ' ', PI.lastName),
-                                CHAR(13), CHAR(10),
-                                CONCAT(U.unitNumber, ' ', MR.description),
-                                CHAR(13), CHAR(10),
-                                (MR.requestDate)
-                                ) AS [Info],
-                                MR.Status
-                                FROM PersonalInformation PI
-                                INNER JOIN Property P ON PI.personalInfoID = P.propertyID
-                                INNER JOIN Unit U ON P.PropertyID = U.PropertyID -- NEW: Join the Unit table
-                                INNER JOIN MaintenanceRequest MR ON P.PropertyID = MR.PropertyID";
+                        PI.firstName, ' ', PI.middleName, ' ', PI.lastName, CHAR(13), CHAR(10),
+                        U.unitNumber, ' ', MR.description, CHAR(13), CHAR(10),
+                        MR.requestDate) AS [Info],
+                        MR.Status
+                        FROM PersonalInformation PI
+                        INNER JOIN Property P ON PI.personalInfoID = P.propertyID
+                        INNER JOIN Unit U ON P.PropertyID = U.PropertyID 
+                        INNER JOIN MaintenanceRequest MR ON P.PropertyID = MR.PropertyID";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
-
                     conn.Open();
                     adapter.Fill(dt);
 
-                    DataRecentMaintenanceRequests.DataSource = dt;
-
-                    if (DataRecentMaintenanceRequests.Columns.Contains("Info"))
+                    if (dt.Rows.Count == 0)
                     {
-                        DataRecentMaintenanceRequests.Columns["Info"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        DataTable emptyDt = new DataTable();
+                        emptyDt.Columns.Add("Info");
+                        emptyDt.Rows.Add("There is no recent maintenance request.");
+                        DataRecentMaintenanceRequests.DataSource = emptyDt;
+                    }
+                    else
+                    {
+                        DataRecentMaintenanceRequests.DataSource = dt;
+                        if (DataRecentMaintenanceRequests.Columns.Contains("Status"))
+                        {
+                            DataRecentMaintenanceRequests.Columns["Status"].Width = 125;
+                            DataRecentMaintenanceRequests.Columns["Status"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                        }
                     }
 
-                    if (DataRecentMaintenanceRequests.Columns.Contains("Status"))
-                    {
-                        DataRecentMaintenanceRequests.Columns["Status"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                        DataRecentMaintenanceRequests.Columns["Status"].Width = 125;
-                        DataRecentMaintenanceRequests.Columns["Status"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                    }
+                    DataRecentMaintenanceRequests.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
+        }
+
+        private DataTable GetRecentMaintenance()
+        {
+            DataTable dt = new DataTable();
+            string query = @"
+        SELECT TOP 5
+            MR.maintenanceReqID, 
+            MR.description, 
+            MR.requestDate, 
+            MR.Status AS MaintenanceStatus,
+            U.UnitNumber,
+            PI.firstName, 
+            PI.middleName, 
+            PI.lastName,
+            MR.propertyID, 
+            RT.typeName
+        FROM MaintenanceRequest AS MR 
+        LEFT JOIN Tenant AS T ON MR.TenantID = T.TenantID
+        LEFT JOIN PersonalInformation AS PI ON T.TenantID = PI.TenantID 
+        LEFT JOIN Contract AS C ON T.TenantID = C.TenantID 
+        LEFT JOIN Unit AS U ON C.UnitID = U.UnitID
+        LEFT JOIN RequestType AS RT ON MR.requestTypeID = RT.requestTypeID
+        WHERE MR.requestDate >= DATEADD(day, -7, CAST(GETDATE() AS DATE))
+        ORDER BY MR.requestDate DESC;";
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(DataConnection))
+                {
+                    con.Open();
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    da.Fill(dt);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show($"Error fetching recent maintenance: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return dt;
+        }
+
+        public void LoadRecentPayments()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DataConnection))
+                {
+                    string query = @"
+                SELECT 
+                    P.paymentId,
+                    ISNULL(TI.firstName,'') + ' ' + ISNULL(TI.lastName,'') AS TenantName,
+                    ISNULL(PR.propertyName,'N/A') AS Property,
+                    P.paymentAmount,
+                    P.paymentDate,
+                    P.paymentStatus
+                FROM Payment P
+                INNER JOIN Contract C ON P.contractId = C.contractID
+                INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId
+                LEFT JOIN Property PR ON C.propertyID = PR.propertyID
+                WHERE DATEPART(week, P.paymentDate) = DATEPART(week, GETDATE())
+                  AND YEAR(P.paymentDate) = YEAR(GETDATE())
+                ORDER BY P.paymentDate DESC";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dt = new DataTable();
+                    conn.Open();
+                    adapter.Fill(dt);
+
+                    if (dt.Rows.Count == 0)
+                    { 
+                        DataTable emptyDt = new DataTable();
+                        emptyDt.Columns.Add("Message");
+                        emptyDt.Rows.Add("There is no recent payment.");
+
+                        DataPaymentRecent.DataSource = emptyDt;
+
+                        DataPaymentRecent.Columns["Message"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        DataPaymentRecent.CellBorderStyle = DataGridViewCellBorderStyle.None;
+                    }
+
+                    else
+                    {
+                        DataPaymentRecent.DataSource = dt;
+                        DataPaymentRecent.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+
+                        if (DataPaymentRecent.Columns.Contains("TenantName"))
+                            DataPaymentRecent.Columns["TenantName"].Width = 150;
+                        if (DataPaymentRecent.Columns.Contains("Property"))
+                            DataPaymentRecent.Columns["Property"].Width = 150;
+                        if (DataPaymentRecent.Columns.Contains("paymentAmount"))
+                        {
+                            DataPaymentRecent.Columns["paymentAmount"].DefaultCellStyle.Format = "C0";
+                            DataPaymentRecent.Columns["paymentAmount"].Width = 100;
+                        }
+                        if (DataPaymentRecent.Columns.Contains("paymentDate"))
+                            DataPaymentRecent.Columns["paymentDate"].Width = 120;
+                        if (DataPaymentRecent.Columns.Contains("paymentStatus"))
+                            DataPaymentRecent.Columns["paymentStatus"].Width = 100;
+                        if (DataPaymentRecent.Columns.Contains("paymentId"))
+                            DataPaymentRecent.Columns["paymentId"].Visible = false;
+                    }
+
+                    DataPaymentRecent.ColumnHeadersVisible = false;
+                    DataPaymentRecent.RowHeadersVisible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading recent payments: " + ex.Message);
             }
         }
 
@@ -281,8 +407,8 @@ namespace WindowsFormsApp1.Super_Admin_Account
                     decimal totalRevenue = GetScalarDecimalResult(connection, "SELECT ISNULL(SUM(CASE WHEN paymentStatus = 'Paid' THEN paymentAmount ELSE 0 END), 0) FROM Payment");
                     label4.Text = totalRevenue.ToString("C0", philippinesCulture);
 
-                    int openRequests = GetScalarResult(connection, "SELECT COUNT(maintenanceReqID) FROM MaintenanceRequest WHERE status = 'Open'");
-                    label5.Text = openRequests.ToString();
+                    int allRequests = GetScalarResult(connection, "SELECT COUNT(maintenanceReqID) FROM MaintenanceRequest");
+                    label5.Text = allRequests.ToString();
 
                     if (UserRole == "Admin")
                         label4.Text = "Confidential";
@@ -317,16 +443,10 @@ namespace WindowsFormsApp1.Super_Admin_Account
                     return decValue;
                 return 0.00m;
             }
-        }
-
-        private void DataRecentMaintenanceRequests_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
+        }   
 
         // -------------------- Button Side Bar -------------------- //
 
-        // --------------- Tenant Button --------------- //
         private void btnTenant_Click_1(object sender, EventArgs e)
         {
             Tenants tenants = new Tenants(UserName, UserRole);
@@ -334,7 +454,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Properties Button --------------- //
         private void btnProperties_Click(object sender, EventArgs e)
         {
             ProperTies properties = new ProperTies(UserName, UserRole);
@@ -342,7 +461,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Payment Record Button --------------- //
         private void btnPaymentRec_Click(object sender, EventArgs e)
         {
             Payment_Records paymentRec = new Payment_Records(UserName, UserRole);
@@ -350,7 +468,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Contracts Button --------------- //
         private void btnContracts_Click(object sender, EventArgs e)
         {
             Contracts contract = new Contracts(UserName, UserRole);
@@ -358,7 +475,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Maintenance Button --------------- //
         private void btnMaintenance_Click(object sender, EventArgs e)
         {
             Maintenance maintenance = new Maintenance(UserName, UserRole);
@@ -366,7 +482,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Admin Account Button --------------- //
         private void btnAdminAcc_Click(object sender, EventArgs e)
         {
             SuperAdmin_AdminAccounts adminAcc = new SuperAdmin_AdminAccounts(UserName, UserRole);
@@ -374,7 +489,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- View Reports Button --------------- //
         private void btnViewReport_Click_1(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
@@ -389,7 +503,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        // --------------- Backup Button --------------- //
         private void btnBackUp_Click_1(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
@@ -404,7 +517,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        // --------------- Logout Button --------------- //
         private void btnlogout_Click(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
@@ -420,4 +532,4 @@ namespace WindowsFormsApp1.Super_Admin_Account
             new LoginPage().Show();
         }
     }
-}
+} 

@@ -48,6 +48,7 @@
             // 
             // cbTenantName
             // 
+            this.cbTenantName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTenantName.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbTenantName.FormattingEnabled = true;
             this.cbTenantName.Location = new System.Drawing.Point(55, 97);
@@ -74,6 +75,7 @@
             // 
             // cbPaymentType
             // 
+            this.cbPaymentType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPaymentType.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbPaymentType.FormattingEnabled = true;
             this.cbPaymentType.Location = new System.Drawing.Point(332, 179);
@@ -83,6 +85,7 @@
             // 
             // cbPaymentMethod
             // 
+            this.cbPaymentMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPaymentMethod.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbPaymentMethod.FormattingEnabled = true;
             this.cbPaymentMethod.Location = new System.Drawing.Point(55, 179);

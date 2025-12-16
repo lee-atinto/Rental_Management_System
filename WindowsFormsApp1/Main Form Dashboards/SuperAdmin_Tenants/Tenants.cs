@@ -49,7 +49,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.UserRole = userRole;
             this.lbName.Text = $"{UserName} \n ({UserRole})";
 
-
             this.TenantsData.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DataTenants_CellFormatting);
 
             if (!comboBox1.Items.Contains("All"))
@@ -140,6 +139,11 @@ namespace WindowsFormsApp1.Super_Admin_Account
                 comboBox1.Items.Add("Active");
             if (!comboBox1.Items.Contains("Inactive"))
                 comboBox1.Items.Add("Inactive");
+            if (!comboBox1.Items.Contains("Move-Out"))
+                comboBox1.Items.Add("Move-Out");
+            if (!comboBox1.Items.Contains("Evicted"))
+                comboBox1.Items.Add("Evicted");
+
             if (comboBox1.SelectedIndex < 0)
                 comboBox1.SelectedIndex = 0;
         }
@@ -148,6 +152,17 @@ namespace WindowsFormsApp1.Super_Admin_Account
         {
             List<string> whereConditions = new List<string>();
 
+            string query = $@" 
+    SELECT 
+        T.tenantID AS TenantID, 
+        T.tenantID_New AS [Tenant ID New], 
+        ISNULL(P.firstName + ' ' + P.lastName, 'No Name Provided') AS TenantName, 
+        ISNULL(P.contactNumber, 'N/A') AS Contact, 
+        T.tenantStatus AS Status, 
+        T.dateRegistered AS DateRegistered 
+    FROM Tenant T 
+    LEFT JOIN PersonalInformation P ON T.tenantID = P.tenantID";
+
             if (!string.IsNullOrEmpty(statusFilter) && statusFilter != "All")
             {
                 whereConditions.Add("T.tenantStatus = @StatusFilter");
@@ -155,11 +170,13 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
             if (!string.IsNullOrEmpty(searchText))
             {
-                whereConditions.Add("(P.firstName + ' ' + P.lastName LIKE @SearchText OR P.contactNumber LIKE @SearchText)");
+                whereConditions.Add("(P.firstName + ' ' + P.lastName LIKE @SearchText OR P.contactNumber LIKE @SearchText OR T.tenantID_New LIKE @SearchText)");
             }
 
-            string whereClause = whereConditions.Any() ? " WHERE " + string.Join(" AND ", whereConditions) : "";
-            string query = $@" SELECT T.tenantID AS TenantID, P.firstName + ' ' + P.lastName AS TenantName, P.contactNumber AS Contact, T.tenantStatus AS Status, T.dateRegistered AS DateRegistered FROM PersonalInformation P INNER JOIN Tenant T ON P.tenantID = T.tenantID {whereClause}";
+            if (whereConditions.Any())
+            {
+                query += " WHERE " + string.Join(" AND ", whereConditions);
+            }
 
             try
             {
@@ -191,8 +208,12 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
         private void DeleteTenant(string tenantId, string tenantName)
         {
-            string deletePersonalInfoQuery = "DELETE FROM PersonalInformation WHERE tenantID = @TenantID";
-            string deleteTenantQuery = "DELETE FROM Tenant WHERE tenantID = @TenantID";
+            string deletePayments = "DELETE FROM Payment WHERE tenantID = @TenantID";
+            string deleteContracts = "DELETE FROM Contract WHERE tenantID = @TenantID";
+            string deleteMaintenance = "DELETE FROM MaintenanceRequest WHERE tenantID = @TenantID";
+            string deleteRent = "DELETE FROM Rent WHERE tenantID = @TenantID";
+            string deletePersonalInfo = "DELETE FROM PersonalInformation WHERE tenantID = @TenantID";
+            string deleteTenant = "DELETE FROM Tenant WHERE tenantID = @TenantID";
 
             using (SqlConnection connection = new SqlConnection(DataConnection))
             {
@@ -201,43 +222,46 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
                 try
                 {
-                    using (SqlCommand command1 = new SqlCommand(deletePersonalInfoQuery, connection, transaction))
+                    using (SqlCommand cmd = connection.CreateCommand())
                     {
-                        command1.Parameters.AddWithValue("@TenantID", tenantId);
-                        command1.ExecuteNonQuery();
-                    }
+                        cmd.Transaction = transaction;
+                        cmd.Parameters.AddWithValue("@TenantID", tenantId);
 
-                    int rowsAffected;
-                    using (SqlCommand command2 = new SqlCommand(deleteTenantQuery, connection, transaction))
-                    {
-                        command2.Parameters.AddWithValue("@TenantID", tenantId);
-                        rowsAffected = command2.ExecuteNonQuery();
-                    }
+                        cmd.CommandText = deletePayments;
+                        cmd.ExecuteNonQuery();
 
-                    transaction.Commit();
+                        cmd.CommandText = deleteContracts;
+                        cmd.ExecuteNonQuery();
 
-                    if (rowsAffected > 0)
-                    {
-                        MessageBox.Show($"{tenantName} has been successfully deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadTenantsData(comboBox1.SelectedItem?.ToString(), tbSearch.Text);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Could not find the tenant to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        cmd.CommandText = deleteMaintenance;
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = deleteRent;
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = deletePersonalInfo;
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = deleteTenant;
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        transaction.Commit();
+
+                        if (rowsAffected > 0)
+                        {
+                            MessageBox.Show($"{tenantName} at lahat ng kaugnay na records ay matagumpay na nabura.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LoadTenantsData(comboBox1.SelectedItem?.ToString(), tbSearch.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Hindi mahanap ang tenant record.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    try
-                    {
-                        transaction.Rollback();
-                    }
-                    catch 
-                    {
-
-                    }
-
-                    MessageBox.Show($"Deletion failed due to: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    try { transaction.Rollback(); } catch { }
+                    MessageBox.Show($"Nagkaroon ng error sa pagbura: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -283,6 +307,9 @@ namespace WindowsFormsApp1.Super_Admin_Account
             if (TenantsData.Columns.Contains("TenantID"))
                 TenantsData.Columns["TenantID"].Visible = false;
 
+            if (TenantsData.Columns.Contains("Tenant ID New"))
+                TenantsData.Columns["Tenant ID New"].Visible = false;
+
             if (TenantsData.Columns.Contains("TenantName"))
             {
                 TenantsData.Columns["TenantName"].HeaderText = "Name";
@@ -291,13 +318,13 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
             if (TenantsData.Columns.Contains("Contact"))
             {
-                TenantsData.Columns["Contact"].HeaderText = "Contact";
+                TenantsData.Columns["Contact"].HeaderText = "Contact Number";
                 TenantsData.Columns["Contact"].DisplayIndex = 1;
             }
 
             if (TenantsData.Columns.Contains("Status"))
             {
-                TenantsData.Columns["Status"].HeaderText = "Status";
+                TenantsData.Columns["Status"].HeaderText = "Current Status";
                 TenantsData.Columns["Status"].DisplayIndex = 2;
             }
 
@@ -312,6 +339,11 @@ namespace WindowsFormsApp1.Super_Admin_Account
 
             if (TenantsData.Columns.Contains("Delete"))
                 TenantsData.Columns["Delete"].DisplayIndex = 5;
+
+            foreach (DataGridViewColumn column in TenantsData.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         private void DataTenants_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -334,9 +366,21 @@ namespace WindowsFormsApp1.Super_Admin_Account
                     {
                         rowColor = Color.LightGreen;
                     }
-                    else
+                    else if (status.Equals("Inactive", StringComparison.OrdinalIgnoreCase))
                     {
                         rowColor = Color.LightCoral;
+                    }
+                    else if (status.Equals("Move-Out", StringComparison.OrdinalIgnoreCase))
+                    {
+                        rowColor = Color.LightSkyBlue;
+                    }
+                    else if (status.Equals("Evicted", StringComparison.OrdinalIgnoreCase))
+                    {
+                        rowColor = Color.Orange;
+                    }
+                    else
+                    {
+                        rowColor = TenantsData.DefaultCellStyle.BackColor;
                     }
 
                     row.DefaultCellStyle.BackColor = rowColor;
@@ -387,6 +431,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
             {
                 AddTenants editForm = new AddTenants(this, tenantID);
                 editForm.ShowDialog();
+
             }
             else if (clickedColumnName == "Delete")
             {
@@ -404,7 +449,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             {
                 btnBackUp.Visible = false;
                 btnViewReport.Visible = false;
-
 
                 panelHeader.BackColor = Color.LightBlue;
             }
@@ -431,9 +475,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             LoadTenantsData(selectedStatus, tbSearch.Text);
         }
 
-        // -------------------- Button Side Bar -------------------- //
-
-        // --------------- Dashboard Button --------------- //
         private void btnDashBoard_Click(object sender, EventArgs e)
         {
             DashBoard dashboard = new DashBoard(UserName, UserRole);
@@ -441,7 +482,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Properties Button --------------- //
         private void btnProperties_Click_1(object sender, EventArgs e)
         {
             ProperTies properties = new ProperTies(UserName, UserRole);
@@ -449,7 +489,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Payment Record Button --------------- //
         private void btnPaymentRec_Click_1(object sender, EventArgs e)
         {
             Payment_Records paymentRec = new Payment_Records(UserName, UserRole);
@@ -457,7 +496,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Contracts Button --------------- //
         private void btnContracts_Click(object sender, EventArgs e)
         {
             Contracts contract = new Contracts(UserName, UserRole);
@@ -465,7 +503,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Maintenance Button --------------- //
         private void btnMaintenance_Click(object sender, EventArgs e)
         {
             Maintenance maintenance = new Maintenance(UserName, UserRole);
@@ -473,7 +510,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- Admin Account Button --------------- //
         private void btnAdminAcc_Click(object sender, EventArgs e)
         {
             SuperAdmin_AdminAccounts adminAcc = new SuperAdmin_AdminAccounts(UserName, UserRole);
@@ -481,7 +517,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        // --------------- View Reports Button --------------- //
         private void btnViewReport_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
@@ -496,7 +531,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        // --------------- Backup Button --------------- //
         private void btnBackUp_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
@@ -511,7 +545,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        // --------------- Logout Button --------------- //
         private void btnlogout_Click_1(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))

@@ -23,7 +23,7 @@ namespace WindowsFormsApp1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new LoginPage());
+            Application.Run(new LoginPage());
 
             //Application.Run(new ProperTies("TestUser", " Super Admin"));
 

@@ -253,6 +253,28 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             btnView.FlatAppearance.MouseOverBackColor = Color.FromArgb(204, 204, 255);
             PropertyCards.Controls.Add(btnView);
 
+            btnView.Click += (s, e) =>
+            {
+                string fullAddress = $"{street}, {barangay}, {city}, {province} {postalCode}";
+
+                WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Properties.View_Properties viewForm =
+                    new WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Properties.View_Properties(
+                        firstName,
+                        middleName,
+                        lastName,
+                        contactNumber,
+                        email,
+                        fullAddress,
+                        propertyName,
+                        unitNumber,
+                        unitType,
+                        status,
+                        rentAmount
+                    );
+
+                viewForm.ShowDialog();
+            };
+
             Button btnEdit = new Button();
             btnEdit.Text = "Edit";
             btnEdit.Size = new Size(95, 50);
