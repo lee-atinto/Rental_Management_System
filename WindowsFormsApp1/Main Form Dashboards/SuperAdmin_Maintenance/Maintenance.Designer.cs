@@ -42,7 +42,6 @@
             this.lbCompleted = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tbSearch = new System.Windows.Forms.TextBox();
-            this.cbMethod = new System.Windows.Forms.ComboBox();
             this.cbStatus = new System.Windows.Forms.ComboBox();
             this.btnAddRequest = new System.Windows.Forms.Button();
             this.btnlogout = new System.Windows.Forms.Button();
@@ -219,24 +218,16 @@
             this.tbSearch.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbSearch.Location = new System.Drawing.Point(112, 27);
             this.tbSearch.Name = "tbSearch";
-            this.tbSearch.Size = new System.Drawing.Size(708, 33);
+            this.tbSearch.Size = new System.Drawing.Size(866, 33);
             this.tbSearch.TabIndex = 1;
             this.tbSearch.TextChanged += new System.EventHandler(this.tbSearch_TextChanged);
             // 
-            // cbMethod
-            // 
-            this.cbMethod.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbMethod.FormattingEnabled = true;
-            this.cbMethod.Location = new System.Drawing.Point(1000, 27);
-            this.cbMethod.Name = "cbMethod";
-            this.cbMethod.Size = new System.Drawing.Size(142, 34);
-            this.cbMethod.TabIndex = 3;
-            // 
             // cbStatus
             // 
+            this.cbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStatus.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbStatus.FormattingEnabled = true;
-            this.cbStatus.Location = new System.Drawing.Point(843, 27);
+            this.cbStatus.Location = new System.Drawing.Point(1000, 27);
             this.cbStatus.Name = "cbStatus";
             this.cbStatus.Size = new System.Drawing.Size(142, 34);
             this.cbStatus.TabIndex = 2;
@@ -338,7 +329,6 @@
             this.panel2.BackColor = System.Drawing.Color.White;
             this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.tbSearch);
-            this.panel2.Controls.Add(this.cbMethod);
             this.panel2.Controls.Add(this.cbStatus);
             this.panel2.Location = new System.Drawing.Point(14, 258);
             this.panel2.Name = "panel2";
@@ -605,7 +595,6 @@
         private System.Windows.Forms.PictureBox SideBarBakground;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox tbSearch;
-        private System.Windows.Forms.ComboBox cbMethod;
         private System.Windows.Forms.ComboBox cbStatus;
         private System.Windows.Forms.Button btnAddRequest;
         private System.Windows.Forms.Button btnlogout;

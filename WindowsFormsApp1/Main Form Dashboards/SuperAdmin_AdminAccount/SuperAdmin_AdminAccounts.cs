@@ -1,25 +1,26 @@
-﻿using System;
+﻿using BCrypt.Net;
+using Rental_Management_System;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Main_Form_Dashboards;
 using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
 using WindowsFormsApp1.Super_Admin_Account;
-using BCrypt.Net;
-using Rental_Management_System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 
 namespace WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount
 {
@@ -72,6 +73,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount
             this.lbName.Text = $"{username} \n ({userRole})";
 
             LoadAdmins();
+            SubscribeToCrashMonitor();
             ApplyRoleRestrictions();
 
             InitializeButtonStyle(btnDashBoard);
@@ -141,6 +143,27 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount
             editBtnCol.UseColumnTextForButtonValue = true;
             adminData.Columns.Add(editBtnCol);
 
+        }
+
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
         }
 
         private void SuperAdmin_AdminAccounts_Load(object sender, EventArgs e)

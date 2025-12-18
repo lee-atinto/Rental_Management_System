@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Main_Form_Dashboards;
 using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
@@ -64,15 +65,19 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         {
             InitializeComponent();
             SetupNoRecordsLabel();
+            SubscribeToCrashMonitor();
+
             pbProfit.SizeMode = PictureBoxSizeMode.Zoom;
             pbPayment.SizeMode = PictureBoxSizeMode.Zoom;
             pbCalendar.SizeMode = PictureBoxSizeMode.Zoom;
             pbProfit.Image = Properties.Resources.profit;
             pbPayment.Image = Properties.Resources.payment;
             pbCalendar.Image = Properties.Resources.calendar;
+
             this.UserName = username;
             this.UserRole = userRole;
             this.lbName.Text = $"{UserName} \n ({UserRole})";
+
             ApplyRoleRestrictions();
             InitializeButtonStyle(btnDashBoard);
             InitializeButtonStyle(btnAdminAcc);
@@ -83,11 +88,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             InitializeButtonStyle(btnProperties);
             InitializeButtonStyle(btnContracts);
             InitializeButtonStyle(btnMaintenance);
+
             panelHeader.BackColor = Color.White;
             lbName.BackColor = Color.FromArgb(46, 51, 73);
             PicUserProfile.Image = Properties.Resources.profile;
             PicUserProfile.BackColor = Color.FromArgb(46, 51, 73);
             SideBarBakground.BackColor = Color.FromArgb(46, 51, 73);
+
             btnDashBoard.ForeColor = Color.Black;
             btnAdminAcc.ForeColor = Color.Black;
             btnTenant.ForeColor = Color.Black;
@@ -96,11 +103,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             btnBackUp.ForeColor = Color.Black;
             btnContracts.ForeColor = Color.Black;
             btnMaintenance.ForeColor = Color.Black;
+
             PaymentTenantData.BorderStyle = BorderStyle.None;
             PaymentTenantData.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             PaymentTenantData.RowHeadersVisible = false;
             PaymentTenantData.EnableHeadersVisualStyles = false;
             PaymentTenantData.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+
             Color defaultBG = Color.FromArgb(240, 240, 240);
             PaymentTenantData.BackgroundColor = defaultBG;
             PaymentTenantData.DefaultCellStyle.BackColor = Color.White;
@@ -148,21 +157,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
 
         public void CalculateTotalPendingPayments()
         {
-            string sumPendingQuery = @"
-        SELECT ISNULL(SUM(Balance), 0) 
-        FROM (
-            SELECT 
-                U.MonthlyRent - ISNULL(Payments.TotalPaid, 0) AS Balance
-            FROM Contract C
-            INNER JOIN Unit U ON C.unitID = U.unitID
-            LEFT JOIN (
-                SELECT contractId, SUM(paymentAmount) AS TotalPaid
-                FROM Payment
-                GROUP BY contractId
-            ) Payments ON C.contractID = Payments.contractId
-            WHERE LOWER(C.contractStatus) = 'active'
-        ) AS ContractBalances
-        WHERE Balance > 0";
+            string sumPendingQuery = @" SELECT ISNULL(SUM(Balance), 0) FROM ( SELECT U.MonthlyRent - ISNULL(Payments.TotalPaid, 0) AS Balance FROM Contract C INNER JOIN Unit U ON C.unitID = U.unitID
+                                        LEFT JOIN ( SELECT contractId, SUM(paymentAmount) AS TotalPaid FROM Payment GROUP BY contractId ) Payments ON C.contractID = Payments.contractId WHERE LOWER(C.contractStatus) = 'active' ) AS ContractBalances WHERE Balance > 0";
 
             using (SqlConnection connection = new SqlConnection(DataConnection))
             using (SqlCommand command = new SqlCommand(sumPendingQuery, connection))
@@ -185,11 +181,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
 
         public void CalculateMonthlyPayments()
         {
-            string countQuery = @"
-        SELECT COUNT(paymentId) 
-        FROM Payment 
-        WHERE MONTH(paymentDate) = MONTH(GETDATE()) 
-          AND YEAR(paymentDate) = YEAR(GETDATE())";
+            string countQuery = @" SELECT COUNT(paymentId) FROM Payment WHERE MONTH(paymentDate) = MONTH(GETDATE()) AND YEAR(paymentDate) = YEAR(GETDATE())";
 
             using (SqlConnection connection = new SqlConnection(DataConnection))
             using (SqlCommand command = new SqlCommand(countQuery, connection))
@@ -232,6 +224,27 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
             }
         }
 
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+        }
+
         private void Payment_Records_Load(object sender, EventArgs e)
         {
             SetButtonActiveStyle(btnPaymentRec, activeColor);
@@ -251,33 +264,48 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords
         {
             string consolidatedQuery = @"
         SELECT 
-    C.contractID,
-    TI.firstName + ' ' + TI.lastName AS Tenant,
-    ISNULL(PR.propertyName, 'N/A') AS Property,
-    ISNULL(P.paymentAmount, 0) AS Amount,
-    R.dueDate AS DueDate,
-    P.paymentDate AS PaymentDate,
+    C.contractID, 
+    TI.firstName + ' ' + TI.lastName AS Tenant, 
+    ISNULL(PR.propertyName, 'N/A') AS Property, 
+    ISNULL(Payments.TotalPaid, 0) AS Amount, 
+    R.dueDate AS DueDate, 
+    Payments.LastPaymentDate AS PaymentDate,
     ISNULL(PT.typeName, 'N/A') AS TypeName,
     CASE
-        WHEN P.paymentId IS NOT NULL THEN 'Paid'
-        WHEN R.dueDate < CAST(GETDATE() AS DATE) THEN 'Overdue'
+        WHEN ISNULL(Payments.TotalPaid, 0) >= U.MonthlyRent 
+            THEN 'Paid'
+
+        WHEN R.dueDate IS NOT NULL 
+             AND CAST(GETDATE() AS DATE) > R.dueDate
+             AND ISNULL(Payments.TotalPaid, 0) < U.MonthlyRent
+            THEN 'Overdue'
+
         ELSE 'Pending'
     END AS Status,
-    P.RowVersion
+    Payments.RowVersion
 FROM Contract C
 INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId
 LEFT JOIN Property PR ON C.propertyID = PR.propertyID
 LEFT JOIN Unit U ON C.unitID = U.unitID
 LEFT JOIN Rent R ON C.contractID = R.contractID
-
--- ✅ CRITICAL FIX
-LEFT JOIN Payment P
-    ON C.contractID = P.contractId
-    AND P.paymentDate <= R.dueDate
-
-LEFT JOIN PaymentType PT ON P.paymentTypeID = PT.paymentTypeID
+LEFT JOIN (
+    SELECT 
+        contractId,
+        SUM(paymentAmount) AS TotalPaid,
+        MAX(paymentDate) AS LastPaymentDate,
+        MAX(RowVersion) AS RowVersion
+    FROM Payment
+    GROUP BY contractId
+) Payments ON C.contractID = Payments.contractId
+LEFT JOIN PaymentType PT ON PT.paymentTypeID = (
+    SELECT TOP 1 paymentTypeID
+    FROM Payment 
+    WHERE contractId = C.contractID
+    ORDER BY paymentDate DESC
+)
 WHERE LOWER(C.contractStatus) = 'active'
-ORDER BY R.dueDate DESC;";
+ORDER BY R.dueDate DESC;
+";
 
             using (SqlConnection connection = new SqlConnection(DataConnection))
             using (SqlCommand command = new SqlCommand(consolidatedQuery, connection))
@@ -309,25 +337,9 @@ ORDER BY R.dueDate DESC;";
 
         private DataTable GetStatementOfAccountData(int contractId)
         {
-            string query = @"
-            SELECT 
-                TI.firstName + ' ' + TI.lastName AS TenantName, 
-                PR.propertyName AS PropertyName,
-                U.unitNumber AS UnitNumber,
-                U.MonthlyRent,
-                R.dueDate AS DueDate,
-                P.paymentDate AS DatePaid,
-                P.paymentAmount AS AmountPaid,
-                PT.typeName AS PaymentMethod
-            FROM Contract C
-            INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId
-            INNER JOIN Property PR ON C.propertyID = PR.propertyID
-            INNER JOIN Unit U ON C.unitID = U.unitID 
-            LEFT JOIN Rent R ON C.contractID = R.contractID
-            LEFT JOIN Payment P ON C.contractID = P.contractId
-            LEFT JOIN PaymentType PT ON P.paymentTypeID = PT.paymentTypeID
-            WHERE C.contractID = @ContractId
-            ORDER BY P.paymentDate ASC, R.dueDate ASC";
+            string query = @" SELECT TI.firstName + ' ' + TI.lastName AS TenantName, PR.propertyName AS PropertyName, U.unitNumber AS UnitNumber, U.MonthlyRent, R.dueDate AS DueDate, P.paymentDate AS DatePaid, P.paymentAmount AS AmountPaid, PT.typeName AS PaymentMethod
+                              FROM Contract C INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId INNER JOIN Property PR ON C.propertyID = PR.propertyID INNER JOIN Unit U ON C.unitID = U.unitID 
+                              LEFT JOIN Rent R ON C.contractID = R.contractID LEFT JOIN Payment P ON C.contractID = P.contractId LEFT JOIN PaymentType PT ON P.paymentTypeID = PT.paymentTypeID WHERE C.contractID = @ContractId ORDER BY P.paymentDate ASC, R.dueDate ASC";
             DataTable dtSOA = new DataTable();
             using (SqlConnection connection = new SqlConnection(DataConnection))
             using (SqlCommand command = new SqlCommand(query, connection))
@@ -405,9 +417,16 @@ ORDER BY R.dueDate DESC;";
 
         private void FormatDataGridColumns()
         {
-            foreach (DataGridViewColumn column in PaymentTenantData.Columns)
+            if (PaymentTenantData.Columns.Contains("Status"))
             {
-                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+                PaymentTenantData.Columns["Status"].Width = 100;
+                foreach (DataGridViewRow row in PaymentTenantData.Rows)
+                {
+                    string status = row.Cells["Status"].Value.ToString();
+                    if (status == "Paid") row.Cells["Status"].Style.ForeColor = Color.Green;
+                    else if (status == "Overdue") row.Cells["Status"].Style.ForeColor = Color.Red;
+                    else if (status == "Pending") row.Cells["Status"].Style.ForeColor = Color.Orange;
+                }
             }
 
             if (PaymentTenantData.Columns.Contains("Tenant")) PaymentTenantData.Columns["Tenant"].Width = 150;
@@ -430,11 +449,6 @@ ORDER BY R.dueDate DESC;";
             if (PaymentTenantData.Columns.Contains("RowVersion")) PaymentTenantData.Columns["RowVersion"].Visible = false;
         }
 
-        private void ShowPaymentHistory(int contractId, string tenantName)
-        {
-            ViewPaymentHistory historyForm = new ViewPaymentHistory(DataConnection, contractId, tenantName);
-            historyForm.ShowDialog();
-        }
 
         private void ApplyFilters()
         {
@@ -530,14 +544,6 @@ ORDER BY R.dueDate DESC;";
             switch (columnName)
             {
                 case "Update":
-                    using (AddPayment editForm = new AddPayment(contractId))
-                    {
-                        if (editForm.ShowDialog() == DialogResult.OK)
-                        {
-                            decimal updatedAmount = editForm.NewAmount;
-                            await ExecuteUpdateTransaction(contractId, updatedAmount, rowVersion);
-                        }
-                    }
                     break;
 
                 case "View":
@@ -548,83 +554,70 @@ ORDER BY R.dueDate DESC;";
                     DataTable soa = GetStatementOfAccountData(contractId);
                     if (soa.Rows.Count > 0) ExportDataToExcel(soa, row.Cells["Tenant"].Value.ToString(), row.Cells["Property"].Value.ToString());
                     break;
+
+                case "Delete":
+                    if (UserRole == "SuperAdmin")
+                    {
+                        string tenantName = row.Cells["Tenant"].Value.ToString();
+                        DialogResult dialog = MessageBox.Show($"Sigurado ka bang gusto mong burahin ang payment record ni {tenantName}?",
+                            "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                        if (dialog == DialogResult.Yes)
+                        {
+                            await ExecuteDeletePayment(contractId);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Access Denied: SuperAdmin lang ang pwedeng mag-delete.");
+                    }
+                    break;
             }
         }
 
-        private async Task ExecuteUpdateTransaction(int contractId, decimal amount, byte[] originalVersion)
+        private async Task ExecuteDeletePayment(int contractId)
         {
-
             using (SqlConnection conn = new SqlConnection(DataConnection))
             {
-                await conn.OpenAsync();
-                SqlTransaction transaction = conn.BeginTransaction();
-
                 try
                 {
-                    await Task.Delay(2000);
+                    await conn.OpenAsync();
 
-                    string updateSql = @"UPDATE Payment SET paymentAmount = @amount 
-                                        WHERE contractId = @cid AND RowVersion = @rv";
+                    string deleteSql = "DELETE FROM Payment WHERE contractId = @cid";
 
-                    using (SqlCommand cmd = new SqlCommand(updateSql, conn, transaction))
+                    using (SqlCommand cmd = new SqlCommand(deleteSql, conn))
                     {
-                        cmd.Parameters.AddWithValue("@amount", amount);
                         cmd.Parameters.AddWithValue("@cid", contractId);
-                        cmd.Parameters.AddWithValue("@rv", originalVersion);
 
                         int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
                         if (rowsAffected > 0)
                         {
-                            transaction.Commit();
-                            MessageBox.Show("Update successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("Payment record successfully deleted.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
                         {
-                            transaction.Rollback();
-                            MessageBox.Show("Conflict Detected: May nag-edit na ng record na ito. I-refresh ang listahan.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBox.Show("No record was deleted. Possible na nabura na ito ng iba.", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Number == 547)
+                    {
+                        MessageBox.Show("Hindi mabura ang record dahil may iba pang tables na nakadepende rito.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show("SQL Error: " + ex.Message);
                     }
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
-                    MessageBox.Show("Transaction Failed: " + ex.Message);
+                    MessageBox.Show("Error: " + ex.Message);
                 }
             }
             RefreshDashboardData();
-        }
-
-        private void DeletePaymentRecord(int contractId)
-        {
-            string deleteQuery = "DELETE FROM Payment WHERE contractId = @contractId";
-
-            using (SqlConnection connection = new SqlConnection(DataConnection))
-            {
-                using (SqlCommand command = new SqlCommand(deleteQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@contractId", contractId);
-
-                    try
-                    {
-                        connection.Open();
-                        int rowsAffected = command.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            MessageBox.Show("Record successfully deleted from the database.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show("No record was found to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Database Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
         }
 
         private void RefreshDashboardData()

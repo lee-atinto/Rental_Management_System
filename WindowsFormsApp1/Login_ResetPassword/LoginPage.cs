@@ -7,14 +7,13 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.Super_Admin_Account;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace WindowsFormsApp1.Login_ResetPassword
 {
-    public partial class LoginPage : Form
+    public partial class LoginPage : BaseForm
     {
         private readonly string DataConnection = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
@@ -28,10 +27,6 @@ namespace WindowsFormsApp1.Login_ResetPassword
 
         private List<Button> navButtons;
         private string selectedRole = "";
-
-        private const int MAX_FAILED_ATTEMPTS = 5;
-        private readonly TimeSpan LOCKOUT_DURATION = TimeSpan.FromMinutes(10);
-        private readonly TimeSpan REMEMBER_ME_DURATION = TimeSpan.FromDays(30);
 
         private readonly string appFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RentalManagementSystem");
         private readonly string tokenFilePath;
@@ -58,7 +53,7 @@ namespace WindowsFormsApp1.Login_ResetPassword
             };
             this.Controls.Add(chkRememberMe);
 
-            this.Load += async (s, e) => { await LoginPage_LoadAsync(); };
+            this.Load += LoginPage_Load;
         }
 
         private void ApplyDefaultButtonStyle(Button button)
@@ -125,6 +120,8 @@ namespace WindowsFormsApp1.Login_ResetPassword
 
         private void LoginPage_Load(object sender, EventArgs e)
         {
+            SubscribeToCrashMonitor();
+
             TbPassword.UseSystemPasswordChar = true;
 
             const int ICON_SIZE = 32;
@@ -139,6 +136,35 @@ namespace WindowsFormsApp1.Login_ResetPassword
 
             btnAdmin.ImageAlign = ContentAlignment.TopCenter;
             btnAdmin.TextAlign = ContentAlignment.BottomCenter;
+
+            // Load last user
+            if (File.Exists(lastUserFilePath))
+            {
+                string lastUser = File.ReadAllText(lastUserFilePath).Trim();
+                if (!string.IsNullOrEmpty(lastUser))
+                    TbUsername.Text = lastUser;
+            }
+        }
+
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
         }
 
         private void btnSuperAdmin_Click(object sender, EventArgs e)
@@ -158,189 +184,97 @@ namespace WindowsFormsApp1.Login_ResetPassword
             TbPassword.UseSystemPasswordChar = !ShowPassword.Checked;
         }
 
-        private async void BtnLogin_Click(object sender, EventArgs e)
+        private void BtnLogin_Click(object sender, EventArgs e)
         {
             BtnLogin.Enabled = false;
             var oldText = BtnLogin.Text;
             Cursor.Current = Cursors.WaitCursor;
             BtnLogin.Text = "Signing in...";
 
-            try
+            // Run login in background to avoid freezing UI
+            System.Threading.ThreadPool.QueueUserWorkItem(_ =>
             {
-                await PerformLoginAsync();
-            }
-            finally
-            {
-                BtnLogin.Enabled = true;
-                BtnLogin.Text = oldText;
-                Cursor.Current = Cursors.Default;
-            }
+                bool success = PerformLogin();
+                this.Invoke((MethodInvoker)(() =>
+                {
+                    BtnLogin.Enabled = true;
+                    BtnLogin.Text = oldText;
+                    Cursor.Current = Cursors.Default;
+
+                    if (!success)
+                        MessageBox.Show("Invalid username, password, or role.");
+                }));
+            });
         }
 
-        private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Reset_Password reset = new Reset_Password();
-            reset.Show();
-            this.Hide();
-        }
-
-        // -------------------- Async Helpers -------------------- //
-
-        private async Task LoginPage_LoadAsync()
+        private bool PerformLogin()
         {
             try
             {
-                if (File.Exists(lastUserFilePath))
-                {
-                    string lastUser = File.ReadAllText(lastUserFilePath).Trim();
-                    if (!string.IsNullOrEmpty(lastUser))
-                        TbUsername.Text = lastUser;
-                }
-            }
-            catch { }
+                string username = TbUsername.Text.Trim();
+                string password = TbPassword.Text.Trim();
 
-            try
-            {
-                if (File.Exists(tokenFilePath))
+                if (string.IsNullOrEmpty(selectedRole) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                    return false;
+
+                using (SqlConnection conn = new SqlConnection(DataConnection))
                 {
-                    var parts = File.ReadAllText(tokenFilePath).Split('|');
-                    if (parts.Length == 3 && DateTime.TryParse(parts[1], out DateTime expiry) && expiry > DateTime.UtcNow)
+                    conn.Open();
+
+                    string query = @"SELECT username, password_hash, role 
+                                     FROM Account 
+                                     WHERE username=@u AND role=@role";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        string token = parts[0];
-                        string user = parts[2];
-                        bool success = await ValidateTokenAsync(user, token);
-                        if (success) return;
-                        else File.Delete(tokenFilePath);
-                    }
-                }
-            }
-            catch { }
-        }
+                        cmd.Parameters.AddWithValue("@u", username);
+                        cmd.Parameters.AddWithValue("@role", selectedRole);
 
-        private async Task<bool> ValidateTokenAsync(string username, string token)
-        {
-            using (SqlConnection conn = new SqlConnection(DataConnection))
-            {
-                string query = "SELECT login_token, token_expiration, role FROM Account WHERE username=@u";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@u", username);
-
-                try
-                {
-                    await conn.OpenAsync();
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            string dbToken = reader["login_token"].ToString();
-                            DateTime dbExp = Convert.ToDateTime(reader["token_expiration"]);
+                            if (!reader.Read())
+                                return false;
+
+                            string dbUser = reader["username"].ToString();
+                            string dbHash = reader["password_hash"].ToString();
                             string role = reader["role"].ToString();
+                            reader.Close();
 
-                            if (dbToken == token && dbExp > DateTime.UtcNow)
+                            if (!BCrypt.Net.BCrypt.Verify(password, dbHash))
+                                return false;
+
+                            // Successful login
+                            ResetFailedAttempts(dbUser);
+                            SaveLastUser(dbUser);
+                            if (chkRememberMe.Checked) SaveRememberMe(dbUser);
+                            MarkUserOnline(dbUser);
+
+                            this.Invoke((MethodInvoker)(() =>
                             {
-                                await MarkUserOnlineAsync(username);
+                                new DashBoard(dbUser, role).Show();
+                                this.Hide();
+                            }));
 
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    new DashBoard(username, role).Show();
-                                    this.Hide();
-                                });
-
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }
-                catch { }
             }
-
-            return false;
-        }
-
-        private async Task PerformLoginAsync()
-        {
-            string username = TbUsername.Text.Trim();
-            string password = TbPassword.Text.Trim();
-
-            if (string.IsNullOrEmpty(selectedRole) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-                return;
-
-            using (SqlConnection conn = new SqlConnection(DataConnection))
+            catch
             {
-                await conn.OpenAsync();
-
-                string query = @"SELECT username, password_hash, role, failed_attempts, lock_until 
-                                 FROM Account 
-                                 WHERE username=@u AND role=@role";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@u", username);
-                    cmd.Parameters.AddWithValue("@role", selectedRole);
-
-                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        if (!await reader.ReadAsync())
-                        {
-                            MessageBox.Show("Invalid username or role.");
-                            return;
-                        }
-
-                        string dbUser = reader["username"].ToString();
-                        string dbHash = reader["password_hash"].ToString();
-                        string role = reader["role"].ToString();
-                        DateTime? lockUntil = reader["lock_until"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["lock_until"]);
-                        reader.Close();
-
-                        if (!BCrypt.Net.BCrypt.Verify(password, dbHash))
-                        {
-                            MessageBox.Show("Incorrect password.");
-                            return;
-                        }
-
-                        await ResetFailedAttemptsAsync(dbUser);
-                        SaveLastUser(dbUser);
-                        if (chkRememberMe.Checked) await SaveRememberMeAsync(dbUser);
-                        await MarkUserOnlineAsync(dbUser);
-
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            new DashBoard(dbUser, role).Show();
-                            this.Hide();
-                        });
-                    }
-                }
+                return false;
             }
         }
 
-
-        private async void button1_Click(object sender, EventArgs e)
-        {
-            string demoUsername = "DEMO_SUPER";
-            string demoRole = "SuperAdmin";
-            DashBoard dashBoard = new DashBoard(demoUsername, demoRole);
-            dashBoard.Show();
-            this.Hide();
-        }
-
-        private async void button2_Click(object sender, EventArgs e)
-        {
-            string demoUsername = "DEMO_ADMIN";
-            string demoRole = "Admin";
-            DashBoard dashBoard = new DashBoard(demoUsername, demoRole);
-            dashBoard.Show();
-            this.Hide();
-        }
-
-        private async Task ResetFailedAttemptsAsync(string username)
+        private void ResetFailedAttempts(string username)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
             {
+                conn.Open();
                 string query = "UPDATE Account SET failed_attempts=0, lock_until=NULL WHERE username=@u";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@u", username);
-                await conn.OpenAsync();
-                await cmd.ExecuteNonQueryAsync();
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -354,40 +288,65 @@ namespace WindowsFormsApp1.Login_ResetPassword
             catch { }
         }
 
-        private async Task SaveRememberMeAsync(string username)
+        private void SaveRememberMe(string username)
         {
-            string token = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
-            DateTime expiry = DateTime.UtcNow.Add(REMEMBER_ME_DURATION);
-
-            using (SqlConnection conn = new SqlConnection(DataConnection))
-            {
-                string query = "UPDATE Account SET login_token=@t, token_expiration=@e WHERE username=@u";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@t", token);
-                cmd.Parameters.AddWithValue("@e", expiry);
-                cmd.Parameters.AddWithValue("@u", username);
-                await conn.OpenAsync();
-                await cmd.ExecuteNonQueryAsync();
-            }
-
             try
             {
+                string token = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+                DateTime expiry = DateTime.UtcNow.AddDays(30);
+
+                using (SqlConnection conn = new SqlConnection(DataConnection))
+                {
+                    conn.Open();
+                    string query = "UPDATE Account SET login_token=@t, token_expiration=@e WHERE username=@u";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@t", token);
+                    cmd.Parameters.AddWithValue("@e", expiry);
+                    cmd.Parameters.AddWithValue("@u", username);
+                    cmd.ExecuteNonQuery();
+                }
+
                 Directory.CreateDirectory(appFolder);
                 File.WriteAllText(tokenFilePath, $"{token}|{expiry:o}|{username}");
             }
             catch { }
         }
 
-        private async Task MarkUserOnlineAsync(string username)
+        private void MarkUserOnline(string username)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
             {
+                conn.Open();
                 string query = "UPDATE Account SET active=1, last_login=SYSDATETIME() WHERE username=@u";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@u", username);
-                await conn.OpenAsync();
-                await cmd.ExecuteNonQueryAsync();
+                cmd.ExecuteNonQuery();
             }
+        }
+
+        private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Reset_Password reset = new Reset_Password();
+            reset.Show();
+            this.Hide();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string demoUsername = "DEMO_SUPER";
+            string demoRole = "SuperAdmin";
+            DashBoard dashBoard = new DashBoard(demoUsername, demoRole);
+            dashBoard.Show();
+            this.Hide();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string demoUsername = "DEMO_ADMIN";
+            string demoRole = "Admin";
+            DashBoard dashBoard = new DashBoard(demoUsername, demoRole);
+            dashBoard.Show();
+            this.Hide();
         }
     }
 }

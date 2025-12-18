@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -9,27 +9,26 @@ using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Main_Form_Dashboards;
 using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
 
 namespace WindowsFormsApp1.Super_Admin_Account
 {
-    public partial class DashBoard : Form
+    public partial class DashBoard : BaseForm
     {
-        private readonly string DataConnection = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+        private readonly string DataConnection = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
         private string UserName;
         private string UserRole;
 
-        // -------------------- Button Style -------------------- //
         private readonly Color activeColor = Color.FromArgb(56, 55, 83);
         private readonly Color defaultBackColor = Color.FromArgb(240, 240, 240);
 
         public DashBoard(string username, string userRole)
         {
             InitializeComponent();
-            LoadMaintenanceData();
 
             this.UserName = username;
             this.UserRole = userRole;
@@ -46,11 +45,13 @@ namespace WindowsFormsApp1.Super_Admin_Account
             InitializeButtonStyle(btnMaintenance);
 
             ApplyRoleRestrictions();
-            GetRecentMaintenance();
+
+            LoadMaintenanceData();
             LoadRecentPayments();
 
             DataRecentMaintenanceRequests.CellFormatting += new DataGridViewCellFormattingEventHandler(dgv_CellFormatting);
 
+            // UI styling
             panelHeader.BackColor = Color.White;
             lbName.BackColor = Color.FromArgb(46, 51, 73);
             PicUserProfile.Image = Properties.Resources.profile;
@@ -73,7 +74,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             pictureBox3.Image = Properties.Resources.revenue;
             pictureBox4.Image = Properties.Resources.application;
 
-            // -------------------- Set Padding -------------------- //
             int padding = 30;
             btnDashBoard.Padding = new Padding(padding, 0, 0, 0);
             btnAdminAcc.Padding = new Padding(padding, 0, 0, 0);
@@ -85,7 +85,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             btnContracts.Padding = new Padding(padding, 0, 0, 0);
             btnMaintenance.Padding = new Padding(padding, 0, 0, 0);
 
-            // -------------------- Set Color Unactive Button -------------------- //
             btnAdminAcc.ForeColor = Color.Black;
             btnTenant.ForeColor = Color.Black;
             btnProperties.ForeColor = Color.Black;
@@ -95,36 +94,99 @@ namespace WindowsFormsApp1.Super_Admin_Account
             btnContracts.ForeColor = Color.Black;
             btnMaintenance.ForeColor = Color.Black;
 
-            // -------------------- Set Borderline -------------------- //
             panel1.BorderStyle = BorderStyle.FixedSingle;
             panel2.BorderStyle = BorderStyle.FixedSingle;
             panel3.BorderStyle = BorderStyle.FixedSingle;
             panel4.BorderStyle = BorderStyle.FixedSingle;
 
-            // -------------------- Data Recent Maintenance Request Borderline -------------------- //
-            DataRecentMaintenanceRequests.ReadOnly = true;
-            DataRecentMaintenanceRequests.Dock = DockStyle.Fill;
-            DataRecentMaintenanceRequests.RowHeadersVisible = false;
-            DataRecentMaintenanceRequests.ColumnHeadersVisible = false;
-            DataRecentMaintenanceRequests.BorderStyle = BorderStyle.None;
-            DataRecentMaintenanceRequests.CellBorderStyle = DataGridViewCellBorderStyle.None;
-            DataRecentMaintenanceRequests.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            DataRecentMaintenanceRequests.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            DataRecentMaintenanceRequests.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            SubscribeToCrashMonitor();
+            SetupDataGridView(DataRecentMaintenanceRequests);
+            SetupDataGridView(DataPaymentRecent);
+        }
 
-            DataRecentMaintenanceRequests.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+        private void ApplyRoleRestrictions()
+        {
+            if (UserRole == "Admin")
+            {
+                btnBackUp.Visible = false;
+                btnViewReport.Visible = false;
+                panelHeader.BackColor = Color.LightBlue;
+            }
+            else if (UserRole == "SuperAdmin")
+            {
+                btnAdminAcc.Visible = true;
+                btnBackUp.Visible = true;
+                btnViewReport.Visible = true;
+                panelHeader.BackColor = Color.White;
+            }
+        }
 
-            DataPaymentRecent.ReadOnly = true;
-            DataPaymentRecent.Dock = DockStyle.Fill;
-            DataPaymentRecent.RowHeadersVisible = false;
-            DataPaymentRecent.ColumnHeadersVisible = false;
-            DataPaymentRecent.BorderStyle = BorderStyle.None;
-            DataPaymentRecent.CellBorderStyle = DataGridViewCellBorderStyle.None;
-            DataPaymentRecent.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            DataPaymentRecent.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            DataPaymentRecent.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        private void InitializeButtonStyle(Button button)
+        {
+            if (button != null)
+            {
+                button.TabStop = false;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 1;
+                button.FlatAppearance.BorderColor = Color.FromArgb(46, 51, 73);
+                button.BackColor = defaultBackColor;
+                button.FlatAppearance.MouseDownBackColor = defaultBackColor;
+                button.FlatAppearance.MouseOverBackColor = defaultBackColor;
+                button.TextAlign = ContentAlignment.MiddleLeft;
+                button.ImageAlign = ContentAlignment.MiddleLeft;
+            }
+        }
 
-            DataPaymentRecent.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+        private void SetButtonActiveStyle(Button button, Color backColor)
+        {
+            if (button != null)
+            {
+                button.BackColor = backColor;
+                button.FlatAppearance.MouseDownBackColor = backColor;
+                button.FlatAppearance.MouseOverBackColor = backColor;
+            }
+        }
+
+        private void SetupDataGridView(DataGridView dgv)
+        {
+            dgv.ReadOnly = true;
+            dgv.Dock = DockStyle.Fill;
+            dgv.RowHeadersVisible = false;
+            dgv.ColumnHeadersVisible = false;
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.None;
+            dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+        }
+
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+        }
+
+        private void DashBoard_Load(object sender, EventArgs e)
+        {
+            SetButtonActiveStyle(btnDashBoard, activeColor);
+            SubscribeToCrashMonitor();
+            LoadDashboardData();
         }
 
         public void LoadMaintenanceData()
@@ -171,47 +233,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
         }
 
-        private DataTable GetRecentMaintenance()
-        {
-            DataTable dt = new DataTable();
-            string query = @"
-        SELECT TOP 5
-            MR.maintenanceReqID, 
-            MR.description, 
-            MR.requestDate, 
-            MR.Status AS MaintenanceStatus,
-            U.UnitNumber,
-            PI.firstName, 
-            PI.middleName, 
-            PI.lastName,
-            MR.propertyID, 
-            RT.typeName
-        FROM MaintenanceRequest AS MR 
-        LEFT JOIN Tenant AS T ON MR.TenantID = T.TenantID
-        LEFT JOIN PersonalInformation AS PI ON T.TenantID = PI.TenantID 
-        LEFT JOIN Contract AS C ON T.TenantID = C.TenantID 
-        LEFT JOIN Unit AS U ON C.UnitID = U.UnitID
-        LEFT JOIN RequestType AS RT ON MR.requestTypeID = RT.requestTypeID
-        WHERE MR.requestDate >= DATEADD(day, -7, CAST(GETDATE() AS DATE))
-        ORDER BY MR.requestDate DESC;";
-
-            try
-            {
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                {
-                    con.Open();
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    da.Fill(dt);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error fetching recent maintenance: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            return dt;
-        }
-
         public void LoadRecentPayments()
         {
             try
@@ -219,20 +240,20 @@ namespace WindowsFormsApp1.Super_Admin_Account
                 using (SqlConnection conn = new SqlConnection(DataConnection))
                 {
                     string query = @"
-                SELECT 
-                    P.paymentId,
-                    ISNULL(TI.firstName,'') + ' ' + ISNULL(TI.lastName,'') AS TenantName,
-                    ISNULL(PR.propertyName,'N/A') AS Property,
-                    P.paymentAmount,
-                    P.paymentDate,
-                    P.paymentStatus
-                FROM Payment P
-                INNER JOIN Contract C ON P.contractId = C.contractID
-                INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId
-                LEFT JOIN Property PR ON C.propertyID = PR.propertyID
-                WHERE DATEPART(week, P.paymentDate) = DATEPART(week, GETDATE())
-                  AND YEAR(P.paymentDate) = YEAR(GETDATE())
-                ORDER BY P.paymentDate DESC";
+                        SELECT 
+                            P.paymentId,
+                            ISNULL(TI.firstName,'') + ' ' + ISNULL(TI.lastName,'') AS TenantName,
+                            ISNULL(PR.propertyName,'N/A') AS Property,
+                            P.paymentAmount,
+                            P.paymentDate,
+                            P.paymentStatus
+                        FROM Payment P
+                        INNER JOIN Contract C ON P.contractId = C.contractID
+                        INNER JOIN PersonalInformation TI ON C.tenantId = TI.tenantId
+                        LEFT JOIN Property PR ON C.propertyID = PR.propertyID
+                        WHERE DATEPART(week, P.paymentDate) = DATEPART(week, GETDATE())
+                          AND YEAR(P.paymentDate) = YEAR(GETDATE())
+                        ORDER BY P.paymentDate DESC";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dt = new DataTable();
@@ -240,31 +261,31 @@ namespace WindowsFormsApp1.Super_Admin_Account
                     adapter.Fill(dt);
 
                     if (dt.Rows.Count == 0)
-                    { 
+                    {
                         DataTable emptyDt = new DataTable();
                         emptyDt.Columns.Add("Message");
                         emptyDt.Rows.Add("There is no recent payment.");
-
                         DataPaymentRecent.DataSource = emptyDt;
-
                         DataPaymentRecent.Columns["Message"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                         DataPaymentRecent.CellBorderStyle = DataGridViewCellBorderStyle.None;
                     }
-
                     else
                     {
                         DataPaymentRecent.DataSource = dt;
                         DataPaymentRecent.CellBorderStyle = DataGridViewCellBorderStyle.Single;
 
+                        CultureInfo phCulture = new CultureInfo("en-PH");
+
+                        if (DataPaymentRecent.Columns.Contains("paymentAmount"))
+                        {
+                            DataPaymentRecent.Columns["paymentAmount"].DefaultCellStyle.Format = "C0";
+                            DataPaymentRecent.Columns["paymentAmount"].DefaultCellStyle.FormatProvider = phCulture;
+                            DataPaymentRecent.Columns["paymentAmount"].Width = 100;
+                        }
                         if (DataPaymentRecent.Columns.Contains("TenantName"))
                             DataPaymentRecent.Columns["TenantName"].Width = 150;
                         if (DataPaymentRecent.Columns.Contains("Property"))
                             DataPaymentRecent.Columns["Property"].Width = 150;
-                        if (DataPaymentRecent.Columns.Contains("paymentAmount"))
-                        {
-                            DataPaymentRecent.Columns["paymentAmount"].DefaultCellStyle.Format = "C0";
-                            DataPaymentRecent.Columns["paymentAmount"].Width = 100;
-                        }
                         if (DataPaymentRecent.Columns.Contains("paymentDate"))
                             DataPaymentRecent.Columns["paymentDate"].Width = 120;
                         if (DataPaymentRecent.Columns.Contains("paymentStatus"))
@@ -283,111 +304,6 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
         }
 
-        private void dgv_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (DataRecentMaintenanceRequests == null || DataRecentMaintenanceRequests.Rows.Count == 0 || e.RowIndex < 0)
-            {
-                return;
-            }
-
-            if (!DataRecentMaintenanceRequests.Columns.Contains("Status") || !DataRecentMaintenanceRequests.Columns.Contains("Info"))
-            {
-                return;
-            }
-
-            int statusColumnIndex = DataRecentMaintenanceRequests.Columns["Status"].Index;
-            int infoColumnIndex = DataRecentMaintenanceRequests.Columns["Info"].Index;
-
-            if (e.ColumnIndex != statusColumnIndex && e.ColumnIndex != infoColumnIndex)
-            {
-                return;
-            }
-
-            if (e.ColumnIndex == statusColumnIndex)
-            {
-                object cellValue = DataRecentMaintenanceRequests.Rows[e.RowIndex].Cells[statusColumnIndex].Value;
-                Color statusColor = Color.White;
-
-                if (cellValue != null && cellValue != DBNull.Value)
-                {
-                    string status = cellValue.ToString().ToLower().Replace("-", "");
-
-                    switch (status)
-                    {
-                        case "pending":
-                            break;
-                        case "inprogress":
-                            break;
-                        case "completed":
-                            break;
-                    }
-                }
-
-                e.CellStyle.BackColor = statusColor;
-                e.CellStyle.SelectionBackColor = statusColor;
-            }
-
-            else if (e.ColumnIndex == infoColumnIndex)
-            {
-                e.CellStyle.BackColor = Color.White;
-                e.CellStyle.SelectionBackColor = Color.White;
-            }
-
-            e.CellStyle.ForeColor = Color.Black;
-            e.CellStyle.SelectionForeColor = Color.Black;
-        }
-
-        private void ApplyRoleRestrictions()
-        {
-            if (UserRole == "Admin")
-            {
-                btnBackUp.Visible = false;
-                btnViewReport.Visible = false;
-
-                panelHeader.BackColor = Color.LightBlue;
-            }
-            else if (UserRole == "SuperAdmin")
-            {
-                btnAdminAcc.Visible = true;
-                btnBackUp.Visible = true;
-                btnViewReport.Visible = true;
-
-                panelHeader.BackColor = Color.White;
-            }
-        }
-
-        private void InitializeButtonStyle(Button button)
-        {
-            if (button != null)
-            {
-                button.TabStop = false;
-                button.FlatStyle = FlatStyle.Flat;
-                button.FlatAppearance.BorderSize = 1;
-                button.FlatAppearance.BorderColor = Color.FromArgb(46, 51, 73);
-                button.BackColor = defaultBackColor;
-                button.FlatAppearance.MouseDownBackColor = defaultBackColor;
-                button.FlatAppearance.MouseOverBackColor = defaultBackColor;
-                button.TextAlign = ContentAlignment.MiddleLeft;
-                button.ImageAlign = ContentAlignment.MiddleLeft;
-            }
-        }
-
-        private void SetButtonActiveStyle(Button button, Color backColor)
-        {
-            if (button != null)
-            {
-                button.BackColor = backColor;
-                button.FlatAppearance.MouseDownBackColor = backColor;
-                button.FlatAppearance.MouseOverBackColor = backColor;
-            }
-        }
-
-        private void DashBoard_Load(object sender, EventArgs e)
-        {
-            SetButtonActiveStyle(btnDashBoard, activeColor);
-            LoadDashboardData();
-        }
-
         private void LoadDashboardData()
         {
             CultureInfo philippinesCulture = new CultureInfo("en-PH");
@@ -398,56 +314,68 @@ namespace WindowsFormsApp1.Super_Admin_Account
                 {
                     connection.Open();
 
-                    int totalProperties = GetScalarResult(connection, "SELECT COUNT(propertyID) FROM Property");
+                    int totalProperties = Convert.ToInt32(new SqlCommand("SELECT COUNT(propertyID) FROM Property", connection).ExecuteScalar());
+                    int activeTenants = Convert.ToInt32(new SqlCommand("SELECT COUNT(tenantID) FROM Tenant WHERE tenantStatus = 'Active'", connection).ExecuteScalar());
+                    decimal totalRevenue = Convert.ToDecimal(new SqlCommand("SELECT ISNULL(SUM(CASE WHEN paymentStatus = 'Paid' THEN paymentAmount ELSE 0 END),0) FROM Payment", connection).ExecuteScalar());
+                    int allRequests = Convert.ToInt32(new SqlCommand("SELECT COUNT(maintenanceReqID) FROM MaintenanceRequest", connection).ExecuteScalar());
+
                     label2.Text = totalProperties.ToString();
-
-                    int activeTenants = GetScalarResult(connection, "SELECT COUNT(tenantID) FROM Tenant WHERE tenantStatus = 'Active'");
                     label3.Text = activeTenants.ToString();
-
-                    decimal totalRevenue = GetScalarDecimalResult(connection, "SELECT ISNULL(SUM(CASE WHEN paymentStatus = 'Paid' THEN paymentAmount ELSE 0 END), 0) FROM Payment");
-                    label4.Text = totalRevenue.ToString("C0", philippinesCulture);
-
-                    int allRequests = GetScalarResult(connection, "SELECT COUNT(maintenanceReqID) FROM MaintenanceRequest");
+                    label4.Text = UserRole == "Admin" ? "Confidential" : totalRevenue.ToString("C0", philippinesCulture);
                     label5.Text = allRequests.ToString();
-
-                    if (UserRole == "Admin")
-                        label4.Text = "Confidential";
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("An error occurred while loading dashboard data: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Error loading dashboard data: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
-        private int GetScalarResult(SqlConnection connection, string query)
+        // --- Remaining code for buttons and formatting remains unchanged ---
+        private void dgv_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            using (SqlCommand command = new SqlCommand(query, connection))
+            if (DataRecentMaintenanceRequests == null || DataRecentMaintenanceRequests.Rows.Count == 0 || e.RowIndex < 0)
+                return;
+
+            if (!DataRecentMaintenanceRequests.Columns.Contains("Status") || !DataRecentMaintenanceRequests.Columns.Contains("Info"))
+                return;
+
+            int statusColumnIndex = DataRecentMaintenanceRequests.Columns["Status"].Index;
+            int infoColumnIndex = DataRecentMaintenanceRequests.Columns["Info"].Index;
+
+            if (e.ColumnIndex != statusColumnIndex && e.ColumnIndex != infoColumnIndex)
+                return;
+
+            if (e.ColumnIndex == statusColumnIndex)
             {
-                object result = command.ExecuteScalar();
-                if (result != null && result != DBNull.Value)
+                object cellValue = DataRecentMaintenanceRequests.Rows[e.RowIndex].Cells[statusColumnIndex].Value;
+                Color statusColor = Color.White;
+
+                if (cellValue != null && cellValue != DBNull.Value)
                 {
-                    if (int.TryParse(result.ToString(), out int intValue)) return intValue;
-                    if (decimal.TryParse(result.ToString(), out decimal decValue)) return (int)decValue;
+                    string status = cellValue.ToString().ToLower().Replace("-", "");
+                    switch (status)
+                    {
+                        case "pending": break;
+                        case "inprogress": break;
+                        case "completed": break;
+                    }
                 }
-                return 0;
+
+                e.CellStyle.BackColor = statusColor;
+                e.CellStyle.SelectionBackColor = statusColor;
             }
+            else if (e.ColumnIndex == infoColumnIndex)
+            {
+                e.CellStyle.BackColor = Color.White;
+                e.CellStyle.SelectionBackColor = Color.White;
+            }
+
+            e.CellStyle.ForeColor = Color.Black;
+            e.CellStyle.SelectionForeColor = Color.Black;
         }
 
-        private decimal GetScalarDecimalResult(SqlConnection connection, string query)
-        {
-            using (SqlCommand command = new SqlCommand(query, connection))
-            {
-                object result = command.ExecuteScalar();
-                if (result != null && result != DBNull.Value && decimal.TryParse(result.ToString(), out decimal decValue))
-                    return decValue;
-                return 0.00m;
-            }
-        }   
-
-        // -------------------- Button Side Bar -------------------- //
-
-        private void btnTenant_Click_1(object sender, EventArgs e)
+        private void btnTenant_Click(object sender, EventArgs e)
         {
             Tenants tenants = new Tenants(UserName, UserRole);
             tenants.Show();
@@ -489,7 +417,7 @@ namespace WindowsFormsApp1.Super_Admin_Account
             this.Hide();
         }
 
-        private void btnViewReport_Click_1(object sender, EventArgs e)
+        private void btnViewReport_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
             {
@@ -499,21 +427,21 @@ namespace WindowsFormsApp1.Super_Admin_Account
             }
             else
             {
-                MessageBox.Show("Access Denied: Admin cannot view full reports.");
+                MessageBox.Show("Access Denied.");
             }
         }
 
-        private void btnBackUp_Click_1(object sender, EventArgs e)
+        private void btnBackUp_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
             {
-                BackUp backup = new BackUp(UserName, UserRole);
-                backup.Show();
+                View_Reports view = new View_Reports(UserName, UserRole);
+                view.Show();
                 this.Hide();
             }
             else
             {
-                MessageBox.Show("Access Denied: Admin cannot access backups.");
+                MessageBox.Show("Access Denied.");
             }
         }
 
@@ -521,15 +449,13 @@ namespace WindowsFormsApp1.Super_Admin_Account
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
             {
-                string query = "UPDATE Account SET active = 0 WHERE username=@u";
-                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand("UPDATE Account SET active = 0 WHERE username=@u", conn);
                 cmd.Parameters.AddWithValue("@u", this.UserName);
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
-
             this.Hide();
             new LoginPage().Show();
         }
     }
-} 
+}

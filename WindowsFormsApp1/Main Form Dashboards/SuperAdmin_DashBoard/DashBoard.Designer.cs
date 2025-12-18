@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle33 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle34 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle35 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle36 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnViewReport = new System.Windows.Forms.Button();
             this.btnBackUp = new System.Windows.Forms.Button();
             this.btnPaymentRec = new System.Windows.Forms.Button();
@@ -121,7 +121,7 @@
             this.btnViewReport.Text = "View Report";
             this.btnViewReport.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnViewReport.UseVisualStyleBackColor = false;
-            this.btnViewReport.Click += new System.EventHandler(this.btnViewReport_Click_1);
+            this.btnViewReport.Click += new System.EventHandler(this.btnViewReport_Click);
             // 
             // btnBackUp
             // 
@@ -136,7 +136,7 @@
             this.btnBackUp.Text = "Back up";
             this.btnBackUp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnBackUp.UseVisualStyleBackColor = false;
-            this.btnBackUp.Click += new System.EventHandler(this.btnBackUp_Click_1);
+            this.btnBackUp.Click += new System.EventHandler(this.btnBackUp_Click);
             // 
             // btnPaymentRec
             // 
@@ -222,21 +222,21 @@
             this.DataPaymentRecent.AllowUserToResizeRows = false;
             this.DataPaymentRecent.BackgroundColor = System.Drawing.Color.White;
             this.DataPaymentRecent.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(20);
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataPaymentRecent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle33.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle33.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle33.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle33.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle33.Padding = new System.Windows.Forms.Padding(20);
+            dataGridViewCellStyle33.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle33.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle33.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DataPaymentRecent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle33;
             this.DataPaymentRecent.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataPaymentRecent.Location = new System.Drawing.Point(0, 0);
             this.DataPaymentRecent.Name = "DataPaymentRecent";
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(20);
-            this.DataPaymentRecent.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle34.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle34.Padding = new System.Windows.Forms.Padding(20);
+            this.DataPaymentRecent.RowsDefaultCellStyle = dataGridViewCellStyle34;
             this.DataPaymentRecent.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DataPaymentRecent.Size = new System.Drawing.Size(512, 450);
             this.DataPaymentRecent.TabIndex = 3;
@@ -275,21 +275,21 @@
             this.DataRecentMaintenanceRequests.AllowUserToResizeRows = false;
             this.DataRecentMaintenanceRequests.BackgroundColor = System.Drawing.Color.White;
             this.DataRecentMaintenanceRequests.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.Padding = new System.Windows.Forms.Padding(20);
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DataRecentMaintenanceRequests.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle35.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle35.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle35.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle35.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle35.Padding = new System.Windows.Forms.Padding(20);
+            dataGridViewCellStyle35.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle35.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle35.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DataRecentMaintenanceRequests.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle35;
             this.DataRecentMaintenanceRequests.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataRecentMaintenanceRequests.Location = new System.Drawing.Point(0, 0);
             this.DataRecentMaintenanceRequests.Name = "DataRecentMaintenanceRequests";
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.Padding = new System.Windows.Forms.Padding(20);
-            this.DataRecentMaintenanceRequests.RowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle36.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle36.Padding = new System.Windows.Forms.Padding(20);
+            this.DataRecentMaintenanceRequests.RowsDefaultCellStyle = dataGridViewCellStyle36;
             this.DataRecentMaintenanceRequests.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DataRecentMaintenanceRequests.Size = new System.Drawing.Size(512, 450);
             this.DataRecentMaintenanceRequests.TabIndex = 4;
@@ -612,7 +612,7 @@
             this.btnTenant.Text = "Tenants";
             this.btnTenant.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnTenant.UseVisualStyleBackColor = false;
-            this.btnTenant.Click += new System.EventHandler(this.btnTenant_Click_1);
+            this.btnTenant.Click += new System.EventHandler(this.btnTenant_Click);
             // 
             // btnAdminAcc
             // 

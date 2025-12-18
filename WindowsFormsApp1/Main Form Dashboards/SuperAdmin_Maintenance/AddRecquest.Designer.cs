@@ -47,12 +47,13 @@
             // 
             // cbTenant
             // 
+            this.cbTenant.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTenant.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbTenant.FormattingEnabled = true;
             this.cbTenant.Location = new System.Drawing.Point(39, 103);
             this.cbTenant.Name = "cbTenant";
             this.cbTenant.Size = new System.Drawing.Size(270, 27);
-            this.cbTenant.TabIndex = 0;
+            this.cbTenant.TabIndex = 1;
             // 
             // label1
             // 
@@ -84,12 +85,13 @@
             // 
             // cbStatus
             // 
+            this.cbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStatus.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbStatus.FormattingEnabled = true;
             this.cbStatus.Location = new System.Drawing.Point(527, 103);
             this.cbStatus.Name = "cbStatus";
             this.cbStatus.Size = new System.Drawing.Size(200, 27);
-            this.cbStatus.TabIndex = 5;
+            this.cbStatus.TabIndex = 3;
             // 
             // tbUnitNumber
             // 
@@ -97,7 +99,7 @@
             this.tbUnitNumber.Location = new System.Drawing.Point(346, 103);
             this.tbUnitNumber.Name = "tbUnitNumber";
             this.tbUnitNumber.Size = new System.Drawing.Size(152, 27);
-            this.tbUnitNumber.TabIndex = 7;
+            this.tbUnitNumber.TabIndex = 2;
             // 
             // lbUnitNumber
             // 
@@ -145,7 +147,7 @@
             this.btnSave.Location = new System.Drawing.Point(260, 372);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(107, 32);
-            this.btnSave.TabIndex = 12;
+            this.btnSave.TabIndex = 7;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             // 
@@ -155,18 +157,19 @@
             this.btnCancel.Location = new System.Drawing.Point(396, 372);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(107, 32);
-            this.btnCancel.TabIndex = 13;
+            this.btnCancel.TabIndex = 8;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // cbRequestType
             // 
+            this.cbRequestType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRequestType.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbRequestType.FormattingEnabled = true;
             this.cbRequestType.Location = new System.Drawing.Point(346, 181);
             this.cbRequestType.Name = "cbRequestType";
             this.cbRequestType.Size = new System.Drawing.Size(200, 27);
-            this.cbRequestType.TabIndex = 14;
+            this.cbRequestType.TabIndex = 5;
             // 
             // label3
             // 
@@ -184,7 +187,7 @@
             this.tbDescription.Location = new System.Drawing.Point(39, 264);
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.Size = new System.Drawing.Size(688, 102);
-            this.tbDescription.TabIndex = 16;
+            this.tbDescription.TabIndex = 6;
             this.tbDescription.Text = "";
             // 
             // AddRecquest

@@ -9,6 +9,7 @@ using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
 using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Maintenance;
@@ -48,6 +49,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             InitializeButtonStyle(btnContracts);
             InitializeButtonStyle(btnMaintenance);
 
+            SubscribeToCrashMonitor();
             ApplyRoleRestrictions();
 
             panelHeader.BackColor = Color.White;
@@ -553,6 +555,27 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
                     DeleteMaintenanceRequest(requestID);
                 }
             }
+        }
+
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
         }
 
         private void Maintenance_Load(object sender, EventArgs e)

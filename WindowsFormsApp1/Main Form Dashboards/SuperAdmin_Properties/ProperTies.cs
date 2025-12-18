@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Main_Form_Dashboards;
 using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
@@ -58,10 +59,11 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.lbName.Text = $"{userName} \n ({userRole})";
 
             cbStatus.Items.Clear();
-            cbStatus.Items.AddRange(new object[] { "All Status", "Vacant", "Occupied", "Under Maintenance" ,"Reserved"});
+            cbStatus.Items.AddRange(new object[] { "All Status", "Vacant", "Occupied", "Under Maintenance", "Reserved" });
             cbStatus.SelectedIndex = 0;
             cbStatus.SelectedIndexChanged += cbStatusFilter_SelectedIndexChanged;
 
+            SubscribeToCrashMonitor();
             LoadPropertyCards();
             ApplyRoleRestrictions();
 
@@ -348,7 +350,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 
             btnDelete.Click += (s, e) =>
             {
-                DialogResult result = MessageBox.Show($"Are you sure you want to delete \"{propertyName}\" and ALL its associated units and records?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show($"This action cannot be undone. Are you sure you want to delete \"{propertyName}\" and all associated data?", "Confirm Permanent Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result != DialogResult.Yes) return;
 
                 using (SqlConnection con = new SqlConnection(DataConnection))
@@ -405,7 +407,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                                 if (affected == 0)
                                 {
                                     tx.Rollback();
-                                    MessageBox.Show("Delete failed: property not found.", "Delete", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    MessageBox.Show("Record not found. Deletion request failed.", "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     return;
                                 }
                             }
@@ -437,12 +439,12 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                                 DisplayPropertyCards(propertyData);
                             }
 
-                            MessageBox.Show("Property deleted successfully.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("The property record has been successfully removed from the system.", "Action Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         catch (Exception ex)
                         {
                             try { tx.Rollback(); } catch { }
-                            MessageBox.Show("Error deleting property: " + ex.Message, "Delete Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("A database error occurred. The system was unable to complete the deletion request.", "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
@@ -506,6 +508,27 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
         }
 
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+        }
+
         private void ProperTies_Load(object sender, EventArgs e)
         {
             SetButtonActiveStyle(btnProperties, activeColor);
@@ -551,6 +574,34 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
         }
 
+        private void ShowNoResultsMessage()
+        {
+            flowLayoutPanelRightSideBar.Controls.Clear();
+
+            Panel noResultsPanel = new Panel();
+            noResultsPanel.Size = new Size(flowLayoutPanelRightSideBar.Width - 50, 200);
+
+            Label lbTitle = new Label();
+            lbTitle.Text = "No Results Found";
+            lbTitle.Font = new Font("Segoe UI", 16, FontStyle.Bold);
+            lbTitle.ForeColor = Color.DimGray;
+            lbTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lbTitle.Dock = DockStyle.Top;
+            lbTitle.Height = 40;
+
+            Label lbMessage = new Label();
+            lbMessage.Text = "We couldn't find any properties matching your current search or filter criteria. \nPlease try adjusting your keywords or selecting a different status.";
+            lbMessage.Font = new Font("Segoe UI", 10, FontStyle.Regular);
+            lbMessage.ForeColor = Color.Gray;
+            lbMessage.TextAlign = ContentAlignment.MiddleCenter;
+            lbMessage.Dock = DockStyle.Fill;
+
+            noResultsPanel.Controls.Add(lbMessage);
+            noResultsPanel.Controls.Add(lbTitle);
+
+            flowLayoutPanelRightSideBar.Controls.Add(noResultsPanel);
+        }
+
         private void tbSearch_TextChanged_1(object sender, EventArgs e)
         {
             string keyword = tbSearch.Text.Trim().ToLower();
@@ -572,7 +623,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
             else
             {
-                flowLayoutPanelRightSideBar.Controls.Clear();
+                ShowNoResultsMessage();
             }
         }
 
@@ -600,9 +651,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                 {
                     filteredRows = propertyData.Select(filterExpression);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    MessageBox.Show("Error applying status filter: " + ex.Message, "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("An error occurred while processing the filter request.", "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
@@ -614,7 +665,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
             else
             {
-                flowLayoutPanelRightSideBar.Controls.Clear();
+                ShowNoResultsMessage();
             }
         }
 
@@ -653,7 +704,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 
         // -------------------- Button Side Bar -------------------- //
 
-        // --------------- Dashboard Button --------------- //
         private void btnDashBoard_Click(object sender, EventArgs e)
         {
             DashBoard dashboard = new DashBoard(UserName, UserRole);
@@ -661,7 +711,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.Hide();
         }
 
-        // --------------- Tenant Button --------------- //
         private void btnTenant_Click(object sender, EventArgs e)
         {
             Tenants tenants = new Tenants(UserName, UserRole);
@@ -669,7 +718,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.Hide();
         }
 
-        // --------------- Payment Record Button --------------- //
         private void btnPaymentRec_Click(object sender, EventArgs e)
         {
             Payment_Records paymentRec = new Payment_Records(UserName, UserRole);
@@ -677,7 +725,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.Hide();
         }
 
-        // --------------- Contract Button --------------- //
         private void btnContracts_Click(object sender, EventArgs e)
         {
             Contracts contract = new Contracts(UserName, UserRole);
@@ -685,7 +732,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.Hide();
         }
 
-        // --------------- Maintenances Button --------------- //
         private void btnMaintenance_Click(object sender, EventArgs e)
         {
             Maintenance maintenance = new Maintenance(UserName, UserRole);
@@ -693,7 +739,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.Hide();
         }
 
-        // --------------- Admin Accoutn Button --------------- //
         private void btnAdminAcc_Click(object sender, EventArgs e)
         {
             SuperAdmin_AdminAccounts adminAcc = new SuperAdmin_AdminAccounts(UserName, UserRole);
@@ -701,7 +746,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             this.Hide();
         }
 
-        // --------------- Vuew Reports Button --------------- //
         private void btnViewReport_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
@@ -712,11 +756,10 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
             else
             {
-                MessageBox.Show("Access Denied: Admin cannot view full reports.");
+                MessageBox.Show("Insufficient Privileges: Your current account role does not have permission to access the Reporting Module.", "Security Restriction", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
 
-        // --------------- Baskup Button --------------- //
         private void btnBackUp_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
@@ -727,11 +770,10 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
             else
             {
-                MessageBox.Show("Access Denied: Admin cannot access backups.");
+                MessageBox.Show("Security Restriction: System Backups can only be managed by a Super Administrator.", "Access Restricted", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
         }
 
-        // --------------- Logout Button --------------- //
         private void btnlogout_Click(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))

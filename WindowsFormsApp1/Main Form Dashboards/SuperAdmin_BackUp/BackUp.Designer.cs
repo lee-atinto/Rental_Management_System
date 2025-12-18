@@ -28,15 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.panelHeader = new System.Windows.Forms.Panel();
             this.lbTitle = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.btnBackupRecovery = new System.Windows.Forms.Button();
             this.plBackupRecovery = new System.Windows.Forms.Panel();
+            this.lblRestoreStatus = new System.Windows.Forms.Label();
+            this.progressRestore = new System.Windows.Forms.ProgressBar();
             this.btnBrowseRestore = new System.Windows.Forms.Button();
             this.btnBrowseBackup = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
@@ -46,16 +48,6 @@
             this.btnRestore = new System.Windows.Forms.Button();
             this.btnBackups = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.btnBackupRecovery = new System.Windows.Forms.Button();
-            this.btnDatabse = new System.Windows.Forms.Button();
-            this.btnSystemOverview = new System.Windows.Forms.Button();
-            this.plDataBase = new System.Windows.Forms.Panel();
-            this.btnOptimizeData = new System.Windows.Forms.Button();
-            this.dtDatabase = new System.Windows.Forms.DataGridView();
-            this.label4 = new System.Windows.Forms.Label();
-            this.plSystemOverView = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
             this.panel9 = new System.Windows.Forms.Panel();
             this.btnContracts = new System.Windows.Forms.Button();
             this.btnMaintenance = new System.Windows.Forms.Button();
@@ -73,11 +65,8 @@
             this.panel1.SuspendLayout();
             this.panelHeader.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.plBackupRecovery.SuspendLayout();
             this.panel4.SuspendLayout();
-            this.plDataBase.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dtDatabase)).BeginInit();
-            this.plSystemOverView.SuspendLayout();
+            this.plBackupRecovery.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).BeginInit();
             this.SuspendLayout();
@@ -142,8 +131,6 @@
             // 
             this.panel2.Controls.Add(this.panel4);
             this.panel2.Controls.Add(this.panel1);
-            this.panel2.Controls.Add(this.plSystemOverView);
-            this.panel2.Controls.Add(this.plDataBase);
             this.panel2.Controls.Add(this.plBackupRecovery);
             this.panel2.Location = new System.Drawing.Point(329, 82);
             this.panel2.Name = "panel2";
@@ -151,8 +138,30 @@
             this.panel2.Size = new System.Drawing.Size(1199, 715);
             this.panel2.TabIndex = 176;
             // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.Color.White;
+            this.panel4.Controls.Add(this.btnBackupRecovery);
+            this.panel4.Location = new System.Drawing.Point(37, 174);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(1132, 81);
+            this.panel4.TabIndex = 256;
+            // 
+            // btnBackupRecovery
+            // 
+            this.btnBackupRecovery.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBackupRecovery.Location = new System.Drawing.Point(33, 22);
+            this.btnBackupRecovery.Name = "btnBackupRecovery";
+            this.btnBackupRecovery.Size = new System.Drawing.Size(184, 38);
+            this.btnBackupRecovery.TabIndex = 257;
+            this.btnBackupRecovery.Text = "Backup and Recovery";
+            this.btnBackupRecovery.UseVisualStyleBackColor = true;
+            this.btnBackupRecovery.Click += new System.EventHandler(this.btnBackupRecovery_Click);
+            // 
             // plBackupRecovery
             // 
+            this.plBackupRecovery.Controls.Add(this.lblRestoreStatus);
+            this.plBackupRecovery.Controls.Add(this.progressRestore);
             this.plBackupRecovery.Controls.Add(this.btnBrowseRestore);
             this.plBackupRecovery.Controls.Add(this.btnBrowseBackup);
             this.plBackupRecovery.Controls.Add(this.label7);
@@ -162,16 +171,34 @@
             this.plBackupRecovery.Controls.Add(this.btnRestore);
             this.plBackupRecovery.Controls.Add(this.btnBackups);
             this.plBackupRecovery.Controls.Add(this.label5);
-            this.plBackupRecovery.Location = new System.Drawing.Point(0, 271);
+            this.plBackupRecovery.Location = new System.Drawing.Point(0, 285);
             this.plBackupRecovery.Name = "plBackupRecovery";
             this.plBackupRecovery.Padding = new System.Windows.Forms.Padding(25);
-            this.plBackupRecovery.Size = new System.Drawing.Size(1199, 444);
+            this.plBackupRecovery.Size = new System.Drawing.Size(1199, 430);
             this.plBackupRecovery.TabIndex = 7;
+            // 
+            // lblRestoreStatus
+            // 
+            this.lblRestoreStatus.AutoSize = true;
+            this.lblRestoreStatus.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRestoreStatus.Location = new System.Drawing.Point(212, 229);
+            this.lblRestoreStatus.Name = "lblRestoreStatus";
+            this.lblRestoreStatus.Size = new System.Drawing.Size(56, 23);
+            this.lblRestoreStatus.TabIndex = 10;
+            this.lblRestoreStatus.Text = "label8";
+            this.lblRestoreStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // progressRestore
+            // 
+            this.progressRestore.Location = new System.Drawing.Point(28, 255);
+            this.progressRestore.Name = "progressRestore";
+            this.progressRestore.Size = new System.Drawing.Size(522, 17);
+            this.progressRestore.TabIndex = 9;
             // 
             // btnBrowseRestore
             // 
             this.btnBrowseRestore.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBrowseRestore.Location = new System.Drawing.Point(618, 224);
+            this.btnBrowseRestore.Location = new System.Drawing.Point(609, 187);
             this.btnBrowseRestore.Name = "btnBrowseRestore";
             this.btnBrowseRestore.Size = new System.Drawing.Size(105, 31);
             this.btnBrowseRestore.TabIndex = 8;
@@ -182,7 +209,7 @@
             // btnBrowseBackup
             // 
             this.btnBrowseBackup.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBrowseBackup.Location = new System.Drawing.Point(618, 128);
+            this.btnBrowseBackup.Location = new System.Drawing.Point(609, 109);
             this.btnBrowseBackup.Name = "btnBrowseBackup";
             this.btnBrowseBackup.Size = new System.Drawing.Size(105, 31);
             this.btnBrowseBackup.TabIndex = 7;
@@ -194,7 +221,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(42, 199);
+            this.label7.Location = new System.Drawing.Point(33, 162);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(69, 23);
             this.label7.TabIndex = 6;
@@ -204,7 +231,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(42, 102);
+            this.label6.Location = new System.Drawing.Point(33, 83);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 23);
             this.label6.TabIndex = 5;
@@ -213,7 +240,7 @@
             // tbRestoreFile
             // 
             this.tbRestoreFile.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbRestoreFile.Location = new System.Drawing.Point(37, 224);
+            this.tbRestoreFile.Location = new System.Drawing.Point(28, 187);
             this.tbRestoreFile.Name = "tbRestoreFile";
             this.tbRestoreFile.Size = new System.Drawing.Size(522, 31);
             this.tbRestoreFile.TabIndex = 4;
@@ -221,7 +248,7 @@
             // tbBackupPath
             // 
             this.tbBackupPath.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbBackupPath.Location = new System.Drawing.Point(37, 128);
+            this.tbBackupPath.Location = new System.Drawing.Point(28, 109);
             this.tbBackupPath.Name = "tbBackupPath";
             this.tbBackupPath.Size = new System.Drawing.Size(522, 31);
             this.tbBackupPath.TabIndex = 3;
@@ -229,9 +256,9 @@
             // btnRestore
             // 
             this.btnRestore.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRestore.Location = new System.Drawing.Point(169, 328);
+            this.btnRestore.Location = new System.Drawing.Point(683, 340);
             this.btnRestore.Name = "btnRestore";
-            this.btnRestore.Size = new System.Drawing.Size(105, 42);
+            this.btnRestore.Size = new System.Drawing.Size(150, 35);
             this.btnRestore.TabIndex = 2;
             this.btnRestore.Text = "Restore";
             this.btnRestore.UseVisualStyleBackColor = true;
@@ -240,9 +267,9 @@
             // btnBackups
             // 
             this.btnBackups.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBackups.Location = new System.Drawing.Point(37, 328);
+            this.btnBackups.Location = new System.Drawing.Point(450, 340);
             this.btnBackups.Name = "btnBackups";
-            this.btnBackups.Size = new System.Drawing.Size(105, 42);
+            this.btnBackups.Size = new System.Drawing.Size(150, 35);
             this.btnBackups.TabIndex = 1;
             this.btnBackups.Text = "Backup";
             this.btnBackups.UseVisualStyleBackColor = true;
@@ -257,124 +284,6 @@
             this.label5.Size = new System.Drawing.Size(198, 26);
             this.label5.TabIndex = 0;
             this.label5.Text = "Backup and Recovery";
-            // 
-            // panel4
-            // 
-            this.panel4.BackColor = System.Drawing.Color.White;
-            this.panel4.Controls.Add(this.btnBackupRecovery);
-            this.panel4.Controls.Add(this.btnDatabse);
-            this.panel4.Controls.Add(this.btnSystemOverview);
-            this.panel4.Location = new System.Drawing.Point(37, 174);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1132, 81);
-            this.panel4.TabIndex = 256;
-            // 
-            // btnBackupRecovery
-            // 
-            this.btnBackupRecovery.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBackupRecovery.Location = new System.Drawing.Point(431, 21);
-            this.btnBackupRecovery.Name = "btnBackupRecovery";
-            this.btnBackupRecovery.Size = new System.Drawing.Size(184, 38);
-            this.btnBackupRecovery.TabIndex = 257;
-            this.btnBackupRecovery.Text = "Backup and Recovery";
-            this.btnBackupRecovery.UseVisualStyleBackColor = true;
-            this.btnBackupRecovery.Click += new System.EventHandler(this.btnBackupRecovery_Click);
-            // 
-            // btnDatabse
-            // 
-            this.btnDatabse.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDatabse.Location = new System.Drawing.Point(210, 21);
-            this.btnDatabse.Name = "btnDatabse";
-            this.btnDatabse.Size = new System.Drawing.Size(184, 38);
-            this.btnDatabse.TabIndex = 255;
-            this.btnDatabse.Text = "Database";
-            this.btnDatabse.UseVisualStyleBackColor = true;
-            this.btnDatabse.Click += new System.EventHandler(this.btnDatabse_Click);
-            // 
-            // btnSystemOverview
-            // 
-            this.btnSystemOverview.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSystemOverview.Location = new System.Drawing.Point(27, 21);
-            this.btnSystemOverview.Name = "btnSystemOverview";
-            this.btnSystemOverview.Size = new System.Drawing.Size(148, 38);
-            this.btnSystemOverview.TabIndex = 254;
-            this.btnSystemOverview.Text = "System Overview";
-            this.btnSystemOverview.UseVisualStyleBackColor = true;
-            this.btnSystemOverview.Click += new System.EventHandler(this.btnSystemOverview_Click);
-            // 
-            // plDataBase
-            // 
-            this.plDataBase.Controls.Add(this.btnOptimizeData);
-            this.plDataBase.Controls.Add(this.dtDatabase);
-            this.plDataBase.Controls.Add(this.label4);
-            this.plDataBase.Location = new System.Drawing.Point(0, 271);
-            this.plDataBase.Name = "plDataBase";
-            this.plDataBase.Padding = new System.Windows.Forms.Padding(25);
-            this.plDataBase.Size = new System.Drawing.Size(1199, 444);
-            this.plDataBase.TabIndex = 6;
-            // 
-            // btnOptimizeData
-            // 
-            this.btnOptimizeData.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOptimizeData.Location = new System.Drawing.Point(943, 28);
-            this.btnOptimizeData.Name = "btnOptimizeData";
-            this.btnOptimizeData.Size = new System.Drawing.Size(200, 49);
-            this.btnOptimizeData.TabIndex = 2;
-            this.btnOptimizeData.Text = "Optimize Database";
-            this.btnOptimizeData.UseVisualStyleBackColor = true;
-            this.btnOptimizeData.Click += new System.EventHandler(this.btnOptimizeData_Click);
-            // 
-            // dtDatabase
-            // 
-            this.dtDatabase.AllowUserToAddRows = false;
-            this.dtDatabase.AllowUserToDeleteRows = false;
-            this.dtDatabase.AllowUserToResizeColumns = false;
-            this.dtDatabase.AllowUserToResizeRows = false;
-            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle23.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle23.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle23.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle23.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle23.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dtDatabase.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle23;
-            this.dtDatabase.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dtDatabase.Location = new System.Drawing.Point(37, 94);
-            this.dtDatabase.Name = "dtDatabase";
-            dataGridViewCellStyle24.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtDatabase.RowsDefaultCellStyle = dataGridViewCellStyle24;
-            this.dtDatabase.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dtDatabase.Size = new System.Drawing.Size(1134, 307);
-            this.dtDatabase.TabIndex = 1;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(32, 35);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(92, 26);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Database";
-            // 
-            // plSystemOverView
-            // 
-            this.plSystemOverView.Controls.Add(this.label3);
-            this.plSystemOverView.Location = new System.Drawing.Point(0, 271);
-            this.plSystemOverView.Name = "plSystemOverView";
-            this.plSystemOverView.Padding = new System.Windows.Forms.Padding(25);
-            this.plSystemOverView.Size = new System.Drawing.Size(1199, 444);
-            this.plSystemOverView.TabIndex = 5;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(32, 35);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(226, 26);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Recent System Activities";
             // 
             // panel9
             // 
@@ -593,14 +502,9 @@
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             this.panel2.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
             this.plBackupRecovery.ResumeLayout(false);
             this.plBackupRecovery.PerformLayout();
-            this.panel4.ResumeLayout(false);
-            this.plDataBase.ResumeLayout(false);
-            this.plDataBase.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dtDatabase)).EndInit();
-            this.plSystemOverView.ResumeLayout(false);
-            this.plSystemOverView.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).EndInit();
             this.ResumeLayout(false);
@@ -632,16 +536,8 @@
         private System.Windows.Forms.PictureBox SideBarBakground;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Button btnBackupRecovery;
-        private System.Windows.Forms.Button btnDatabse;
-        private System.Windows.Forms.Button btnSystemOverview;
-        private System.Windows.Forms.Panel plDataBase;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button btnOptimizeData;
-        private System.Windows.Forms.DataGridView dtDatabase;
         private System.Windows.Forms.Panel plBackupRecovery;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Panel plSystemOverView;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnBackups;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
@@ -650,5 +546,7 @@
         private System.Windows.Forms.Button btnRestore;
         private System.Windows.Forms.Button btnBrowseRestore;
         private System.Windows.Forms.Button btnBrowseBackup;
+        private System.Windows.Forms.Label lblRestoreStatus;
+        private System.Windows.Forms.ProgressBar progressRestore;
     }
 }

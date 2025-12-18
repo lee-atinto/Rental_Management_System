@@ -9,6 +9,7 @@ using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.Login_ResetPassword;
 using WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract;
 using WindowsFormsApp1.Super_Admin_Account;
@@ -44,6 +45,7 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             InitializeButtonStyle(btnContracts);
             InitializeButtonStyle(btnMaintenance);
 
+            SubscribeToCrashMonitor();
             ApplyRoleRestrictions();
 
             panelHeader.BackColor = Color.White;
@@ -101,6 +103,27 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             }
         }
 
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+        }
+
         private void View_Reports_Load(object sender, EventArgs e)
         {
             SetButtonActiveStyle(btnViewReport, activeColor);
@@ -129,265 +152,11 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         private void LoadDashboardMetrics()
         {
             LoadTotalRevenue();
-            LoadOccupancyRate();
             LoadCollectionRate();
             LoadMaintenanceRequestsCount();
             LoadRevenueVsExpensesChart();
-            LoadSixMonthsRevenue();
-            LoadSixMonthsExpenses();
-            LoadSixMonthsNetProfit();
-
-            LoadAverageRevenue();
-            LoadAverageExpenses();
-            LoadProfitMargin();
-
-            LoadTopPerformingProperties();
             LoadUnitAndMaintenanceCounts();
             LoadUnitsStatusPieChart();
-            LoadPaymentAmountSummary();
-            LoadPaymentStatusDistributionChart();
-            LoadPaymentMethodBreakdown();
-            LoadPaymentMethodPercentLabels();
-
-        }
-
-        private void LoadPaymentAmountSummary()
-        {
-            try
-            {
-                decimal totalRevenue = 0;
-                decimal collected = 0;
-                decimal pending = 0;
-                decimal overdue = 0;
-
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                {
-                    con.Open();
-
-                    totalRevenue = Convert.ToDecimal(
-                        new SqlCommand(@"SELECT ISNULL(SUM(paymentAmount),0) FROM Payment", con)
-                        .ExecuteScalar()
-                    );
-
-                    collected = Convert.ToDecimal(
-                        new SqlCommand(@"SELECT ISNULL(SUM(paymentAmount),0) 
-                                 FROM Payment 
-                                 WHERE paymentStatus='Paid'", con)
-                        .ExecuteScalar()
-                    );
-
-                    pending = Convert.ToDecimal(
-                        new SqlCommand(@"SELECT ISNULL(SUM(paymentAmount),0) 
-                                 FROM Payment 
-                                 WHERE paymentStatus='Pending'", con)
-                        .ExecuteScalar()
-                    );
-
-                    overdue = Convert.ToDecimal(
-                        new SqlCommand(@"SELECT ISNULL(SUM(paymentAmount),0) 
-                                 FROM Payment 
-                                 WHERE paymentStatus='Overdue'", con)
-                        .ExecuteScalar()
-                    );
-                }
-
-                CultureInfo ph = new CultureInfo("en-PH");
-
-                label27.Text = totalRevenue.ToString("C0", ph);
-                label27.ForeColor = Color.Green;
-
-                label17.Text = collected.ToString("C0", ph);
-                label17.ForeColor = Color.Green;
-
-                label23.Text = pending.ToString("C0", ph);
-                label23.ForeColor = Color.Orange;
-
-                label29.Text = overdue.ToString("C0", ph);
-                label29.ForeColor = Color.Red;
-            }
-            catch
-            {
-                label27.Text = "Error";
-                label17.Text = "Error";
-                label23.Text = "Error";
-                label29.Text = "Error";
-            }
-        }
-
-        private void LoadPaymentMethodPercentLabels()
-        {
-            try
-            {
-                int total =
-                    pbBankTransfer.Value +
-                    pbGCash.Value +
-                    pbCash.Value +
-                    pbOthers.Value;
-
-                if (total == 0)
-                {
-                    label36.Text = "0%";
-                    label37.Text = "0%";
-                    label38.Text = "0%";
-                    label39.Text = "0%";
-                    return;
-                }
-
-                double bankPct = pbBankTransfer.Value * 100.0 / total;
-                double gcashPct = pbGCash.Value * 100.0 / total;
-                double cashPct = pbCash.Value * 100.0 / total;
-                double otherPct = pbOthers.Value * 100.0 / total;
-
-                label36.Text = bankPct.ToString("F1") + "%";
-                label37.Text = gcashPct.ToString("F1") + "%";
-                label38.Text = cashPct.ToString("F1") + "%";
-                label39.Text = otherPct.ToString("F1") + "%";
-
-                label36.ForeColor = Color.SteelBlue;
-                label37.ForeColor = Color.DodgerBlue;
-                label38.ForeColor = Color.Green;
-                label39.ForeColor = Color.Gray;
-            }
-            catch
-            {
-                label36.Text = "Error";
-                label37.Text = "Error";
-                label38.Text = "Error";
-                label39.Text = "Error";
-            }
-        }
-
-        private void LoadPaymentStatusDistributionChart()
-        {
-            try
-            {
-                decimal expected = 0, collected = 0, pending = 0, overdue = 0;
-
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                {
-                    con.Open();
-
-                    expected = Convert.ToDecimal(
-                        new SqlCommand("SELECT ISNULL(SUM(paymentAmount),0) FROM Payment", con)
-                        .ExecuteScalar());
-
-                    collected = Convert.ToDecimal(
-                        new SqlCommand("SELECT ISNULL(SUM(paymentAmount),0) FROM Payment WHERE paymentStatus='Paid'", con)
-                        .ExecuteScalar());
-
-                    pending = Convert.ToDecimal(
-                        new SqlCommand("SELECT ISNULL(SUM(paymentAmount),0) FROM Payment WHERE paymentStatus='Pending'", con)
-                        .ExecuteScalar());
-
-                    overdue = Convert.ToDecimal(
-                        new SqlCommand("SELECT ISNULL(SUM(paymentAmount),0) FROM Payment WHERE paymentStatus='Overdue'", con)
-                        .ExecuteScalar());
-                }
-
-                chartPaymentStatus.Series.Clear();
-                chartPaymentStatus.Titles.Clear();
-                chartPaymentStatus.Legends[0].Docking = Docking.Bottom;
-
-                chartPaymentStatus.Titles.Add(new Title(
-                    "Payment Status Distribution",
-                    Docking.Top,
-                    new Font("Calibri", 14, FontStyle.Bold),
-                    Color.Black));
-
-                Series series = new Series("Payments");
-                series.ChartType = SeriesChartType.Pie;
-                series.IsValueShownAsLabel = true;
-
-                decimal total = expected;
-
-                if (expected > 0)
-                {
-                    int i = series.Points.AddXY("Total Expected", expected);
-                    series.Points[i].Color = Color.SteelBlue;
-                }
-
-                if (collected > 0)
-                {
-                    int i = series.Points.AddXY("Collected", collected);
-                    series.Points[i].Color = Color.Green;
-                }
-
-                if (pending > 0)
-                {
-                    int i = series.Points.AddXY("Pending", pending);
-                    series.Points[i].Color = Color.Orange;
-                }
-
-                if (overdue > 0)
-                {
-                    int i = series.Points.AddXY("Overdue", overdue);
-                    series.Points[i].Color = Color.Red;
-                }
-
-                foreach (DataPoint p in series.Points)
-                {
-                    p.Label = p.AxisLabel + ": " + ((p.YValues[0] / (double)total) * 100).ToString("F1") + "%";
-                    p.Font = new Font("Calibri", 12, FontStyle.Regular);
-                }
-
-                chartPaymentStatus.Series.Add(series);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading Payment Status Distribution chart: " + ex.Message);
-            }
-        }
-
-
-        private void LoadPaymentMethodBreakdown()
-        {
-            try
-            {
-                int bank = 0, gcash = 0, cash = 0, others = 0, total = 0;
-
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                {
-                    con.Open();
-
-                    total = Convert.ToInt32(
-                        new SqlCommand(@"SELECT COUNT(*) FROM Payment", con)
-                        .ExecuteScalar());
-
-                    bank = Convert.ToInt32(
-                        new SqlCommand(@"SELECT COUNT(*) FROM Payment 
-                                 WHERE paymentMethodID = 
-                                 (SELECT paymentMethodID FROM PaymentMethod WHERE methodName='Bank Transfer')", con)
-                        .ExecuteScalar());
-
-                    gcash = Convert.ToInt32(
-                        new SqlCommand(@"SELECT COUNT(*) FROM Payment 
-                                 WHERE paymentMethodID = 
-                                 (SELECT paymentMethodID FROM PaymentMethod WHERE methodName='GCash')", con)
-                        .ExecuteScalar());
-
-                    cash = Convert.ToInt32(
-                        new SqlCommand(@"SELECT COUNT(*) FROM Payment 
-                                 WHERE paymentMethodID = 
-                                 (SELECT paymentMethodID FROM PaymentMethod WHERE methodName='Cash')", con)
-                        .ExecuteScalar());
-
-                    others = total - (bank + gcash + cash);
-                }
-
-                pbBankTransfer.Maximum = 100;
-                pbGCash.Maximum = 100;
-                pbCash.Maximum = 100;
-                pbOthers.Maximum = 100;
-
-                pbBankTransfer.Value = total > 0 ? (int)(bank * 100.0 / total) : 0;
-                pbGCash.Value = total > 0 ? (int)(gcash * 100.0 / total) : 0;
-                pbCash.Value = total > 0 ? (int)(cash * 100.0 / total) : 0;
-                pbOthers.Value = total > 0 ? (int)(others * 100.0 / total) : 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading payment method breakdown: " + ex.Message);
-            }
         }
 
         private decimal GetTotalRevenue()
@@ -463,45 +232,6 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             catch
             {
                 label4.Text = "Error";
-            }
-        }
-
-        private void LoadSixMonthsRevenue()
-        {
-            try
-            {
-                decimal revenue = GetSixMonthsRevenue();
-                CultureInfo philippinesCulture = new CultureInfo("en-PH");
-                label7.Text = revenue.ToString("C0", philippinesCulture);
-                label7.ForeColor = Color.Green;
-            }
-            catch
-            {
-                label7.Text = "Error";
-            }
-        }
-
-        private void LoadOccupancyRate()
-        {
-            string occupiedQuery = @"SELECT COUNT(*) FROM Unit WHERE Status = 'Occupied'";
-            string totalQuery = @"SELECT COUNT(*) FROM Unit";
-
-            try
-            {
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                {
-                    con.Open();
-                    int occupied = Convert.ToInt32(new SqlCommand(occupiedQuery, con).ExecuteScalar());
-                    int total = Convert.ToInt32(new SqlCommand(totalQuery, con).ExecuteScalar());
-
-                    double rate = total > 0 ? (double)occupied / total * 100 : 0;
-                    label5.Text = $"{rate:F2} %";
-                    label5.ForeColor = rate >= 80 ? Color.Green : Color.Orange;
-                }
-            }
-            catch
-            {
-                label5.Text = "Error";
             }
         }
 
@@ -626,154 +356,6 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
             }
         }
 
-        private void LoadSixMonthsExpenses()
-        {
-            try
-            {
-                decimal expenses = GetSixMonthsExpenses();
-                label12.Text = $"₱ {expenses:N2}";
-                label12.ForeColor = Color.Red;
-            }
-            catch
-            {
-                label12.Text = "Error";
-            }
-        }
-
-        private void LoadSixMonthsNetProfit()
-        {
-            try
-            {
-                decimal revenue = GetSixMonthsRevenue();
-                decimal expenses = GetSixMonthsExpenses();
-                decimal profit = revenue - expenses;
-
-                label15.Text = $"₱ {profit:N2}";
-                label15.ForeColor = profit >= 0 ? Color.Green : Color.Red;
-            }
-            catch
-            {
-                label15.Text = "Error";
-            }
-        }
-
-        private void LoadAverageRevenue()
-        {
-            try
-            {
-                decimal sixMonthRevenue = GetSixMonthsRevenue();
-                decimal avgRevenue = sixMonthRevenue / 6;
-
-                CultureInfo philippinesCulture = new CultureInfo("en-PH");
-                label10.Text = $"Average: {avgRevenue.ToString("C0", philippinesCulture)}/month";
-                label10.ForeColor = Color.Green;
-            }
-            catch
-            {
-                label10.Text = "Average: Error";
-            }
-        }
-
-        private void LoadAverageExpenses()
-        {
-            try
-            {
-                decimal sixMonthExpenses = GetSixMonthsExpenses();
-                decimal avgExpenses = sixMonthExpenses / 6;
-
-                label11.Text = $"Average: ₱ {avgExpenses:N0}/month";
-                label11.ForeColor = Color.Red;
-            }
-            catch
-            {
-                label11.Text = "Average: Error";
-            }
-        }
-
-        private void LoadProfitMargin()
-        {
-            try
-            {
-                decimal revenue = GetSixMonthsRevenue();
-                decimal expenses = GetSixMonthsExpenses();
-                decimal profit = revenue - expenses;
-
-                double margin = revenue != 0 ? (double)(profit / revenue) * 100 : 0;
-
-                label14.Text = $"Margin: {margin:F2} %";
-                label14.ForeColor = margin >= 0 ? Color.Green : Color.Red;
-            }
-            catch
-            {
-                label14.Text = "Margin: Error";
-            }
-        }
-
-        private void LoadTopPerformingProperties()
-        {
-            try
-            {
-                DataTable dt = new DataTable();
-
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                {
-                    string query = @"
-        SELECT 
-            U.unitNumber AS UnitNumber,
-            ISNULL(SUM(CASE WHEN Pay.paymentStatus = 'Paid' THEN Pay.paymentAmount ELSE 0 END),0) AS Revenue,
-            CAST(CASE WHEN COUNT(U.unitID) = 0 THEN 0 
-                 ELSE SUM(CASE WHEN U.Status = 'Occupied' THEN 1 ELSE 0 END) * 100.0 / COUNT(U.unitID) END AS DECIMAL(5,2)) AS OccupancyPercent
-        FROM Unit U
-        LEFT JOIN Payment Pay ON U.UnitID = Pay.UnitID
-        GROUP BY U.unitNumber
-        ORDER BY Revenue DESC";
-
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    da.Fill(dt);
-                }
-
-                dt.Columns.Add("Rank", typeof(int));
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    dt.Rows[i]["Rank"] = i + 1;
-                }
-                dt.Columns["Rank"].SetOrdinal(0);
-
-                TopPropertiesGrid.RowTemplate.Height = 35;
-
-                TopPropertiesGrid.DataSource = dt;
-
-                TopPropertiesGrid.Columns["Rank"].HeaderText = "Rank";
-                TopPropertiesGrid.Columns["UnitNumber"].HeaderText = "Unit";
-                TopPropertiesGrid.Columns["Revenue"].HeaderText = "Revenue";
-                TopPropertiesGrid.Columns["OccupancyPercent"].HeaderText = "Occupancy";
-
-                TopPropertiesGrid.Columns["Revenue"].DefaultCellStyle.Format = "C0";
-                TopPropertiesGrid.Columns["Revenue"].DefaultCellStyle.FormatProvider = new CultureInfo("en-PH");
-                TopPropertiesGrid.Columns["OccupancyPercent"].DefaultCellStyle.Format = "N2";
-
-                TopPropertiesGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                TopPropertiesGrid.ReadOnly = true;
-                TopPropertiesGrid.RowHeadersVisible = false;
-                TopPropertiesGrid.AllowUserToAddRows = false;
-
-                foreach (DataGridViewRow row in TopPropertiesGrid.Rows)
-                {
-                    int rank = Convert.ToInt32(row.Cells["Rank"].Value);
-                    if (rank == 1) row.DefaultCellStyle.BackColor = Color.Gold;
-                    else if (rank == 2) row.DefaultCellStyle.BackColor = Color.Silver;
-                    else if (rank == 3) row.DefaultCellStyle.BackColor = Color.Peru;
-                    else row.DefaultCellStyle.BackColor = Color.White;
-
-                    row.DefaultCellStyle.ForeColor = Color.Black;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading top performing properties: " + ex.Message);
-            }
-        }
-
         private void LoadUnitsStatusPieChart()
         {
             try
@@ -877,36 +459,15 @@ namespace WindowsFormsApp1.Main_Form_Dashboards
         {
             plOverView.Visible = true;
 
-            plRevenueAnalysis.Visible = false;
             plOccupancyReport.Visible = false;
-            plPayementAnalysis.Visible = false;
         }
 
-        private void btnRevenueAnalysis_Click(object sender, EventArgs e)
-        {
-            plRevenueAnalysis.Visible = true;
-
-            plOverView.Visible = false;
-            plOccupancyReport.Visible = false;
-            plPayementAnalysis.Visible = false;
-        }
 
         private void btnOccupancyReport_Click(object sender, EventArgs e)
         {
             plOccupancyReport.Visible = true;
 
             plOverView.Visible = false;
-            plRevenueAnalysis.Visible = false;
-            plPayementAnalysis.Visible = false;
-        }
-
-        private void btnPayementAnalysis_Click(object sender, EventArgs e)
-        {
-            plPayementAnalysis.Visible = true;
-
-            plOverView.Visible = false;
-            plRevenueAnalysis.Visible = false;
-            plOccupancyReport.Visible = false;
         }
 
         // -------------------- Button Side Bar -------------------- //

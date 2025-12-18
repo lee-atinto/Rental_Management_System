@@ -33,12 +33,12 @@
             this.cbStatus = new System.Windows.Forms.ComboBox();
             this.dtpStartDate = new System.Windows.Forms.DateTimePicker();
             this.dtpEndDate = new System.Windows.Forms.DateTimePicker();
-            this.tbDepositAmount = new System.Windows.Forms.TextBox();
+            this.tbMonthlyRent = new System.Windows.Forms.TextBox();
             this.lbTitle = new System.Windows.Forms.Label();
             this.lbName = new System.Windows.Forms.Label();
             this.lbUnitStatus = new System.Windows.Forms.Label();
             this.lbStatus = new System.Windows.Forms.Label();
-            this.lbDepositAmount = new System.Windows.Forms.Label();
+            this.lbMonthlyRent = new System.Windows.Forms.Label();
             this.lbStartDate = new System.Windows.Forms.Label();
             this.lbEndDate = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
@@ -49,6 +49,7 @@
             // 
             // cbTenant
             // 
+            this.cbTenant.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTenant.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbTenant.FormattingEnabled = true;
             this.cbTenant.Location = new System.Drawing.Point(42, 113);
@@ -58,15 +59,18 @@
             // 
             // cbUnit
             // 
+            this.cbUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbUnit.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbUnit.FormattingEnabled = true;
             this.cbUnit.Location = new System.Drawing.Point(42, 198);
             this.cbUnit.Name = "cbUnit";
             this.cbUnit.Size = new System.Drawing.Size(137, 27);
             this.cbUnit.TabIndex = 1;
+            this.cbUnit.SelectedIndexChanged += new System.EventHandler(this.cbUnit_SelectedIndexChanged_1);
             // 
             // cbStatus
             // 
+            this.cbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStatus.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbStatus.FormattingEnabled = true;
             this.cbStatus.Location = new System.Drawing.Point(411, 109);
@@ -90,13 +94,13 @@
             this.dtpEndDate.Size = new System.Drawing.Size(200, 31);
             this.dtpEndDate.TabIndex = 4;
             // 
-            // tbDepositAmount
+            // tbMonthlyRent
             // 
-            this.tbDepositAmount.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbDepositAmount.Location = new System.Drawing.Point(411, 198);
-            this.tbDepositAmount.Name = "tbDepositAmount";
-            this.tbDepositAmount.Size = new System.Drawing.Size(121, 27);
-            this.tbDepositAmount.TabIndex = 5;
+            this.tbMonthlyRent.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbMonthlyRent.Location = new System.Drawing.Point(411, 198);
+            this.tbMonthlyRent.Name = "tbMonthlyRent";
+            this.tbMonthlyRent.Size = new System.Drawing.Size(121, 27);
+            this.tbMonthlyRent.TabIndex = 5;
             // 
             // lbTitle
             // 
@@ -138,15 +142,15 @@
             this.lbStatus.TabIndex = 9;
             this.lbStatus.Text = "Status";
             // 
-            // lbDepositAmount
+            // lbMonthlyRent
             // 
-            this.lbDepositAmount.AutoSize = true;
-            this.lbDepositAmount.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbDepositAmount.Location = new System.Drawing.Point(407, 176);
-            this.lbDepositAmount.Name = "lbDepositAmount";
-            this.lbDepositAmount.Size = new System.Drawing.Size(113, 19);
-            this.lbDepositAmount.TabIndex = 10;
-            this.lbDepositAmount.Text = "Deposit Amount";
+            this.lbMonthlyRent.AutoSize = true;
+            this.lbMonthlyRent.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbMonthlyRent.Location = new System.Drawing.Point(407, 176);
+            this.lbMonthlyRent.Name = "lbMonthlyRent";
+            this.lbMonthlyRent.Size = new System.Drawing.Size(96, 19);
+            this.lbMonthlyRent.TabIndex = 10;
+            this.lbMonthlyRent.Text = "Monthly Rent";
             // 
             // lbStartDate
             // 
@@ -202,12 +206,14 @@
             // 
             // cbProperty
             // 
+            this.cbProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbProperty.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbProperty.FormattingEnabled = true;
             this.cbProperty.Location = new System.Drawing.Point(238, 198);
             this.cbProperty.Name = "cbProperty";
             this.cbProperty.Size = new System.Drawing.Size(137, 27);
             this.cbProperty.TabIndex = 15;
+            this.cbProperty.SelectedIndexChanged += new System.EventHandler(this.cbProperty_SelectedIndexChanged_1);
             // 
             // AddContract
             // 
@@ -220,12 +226,12 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.lbEndDate);
             this.Controls.Add(this.lbStartDate);
-            this.Controls.Add(this.lbDepositAmount);
+            this.Controls.Add(this.lbMonthlyRent);
             this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.lbUnitStatus);
             this.Controls.Add(this.lbName);
             this.Controls.Add(this.lbTitle);
-            this.Controls.Add(this.tbDepositAmount);
+            this.Controls.Add(this.tbMonthlyRent);
             this.Controls.Add(this.dtpEndDate);
             this.Controls.Add(this.dtpStartDate);
             this.Controls.Add(this.cbStatus);
@@ -247,12 +253,12 @@
         private System.Windows.Forms.ComboBox cbStatus;
         private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.DateTimePicker dtpEndDate;
-        private System.Windows.Forms.TextBox tbDepositAmount;
+        private System.Windows.Forms.TextBox tbMonthlyRent;
         private System.Windows.Forms.Label lbTitle;
         private System.Windows.Forms.Label lbName;
         private System.Windows.Forms.Label lbUnitStatus;
         private System.Windows.Forms.Label lbStatus;
-        private System.Windows.Forms.Label lbDepositAmount;
+        private System.Windows.Forms.Label lbMonthlyRent;
         private System.Windows.Forms.Label lbStartDate;
         private System.Windows.Forms.Label lbEndDate;
         private System.Windows.Forms.Button btnSave;

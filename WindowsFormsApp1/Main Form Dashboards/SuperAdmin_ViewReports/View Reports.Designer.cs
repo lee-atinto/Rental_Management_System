@@ -31,14 +31,9 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.panel9 = new System.Windows.Forms.Panel();
             this.btnContracts = new System.Windows.Forms.Button();
             this.btnMaintenance = new System.Windows.Forms.Button();
@@ -56,9 +51,7 @@
             this.panelHeader = new System.Windows.Forms.Panel();
             this.lbTitle = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.btnPayementAnalysis = new System.Windows.Forms.Button();
             this.btnOccupancyReport = new System.Windows.Forms.Button();
-            this.btnRevenueAnalysis = new System.Windows.Forms.Button();
             this.btnOverView = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -71,10 +64,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.lbMaintenanceRequests = new System.Windows.Forms.Label();
-            this.panel5 = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.lbOccupancyRate = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.plOverView = new System.Windows.Forms.Panel();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -82,20 +71,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.lbCollectionRate = new System.Windows.Forms.Label();
-            this.plRevenueAnalysis = new System.Windows.Forms.Panel();
-            this.TopPropertiesGrid = new System.Windows.Forms.DataGridView();
-            this.panel10 = new System.Windows.Forms.Panel();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.panel8 = new System.Windows.Forms.Panel();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.panel7 = new System.Windows.Forms.Panel();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.plOccupancyReport = new System.Windows.Forms.Panel();
             this.chartUnitsStatus = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panel11 = new System.Windows.Forms.Panel();
@@ -110,34 +85,6 @@
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.label24 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
-            this.plPayementAnalysis = new System.Windows.Forms.Panel();
-            this.panel19 = new System.Windows.Forms.Panel();
-            this.label39 = new System.Windows.Forms.Label();
-            this.label38 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
-            this.label36 = new System.Windows.Forms.Label();
-            this.pbOthers = new System.Windows.Forms.ProgressBar();
-            this.pbCash = new System.Windows.Forms.ProgressBar();
-            this.pbGCash = new System.Windows.Forms.ProgressBar();
-            this.pbBankTransfer = new System.Windows.Forms.ProgressBar();
-            this.label35 = new System.Windows.Forms.Label();
-            this.label34 = new System.Windows.Forms.Label();
-            this.label33 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.chartPaymentStatus = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.panel15 = new System.Windows.Forms.Panel();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.panel16 = new System.Windows.Forms.Panel();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.panel17 = new System.Windows.Forms.Panel();
-            this.label27 = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.panel18 = new System.Windows.Forms.Panel();
-            this.label29 = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.PicUserProfile)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SideBarBakground)).BeginInit();
             this.panelHeader.SuspendLayout();
@@ -146,18 +93,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
-            this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.panel1.SuspendLayout();
             this.plOverView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            this.plRevenueAnalysis.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TopPropertiesGrid)).BeginInit();
-            this.panel10.SuspendLayout();
-            this.panel8.SuspendLayout();
-            this.panel7.SuspendLayout();
             this.plOccupancyReport.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartUnitsStatus)).BeginInit();
             this.panel11.SuspendLayout();
@@ -166,13 +106,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             this.panel13.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
-            this.plPayementAnalysis.SuspendLayout();
-            this.panel19.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chartPaymentStatus)).BeginInit();
-            this.panel15.SuspendLayout();
-            this.panel16.SuspendLayout();
-            this.panel17.SuspendLayout();
-            this.panel18.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel9
@@ -386,47 +319,23 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.White;
-            this.panel2.Controls.Add(this.btnPayementAnalysis);
             this.panel2.Controls.Add(this.btnOccupancyReport);
-            this.panel2.Controls.Add(this.btnRevenueAnalysis);
             this.panel2.Controls.Add(this.btnOverView);
             this.panel2.Location = new System.Drawing.Point(37, 105);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1132, 81);
             this.panel2.TabIndex = 255;
             // 
-            // btnPayementAnalysis
-            // 
-            this.btnPayementAnalysis.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPayementAnalysis.Location = new System.Drawing.Point(642, 21);
-            this.btnPayementAnalysis.Name = "btnPayementAnalysis";
-            this.btnPayementAnalysis.Size = new System.Drawing.Size(184, 38);
-            this.btnPayementAnalysis.TabIndex = 257;
-            this.btnPayementAnalysis.Text = "Payment Analysis";
-            this.btnPayementAnalysis.UseVisualStyleBackColor = true;
-            this.btnPayementAnalysis.Click += new System.EventHandler(this.btnPayementAnalysis_Click);
-            // 
             // btnOccupancyReport
             // 
             this.btnOccupancyReport.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOccupancyReport.Location = new System.Drawing.Point(424, 21);
+            this.btnOccupancyReport.Location = new System.Drawing.Point(204, 21);
             this.btnOccupancyReport.Name = "btnOccupancyReport";
             this.btnOccupancyReport.Size = new System.Drawing.Size(184, 38);
             this.btnOccupancyReport.TabIndex = 256;
             this.btnOccupancyReport.Text = "Occupancy Report";
             this.btnOccupancyReport.UseVisualStyleBackColor = true;
             this.btnOccupancyReport.Click += new System.EventHandler(this.btnOccupancyReport_Click);
-            // 
-            // btnRevenueAnalysis
-            // 
-            this.btnRevenueAnalysis.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRevenueAnalysis.Location = new System.Drawing.Point(210, 21);
-            this.btnRevenueAnalysis.Name = "btnRevenueAnalysis";
-            this.btnRevenueAnalysis.Size = new System.Drawing.Size(184, 38);
-            this.btnRevenueAnalysis.TabIndex = 255;
-            this.btnRevenueAnalysis.Text = "Revenue Analysis";
-            this.btnRevenueAnalysis.UseVisualStyleBackColor = true;
-            this.btnRevenueAnalysis.Click += new System.EventHandler(this.btnRevenueAnalysis_Click);
             // 
             // btnOverView
             // 
@@ -479,7 +388,7 @@
             this.panel3.Controls.Add(this.lbTotalRevenue);
             this.panel3.Location = new System.Drawing.Point(39, 14);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(221, 150);
+            this.panel3.Size = new System.Drawing.Size(324, 150);
             this.panel3.TabIndex = 256;
             // 
             // label4
@@ -516,9 +425,9 @@
             this.panel4.Controls.Add(this.label8);
             this.panel4.Controls.Add(this.pictureBox4);
             this.panel4.Controls.Add(this.lbMaintenanceRequests);
-            this.panel4.Location = new System.Drawing.Point(950, 14);
+            this.panel4.Location = new System.Drawing.Point(843, 20);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(221, 150);
+            this.panel4.Size = new System.Drawing.Size(324, 150);
             this.panel4.TabIndex = 257;
             // 
             // label8
@@ -549,45 +458,6 @@
             this.lbMaintenanceRequests.TabIndex = 9;
             this.lbMaintenanceRequests.Text = "Maintenance Requests";
             // 
-            // panel5
-            // 
-            this.panel5.BackColor = System.Drawing.Color.White;
-            this.panel5.Controls.Add(this.label5);
-            this.panel5.Controls.Add(this.pictureBox2);
-            this.panel5.Controls.Add(this.lbOccupancyRate);
-            this.panel5.Location = new System.Drawing.Point(339, 14);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(221, 150);
-            this.panel5.TabIndex = 257;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(23, 106);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(56, 23);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "label5";
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Location = new System.Drawing.Point(27, 19);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(50, 50);
-            this.pictureBox2.TabIndex = 4;
-            this.pictureBox2.TabStop = false;
-            // 
-            // lbOccupancyRate
-            // 
-            this.lbOccupancyRate.AutoSize = true;
-            this.lbOccupancyRate.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbOccupancyRate.Location = new System.Drawing.Point(23, 79);
-            this.lbOccupancyRate.Name = "lbOccupancyRate";
-            this.lbOccupancyRate.Size = new System.Drawing.Size(136, 23);
-            this.lbOccupancyRate.TabIndex = 3;
-            this.lbOccupancyRate.Text = "Occupancy Rate";
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.label3);
@@ -595,9 +465,7 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Controls.Add(this.plOverView);
-            this.panel1.Controls.Add(this.plRevenueAnalysis);
             this.panel1.Controls.Add(this.plOccupancyReport);
-            this.panel1.Controls.Add(this.plPayementAnalysis);
             this.panel1.Location = new System.Drawing.Point(332, 82);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1196, 715);
@@ -606,13 +474,12 @@
             // plOverView
             // 
             this.plOverView.Controls.Add(this.chart1);
-            this.plOverView.Controls.Add(this.panel5);
             this.plOverView.Controls.Add(this.panel6);
             this.plOverView.Controls.Add(this.panel3);
             this.plOverView.Controls.Add(this.panel4);
-            this.plOverView.Location = new System.Drawing.Point(0, 215);
+            this.plOverView.Location = new System.Drawing.Point(0, 225);
             this.plOverView.Name = "plOverView";
-            this.plOverView.Size = new System.Drawing.Size(1196, 500);
+            this.plOverView.Size = new System.Drawing.Size(1196, 490);
             this.plOverView.TabIndex = 260;
             // 
             // chart1
@@ -637,9 +504,9 @@
             this.panel6.Controls.Add(this.label6);
             this.panel6.Controls.Add(this.pictureBox3);
             this.panel6.Controls.Add(this.lbCollectionRate);
-            this.panel6.Location = new System.Drawing.Point(652, 14);
+            this.panel6.Location = new System.Drawing.Point(450, 20);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(221, 150);
+            this.panel6.Size = new System.Drawing.Size(324, 150);
             this.panel6.TabIndex = 258;
             // 
             // label6
@@ -670,173 +537,15 @@
             this.lbCollectionRate.TabIndex = 6;
             this.lbCollectionRate.Text = "Collection Rate";
             // 
-            // plRevenueAnalysis
-            // 
-            this.plRevenueAnalysis.Controls.Add(this.TopPropertiesGrid);
-            this.plRevenueAnalysis.Controls.Add(this.panel10);
-            this.plRevenueAnalysis.Controls.Add(this.panel8);
-            this.plRevenueAnalysis.Controls.Add(this.panel7);
-            this.plRevenueAnalysis.Location = new System.Drawing.Point(0, 215);
-            this.plRevenueAnalysis.Name = "plRevenueAnalysis";
-            this.plRevenueAnalysis.Size = new System.Drawing.Size(1196, 500);
-            this.plRevenueAnalysis.TabIndex = 260;
-            // 
-            // TopPropertiesGrid
-            // 
-            this.TopPropertiesGrid.AllowUserToAddRows = false;
-            this.TopPropertiesGrid.AllowUserToDeleteRows = false;
-            this.TopPropertiesGrid.AllowUserToResizeColumns = false;
-            this.TopPropertiesGrid.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.TopPropertiesGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.TopPropertiesGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.TopPropertiesGrid.Location = new System.Drawing.Point(37, 192);
-            this.TopPropertiesGrid.Name = "TopPropertiesGrid";
-            this.TopPropertiesGrid.ReadOnly = true;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Calibri", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TopPropertiesGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.TopPropertiesGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.TopPropertiesGrid.Size = new System.Drawing.Size(1134, 287);
-            this.TopPropertiesGrid.TabIndex = 260;
-            // 
-            // panel10
-            // 
-            this.panel10.BackColor = System.Drawing.Color.White;
-            this.panel10.Controls.Add(this.label14);
-            this.panel10.Controls.Add(this.label15);
-            this.panel10.Controls.Add(this.label16);
-            this.panel10.Location = new System.Drawing.Point(843, 30);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(326, 134);
-            this.panel10.TabIndex = 259;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(25, 100);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(66, 23);
-            this.label14.TabIndex = 3;
-            this.label14.Text = "label14";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(25, 63);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(66, 23);
-            this.label15.TabIndex = 2;
-            this.label15.Text = "label15";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(23, 21);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(179, 23);
-            this.label16.TabIndex = 0;
-            this.label16.Text = "Net Profit (6 months)";
-            // 
-            // panel8
-            // 
-            this.panel8.BackColor = System.Drawing.Color.White;
-            this.panel8.Controls.Add(this.label11);
-            this.panel8.Controls.Add(this.label12);
-            this.panel8.Controls.Add(this.label13);
-            this.panel8.Location = new System.Drawing.Point(450, 30);
-            this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(326, 134);
-            this.panel8.TabIndex = 258;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(23, 100);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(66, 23);
-            this.label11.TabIndex = 3;
-            this.label11.Text = "label11";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(25, 63);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(66, 23);
-            this.label12.TabIndex = 2;
-            this.label12.Text = "label12";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(23, 21);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(216, 23);
-            this.label13.TabIndex = 0;
-            this.label13.Text = "Total Expenses (6 months)";
-            // 
-            // panel7
-            // 
-            this.panel7.BackColor = System.Drawing.Color.White;
-            this.panel7.Controls.Add(this.label10);
-            this.panel7.Controls.Add(this.label7);
-            this.panel7.Controls.Add(this.label9);
-            this.panel7.Location = new System.Drawing.Point(37, 30);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(326, 134);
-            this.panel7.TabIndex = 257;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(23, 100);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(66, 23);
-            this.label10.TabIndex = 3;
-            this.label10.Text = "label10";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(25, 63);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(56, 23);
-            this.label7.TabIndex = 2;
-            this.label7.Text = "label7";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(23, 21);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(212, 23);
-            this.label9.TabIndex = 0;
-            this.label9.Text = "Total Revenue (6 months)";
-            // 
             // plOccupancyReport
             // 
             this.plOccupancyReport.Controls.Add(this.chartUnitsStatus);
             this.plOccupancyReport.Controls.Add(this.panel11);
             this.plOccupancyReport.Controls.Add(this.panel12);
             this.plOccupancyReport.Controls.Add(this.panel13);
-            this.plOccupancyReport.Location = new System.Drawing.Point(0, 215);
+            this.plOccupancyReport.Location = new System.Drawing.Point(0, 225);
             this.plOccupancyReport.Name = "plOccupancyReport";
-            this.plOccupancyReport.Size = new System.Drawing.Size(1196, 500);
+            this.plOccupancyReport.Size = new System.Drawing.Size(1196, 490);
             this.plOccupancyReport.TabIndex = 261;
             // 
             // chartUnitsStatus
@@ -972,294 +681,6 @@
             this.label25.TabIndex = 0;
             this.label25.Text = "Occupied Units";
             // 
-            // plPayementAnalysis
-            // 
-            this.plPayementAnalysis.Controls.Add(this.panel19);
-            this.plPayementAnalysis.Controls.Add(this.chartPaymentStatus);
-            this.plPayementAnalysis.Controls.Add(this.panel15);
-            this.plPayementAnalysis.Controls.Add(this.panel16);
-            this.plPayementAnalysis.Controls.Add(this.panel17);
-            this.plPayementAnalysis.Controls.Add(this.panel18);
-            this.plPayementAnalysis.Location = new System.Drawing.Point(0, 215);
-            this.plPayementAnalysis.Name = "plPayementAnalysis";
-            this.plPayementAnalysis.Size = new System.Drawing.Size(1196, 500);
-            this.plPayementAnalysis.TabIndex = 262;
-            // 
-            // panel19
-            // 
-            this.panel19.BackColor = System.Drawing.Color.White;
-            this.panel19.Controls.Add(this.label39);
-            this.panel19.Controls.Add(this.label38);
-            this.panel19.Controls.Add(this.label37);
-            this.panel19.Controls.Add(this.label36);
-            this.panel19.Controls.Add(this.pbOthers);
-            this.panel19.Controls.Add(this.pbCash);
-            this.panel19.Controls.Add(this.pbGCash);
-            this.panel19.Controls.Add(this.pbBankTransfer);
-            this.panel19.Controls.Add(this.label35);
-            this.panel19.Controls.Add(this.label34);
-            this.panel19.Controls.Add(this.label33);
-            this.panel19.Controls.Add(this.label32);
-            this.panel19.Controls.Add(this.label31);
-            this.panel19.Location = new System.Drawing.Point(652, 133);
-            this.panel19.Name = "panel19";
-            this.panel19.Size = new System.Drawing.Size(519, 333);
-            this.panel19.TabIndex = 264;
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label39.Location = new System.Drawing.Point(373, 255);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(66, 23);
-            this.label39.TabIndex = 20;
-            this.label39.Text = "label39";
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label38.Location = new System.Drawing.Point(373, 190);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(66, 23);
-            this.label38.TabIndex = 19;
-            this.label38.Text = "label38";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label37.Location = new System.Drawing.Point(373, 130);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(66, 23);
-            this.label37.TabIndex = 18;
-            this.label37.Text = "label37";
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label36.Location = new System.Drawing.Point(373, 70);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(66, 23);
-            this.label36.TabIndex = 17;
-            this.label36.Text = "label36";
-            // 
-            // pbOthers
-            // 
-            this.pbOthers.Location = new System.Drawing.Point(27, 281);
-            this.pbOthers.Name = "pbOthers";
-            this.pbOthers.Size = new System.Drawing.Size(462, 23);
-            this.pbOthers.TabIndex = 16;
-            // 
-            // pbCash
-            // 
-            this.pbCash.Location = new System.Drawing.Point(27, 216);
-            this.pbCash.Name = "pbCash";
-            this.pbCash.Size = new System.Drawing.Size(462, 23);
-            this.pbCash.TabIndex = 15;
-            // 
-            // pbGCash
-            // 
-            this.pbGCash.Location = new System.Drawing.Point(27, 156);
-            this.pbGCash.Name = "pbGCash";
-            this.pbGCash.Size = new System.Drawing.Size(462, 23);
-            this.pbGCash.TabIndex = 14;
-            // 
-            // pbBankTransfer
-            // 
-            this.pbBankTransfer.Location = new System.Drawing.Point(27, 96);
-            this.pbBankTransfer.Name = "pbBankTransfer";
-            this.pbBankTransfer.Size = new System.Drawing.Size(462, 23);
-            this.pbBankTransfer.TabIndex = 13;
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label35.Location = new System.Drawing.Point(23, 255);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(63, 23);
-            this.label35.TabIndex = 12;
-            this.label35.Text = "Others";
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label34.Location = new System.Drawing.Point(23, 190);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(47, 23);
-            this.label34.TabIndex = 11;
-            this.label34.Text = "Cash";
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label33.Location = new System.Drawing.Point(23, 130);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(59, 23);
-            this.label33.TabIndex = 10;
-            this.label33.Text = "GCash";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label32.Location = new System.Drawing.Point(23, 70);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(116, 23);
-            this.label32.TabIndex = 9;
-            this.label32.Text = "Bank Transfer";
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label31.Location = new System.Drawing.Point(23, 24);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(250, 23);
-            this.label31.TabIndex = 9;
-            this.label31.Text = "Payment Methods Breakdown";
-            // 
-            // chartPaymentStatus
-            // 
-            chartArea3.Name = "ChartArea1";
-            this.chartPaymentStatus.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chartPaymentStatus.Legends.Add(legend3);
-            this.chartPaymentStatus.Location = new System.Drawing.Point(37, 133);
-            this.chartPaymentStatus.Name = "chartPaymentStatus";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chartPaymentStatus.Series.Add(series3);
-            this.chartPaymentStatus.Size = new System.Drawing.Size(523, 322);
-            this.chartPaymentStatus.TabIndex = 263;
-            this.chartPaymentStatus.Text = "chart2";
-            // 
-            // panel15
-            // 
-            this.panel15.BackColor = System.Drawing.Color.White;
-            this.panel15.Controls.Add(this.label17);
-            this.panel15.Controls.Add(this.label20);
-            this.panel15.Location = new System.Drawing.Point(339, 14);
-            this.panel15.Name = "panel15";
-            this.panel15.Size = new System.Drawing.Size(221, 87);
-            this.panel15.TabIndex = 260;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(16, 45);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(66, 23);
-            this.label17.TabIndex = 5;
-            this.label17.Text = "label17";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.Location = new System.Drawing.Point(16, 18);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(136, 23);
-            this.label20.TabIndex = 3;
-            this.label20.Text = "Occupancy Rate";
-            // 
-            // panel16
-            // 
-            this.panel16.BackColor = System.Drawing.Color.White;
-            this.panel16.Controls.Add(this.label23);
-            this.panel16.Controls.Add(this.label26);
-            this.panel16.Location = new System.Drawing.Point(652, 14);
-            this.panel16.Name = "panel16";
-            this.panel16.Size = new System.Drawing.Size(221, 87);
-            this.panel16.TabIndex = 262;
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label23.Location = new System.Drawing.Point(16, 45);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(66, 23);
-            this.label23.TabIndex = 8;
-            this.label23.Text = "label23";
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(16, 18);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(130, 23);
-            this.label26.TabIndex = 6;
-            this.label26.Text = "Collection Rate";
-            // 
-            // panel17
-            // 
-            this.panel17.BackColor = System.Drawing.Color.White;
-            this.panel17.Controls.Add(this.label27);
-            this.panel17.Controls.Add(this.label28);
-            this.panel17.Location = new System.Drawing.Point(39, 14);
-            this.panel17.Name = "panel17";
-            this.panel17.Size = new System.Drawing.Size(221, 87);
-            this.panel17.TabIndex = 259;
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label27.Location = new System.Drawing.Point(16, 45);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(66, 23);
-            this.label27.TabIndex = 2;
-            this.label27.Text = "label27";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label28.Location = new System.Drawing.Point(16, 18);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(122, 23);
-            this.label28.TabIndex = 0;
-            this.label28.Text = "Total Revenue";
-            // 
-            // panel18
-            // 
-            this.panel18.BackColor = System.Drawing.Color.White;
-            this.panel18.Controls.Add(this.label29);
-            this.panel18.Controls.Add(this.label30);
-            this.panel18.Location = new System.Drawing.Point(950, 14);
-            this.panel18.Name = "panel18";
-            this.panel18.Size = new System.Drawing.Size(221, 87);
-            this.panel18.TabIndex = 261;
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label29.Location = new System.Drawing.Point(16, 45);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(66, 23);
-            this.label29.TabIndex = 11;
-            this.label29.Text = "label29";
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label30.Location = new System.Drawing.Point(16, 18);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(79, 23);
-            this.label30.TabIndex = 9;
-            this.label30.Text = "Overdue";
-            // 
             // View_Reports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1297,9 +718,6 @@
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
-            this.panel5.ResumeLayout(false);
-            this.panel5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.plOverView.ResumeLayout(false);
@@ -1307,14 +725,6 @@
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            this.plRevenueAnalysis.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.TopPropertiesGrid)).EndInit();
-            this.panel10.ResumeLayout(false);
-            this.panel10.PerformLayout();
-            this.panel8.ResumeLayout(false);
-            this.panel8.PerformLayout();
-            this.panel7.ResumeLayout(false);
-            this.panel7.PerformLayout();
             this.plOccupancyReport.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartUnitsStatus)).EndInit();
             this.panel11.ResumeLayout(false);
@@ -1326,18 +736,6 @@
             this.panel13.ResumeLayout(false);
             this.panel13.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
-            this.plPayementAnalysis.ResumeLayout(false);
-            this.panel19.ResumeLayout(false);
-            this.panel19.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chartPaymentStatus)).EndInit();
-            this.panel15.ResumeLayout(false);
-            this.panel15.PerformLayout();
-            this.panel16.ResumeLayout(false);
-            this.panel16.PerformLayout();
-            this.panel17.ResumeLayout(false);
-            this.panel17.PerformLayout();
-            this.panel18.ResumeLayout(false);
-            this.panel18.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1368,15 +766,11 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lbTotalRevenue;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.Label lbOccupancyRate;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.Label lbMaintenanceRequests;
@@ -1385,21 +779,6 @@
         private System.Windows.Forms.Label lbCollectionRate;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.Panel plOverView;
-        private System.Windows.Forms.Button btnRevenueAnalysis;
-        private System.Windows.Forms.Panel plRevenueAnalysis;
-        private System.Windows.Forms.Panel panel10;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Panel panel8;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Panel panel7;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.DataGridView TopPropertiesGrid;
         private System.Windows.Forms.Button btnOccupancyReport;
         private System.Windows.Forms.Panel plOccupancyReport;
         private System.Windows.Forms.Panel panel11;
@@ -1415,34 +794,5 @@
         private System.Windows.Forms.PictureBox pictureBox6;
         private System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartUnitsStatus;
-        private System.Windows.Forms.Button btnPayementAnalysis;
-        private System.Windows.Forms.Panel plPayementAnalysis;
-        private System.Windows.Forms.Panel panel15;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Panel panel16;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Panel panel17;
-        private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Panel panel18;
-        private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Panel panel19;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartPaymentStatus;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.Label label33;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.ProgressBar pbOthers;
-        private System.Windows.Forms.ProgressBar pbCash;
-        private System.Windows.Forms.ProgressBar pbGCash;
-        private System.Windows.Forms.ProgressBar pbBankTransfer;
-        private System.Windows.Forms.Label label39;
-        private System.Windows.Forms.Label label38;
-        private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.Label label36;
     }
 }

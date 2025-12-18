@@ -10,27 +10,49 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
     public partial class AddContract : Form
     {
         private readonly string DataConnection = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
-
-        // Parent form (Contracts) is typically passed to enable refreshing the list after addition.
         private Form parentContractsForm;
+        private int editContractID = 0;
 
-        // Removed unused constructor parameters (username, userRole) as they aren't used in this form.
+        private const string STATUS_ACTIVE = "Active";
+        private const string STATUS_PENDING = "Pending";
+        private const string STATUS_EXPIRED = "Expired";
+
+        private const string UNIT_VACANT = "Vacant";
+        private const string UNIT_OCCUPIED = "Occupied";
+
         public AddContract(Form parent)
         {
             InitializeComponent();
             this.parentContractsForm = parent;
+            lbTitle.Text = "Add Contract";
+            this.Text = "Add New Contract";
         }
 
-        public AddContract() : this(null)
+        public AddContract(int contractID)
         {
+            InitializeComponent();
+            this.editContractID = contractID;
+            lbTitle.Text = "Edit Contract";
+            this.Text = "Edit Contract Details";
         }
+
+        public AddContract() : this(null) { }
 
         private void AddContract_Load(object sender, EventArgs e)
         {
             InitializeInputControls();
-            LoadTenants();
             LoadProperties();
-            LoadVacantUnits(); // Loads with default prompt
+
+            if (editContractID > 0)
+            {
+                LoadAllTenants();
+                LoadContractDataToEdit();
+            }
+            else
+            {
+                LoadTenants();
+                LoadVacantUnits();
+            }
         }
 
         private void InitializeInputControls()
@@ -38,407 +60,304 @@ namespace WindowsFormsApp1.Main_Form_Dashboards.SuperAdmin_Contract
             if (cbStatus != null)
             {
                 cbStatus.Items.Clear();
-                // Set initial status to Active for a new contract
-                cbStatus.Items.Add("Active");
-                cbStatus.Items.Add("Expired");
-                cbStatus.Items.Add("Terminated");
+                cbStatus.Items.Add(STATUS_ACTIVE);
+                cbStatus.Items.Add(STATUS_PENDING);
+                cbStatus.Items.Add(STATUS_EXPIRED);
                 cbStatus.SelectedIndex = 0;
+                cbStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             }
 
-            // Initialize dates
             if (dtpStartDate != null) dtpStartDate.Value = DateTime.Today;
             if (dtpEndDate != null) dtpEndDate.Value = DateTime.Today.AddYears(1);
 
-            // Attach event handlers
-            if (cbUnit != null)
-            {
-                cbUnit.SelectedIndexChanged += cbUnit_SelectedIndexChanged;
-            }
+            if (cbUnit != null) cbUnit.SelectedIndexChanged += cbUnit_SelectedIndexChanged;
+            if (cbProperty != null) cbProperty.SelectedIndexChanged += cbProperty_SelectedIndexChanged;
 
-            if (cbProperty != null)
-            {
-                cbProperty.SelectedIndexChanged += cbProperty_SelectedIndexChanged;
-            }
+            if (tbMonthlyRent != null) tbMonthlyRent.Text = "0.00";
+        }
 
-            if (tbDepositAmount != null) tbDepositAmount.Text = "0.00";
+        private void LoadContractDataToEdit()
+        {
+            using (SqlConnection conn = new SqlConnection(DataConnection))
+            {
+                string query = @"
+                    SELECT C.*, U.PropertyID 
+                    FROM Contract C 
+                    INNER JOIN Unit U ON C.UnitID = U.UnitID 
+                    WHERE C.contractID = @id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@id", editContractID);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    int propID = Convert.ToInt32(reader["PropertyID"]);
+                    int unitID = Convert.ToInt32(reader["UnitID"]);
+
+                    cbProperty.SelectedValue = propID;
+                    LoadUnitsInternal(propID, unitID);
+
+                    cbUnit.SelectedValue = unitID;
+                    cbTenant.SelectedValue = reader["tenantID"];
+                    dtpStartDate.Value = Convert.ToDateTime(reader["startDate"]);
+                    dtpEndDate.Value = Convert.ToDateTime(reader["endDate"]);
+                    cbStatus.Text = reader["contractStatus"].ToString();
+
+                    if (cbStatus.Text == STATUS_ACTIVE)
+                        dtpStartDate.Enabled = false;
+                }
+            }
         }
 
         private void LoadTenants()
         {
-            if (cbTenant == null) return;
-            // Only load 'Inactive' tenants, as they are available for a new contract.
             string query = @"
-                SELECT 
-                    T.TenantID, 
-                    PI.firstName + ' ' + PI.lastName AS FullName 
+                SELECT T.TenantID, PI.firstName + ' ' + PI.lastName AS FullName 
                 FROM Tenant T 
                 INNER JOIN PersonalInformation PI ON T.TenantID = PI.TenantID 
-                WHERE T.tenantStatus = 'Inactive' 
-                ORDER BY PI.lastName, PI.firstName;";
+                WHERE T.tenantStatus = 'Inactive'
+                ORDER BY PI.lastName";
 
-            FillComboBox(cbTenant, query, "FullName", "TenantID", "Tenant List (Inactive Only)");
+            FillComboBox(cbTenant, query, "FullName", "TenantID", "Tenant");
+        }
+
+        private void LoadAllTenants()
+        {
+            string query = @"
+                SELECT T.TenantID, PI.firstName + ' ' + PI.lastName AS FullName 
+                FROM Tenant T 
+                INNER JOIN PersonalInformation PI ON T.TenantID = PI.TenantID 
+                ORDER BY PI.lastName";
+
+            FillComboBox(cbTenant, query, "FullName", "TenantID", "Tenant");
         }
 
         private void LoadProperties()
         {
-            if (cbProperty == null) return;
-            string query = "SELECT propertyID, propertyName FROM Property ORDER BY propertyName;";
-            FillComboBox(cbProperty, query, "propertyName", "propertyID", "Property List");
+            string sql = "SELECT propertyID, propertyName FROM Property";
+            SqlDataAdapter da = new SqlDataAdapter(sql, DataConnection);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+
+            cbProperty.DataSource = dt;
+            cbProperty.DisplayMember = "propertyName";
+            cbProperty.ValueMember = "propertyID";
         }
 
         private void LoadVacantUnits(int propertyID = -1)
         {
-            if (cbUnit == null) return;
+            LoadUnitsInternal(propertyID, -1);
+        }
 
-            // Use DataTable to hold Unit data, including MonthlyRent
+        private void LoadUnitsInternal(int propertyID, int currentUnitID)
+        {
             DataTable dt = new DataTable();
             dt.Columns.Add("UnitID", typeof(int));
             dt.Columns.Add("UnitDetail", typeof(string));
-            dt.Columns.Add("MonthlyRent", typeof(decimal));
-
-            // Populate default row
-            DataRow firstRow = dt.NewRow();
-            firstRow["UnitID"] = DBNull.Value;
-            firstRow["UnitDetail"] = $"-- Select a Unit (Vacant Only) --";
-            firstRow["MonthlyRent"] = 0.00M;
-            dt.Rows.InsertAt(firstRow, 0);
+            dt.Columns.Add("RentAmount", typeof(decimal));
 
             if (propertyID != -1)
             {
-                // Optimized query to fetch vacant units for the selected property
                 string query = @"
-                    SELECT 
-                        UnitID, 
-                        'Unit ' + UnitNumber + ' (' + UnitType + ')' AS UnitDetail,
-                        MonthlyRent
-                    FROM Unit
-                    WHERE Status = 'Vacant' AND PropertyID = @PropertyID
-                    ORDER BY UnitNumber;";
+            SELECT 
+                U.UnitID,
+                'Unit ' + U.UnitNumber AS UnitDetail,
+                ISNULL(U.MonthlyRent, 0) AS RentAmount
+            FROM Unit U
+            WHERE (U.Status = @Vacant OR U.UnitID = @CurrentUnitID)
+              AND U.PropertyID = @PropertyID";
 
-                try
-                {
-                    using (SqlConnection con = new SqlConnection(DataConnection))
-                    {
-                        SqlDataAdapter da = new SqlDataAdapter(query, con);
-                        da.SelectCommand.Parameters.AddWithValue("@PropertyID", propertyID);
-
-                        // Temporarily fill a new DataTable from the database
-                        DataTable dbDt = new DataTable();
-                        da.Fill(dbDt);
-
-                        // Merge DB results into the main DT, starting after the first row (the prompt)
-                        foreach (DataRow row in dbDt.Rows)
-                        {
-                            dt.ImportRow(row);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error loading Units: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-
-            // Bind the ComboBox to the prepared DataTable
-            cbUnit.DataSource = dt;
-            cbUnit.DisplayMember = "UnitDetail";
-            cbUnit.ValueMember = "UnitID";
-            cbUnit.SelectedIndex = 0;
-        }
-
-        private void FillComboBox(ComboBox cb, string query, string displayMember, string valueMember, string listName)
-        {
-            try
-            {
                 using (SqlConnection con = new SqlConnection(DataConnection))
                 {
                     SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    DataTable dt = new DataTable();
+                    da.SelectCommand.Parameters.AddWithValue("@Vacant", UNIT_VACANT);
+                    da.SelectCommand.Parameters.AddWithValue("@CurrentUnitID", currentUnitID);
+                    da.SelectCommand.Parameters.AddWithValue("@PropertyID", propertyID);
                     da.Fill(dt);
-
-                    // Insert the prompt row
-                    DataRow firstRow = dt.NewRow();
-                    firstRow[valueMember] = DBNull.Value;
-                    firstRow[displayMember] = $"-- Select a {listName} --";
-
-                    // Note: If the list requires a third column (like MonthlyRent), 
-                    // this generic method might break unless the third column is nullable or defaulted.
-                    // The LoadVacantUnits method is specialized to handle this.
-                    if (dt.Columns.Contains("MonthlyRent") && firstRow.Table.Columns.Contains("MonthlyRent"))
-                    {
-                        firstRow["MonthlyRent"] = 0.00M;
-                    }
-
-                    dt.Rows.InsertAt(firstRow, 0);
-
-                    cb.DataSource = dt;
-                    cb.DisplayMember = displayMember;
-                    cb.ValueMember = valueMember;
-                    cb.SelectedIndex = 0;
                 }
             }
-            catch (Exception ex)
+
+            cbUnit.DataSource = dt;
+            cbUnit.DisplayMember = "UnitDetail";
+            cbUnit.ValueMember = "UnitID";
+        }
+
+
+
+        private void FillComboBox(ComboBox cb, string query, string display, string value, string label)
+        {
+            using (SqlConnection con = new SqlConnection(DataConnection))
             {
-                MessageBox.Show($"Error loading {listName}: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                DataRow r = dt.NewRow();
+                r[value] = DBNull.Value;
+                r[display] = $"-- Select {label} --";
+                dt.Rows.InsertAt(r, 0);
+
+                cb.DataSource = dt;
+                cb.DisplayMember = display;
+                cb.ValueMember = value;
+            }
+        }
+
+        private void DisplayUnitRent(DataRow row)
+        {
+            if (row == null) return;
+
+            if (row.Table.Columns.Contains("RentAmount"))
+            {
+                tbMonthlyRent.Text = row["RentAmount"] != DBNull.Value
+                    ? Convert.ToDecimal(row["RentAmount"]).ToString("N2")
+                    : "0.00";
             }
         }
 
         private void cbProperty_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbProperty.SelectedValue != null && cbProperty.SelectedValue != DBNull.Value && int.TryParse(cbProperty.SelectedValue.ToString(), out int propertyID))
+            HandlePropertyChange();
+        }
+
+        private void cbProperty_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            HandlePropertyChange();
+        }
+
+        private void HandlePropertyChange()
+        {
+            if (cbProperty.SelectedValue != null &&
+                int.TryParse(cbProperty.SelectedValue.ToString(), out int pid))
             {
-                LoadVacantUnits(propertyID);
+                LoadVacantUnits(pid);
             }
             else
             {
                 LoadVacantUnits();
             }
-
-            // Reset deposit amount when property changes
-            if (tbDepositAmount != null) tbDepositAmount.Text = "0.00";
         }
-
 
         private void cbUnit_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tbDepositAmount == null) return;
+            if (cbUnit.SelectedItem is DataRowView drv)
+                DisplayUnitRent(drv.Row);
+        }
 
-            // Safely extract MonthlyRent from the selected DataRowView
-            if (cbUnit.SelectedItem is DataRowView rowView)
-            {
-                DataRow row = rowView.Row;
-                if (row != null && row["MonthlyRent"] != DBNull.Value)
-                {
-                    decimal monthlyRent = Convert.ToDecimal(row["MonthlyRent"]);
-                    // Set deposit amount equal to one month's rent (common practice)
-                    tbDepositAmount.Text = monthlyRent.ToString("N2");
-                }
-                else
-                {
-                    tbDepositAmount.Text = "0.00";
-                }
-            }
-            else
-            {
-                tbDepositAmount.Text = "0.00";
-            }
+        private void cbUnit_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            if (cbUnit.SelectedItem is DataRowView drv)
+                DisplayUnitRent(drv.Row);
         }
 
         private void btnSave_Click_1(object sender, EventArgs e)
         {
             ClearErrorHighlights();
+            if (!ValidateInput()) return;
 
-            if (!ValidateInput())
-            {
-                return;
-            }
-
-            try
-            {
+            if (editContractID > 0)
+                UpdateContractInDatabase();
+            else
                 SaveContractToDatabase();
 
-                // If the parent form is available, typically reload its data
-                if (parentContractsForm != null)
-                {
-                    // This uses reflection/dynamic invocation, which can be brittle.
-                    // A better approach is to define a public method in Contracts (e.g., RefreshData)
-                    // and cast parentContractsForm to Contracts to call it.
-                    try
-                    {
-                        // Example if parentContractsForm is an instance of Contracts class:
-                        // (parentContractsForm as Contracts)?.LoadContractsData(); 
-                    }
-                    catch (Exception)
-                    {
-                        // Ignore refresh error
-                    }
-                }
-
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-                MessageBox.Show("Contract successfully added, unit is Occupied, and Tenant is Active!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to add contract: {ex.Message}\nPlease check required Contract table columns (DepositAmount, MonthlyRent).", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.DialogResult = DialogResult.None;
-            }
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        private bool ValidateInput()
+        private void UpdateContractInDatabase()
         {
-            bool isValid = true;
-            decimal depositAmount;
+            using (SqlConnection con = new SqlConnection(DataConnection))
+            {
+                string query = @"UPDATE Contract 
+                                 SET StartDate=@SD, EndDate=@ED, contractStatus=@ST 
+                                 WHERE contractID=@ID";
 
-            // Validation 1: Tenant Selected
-            if (cbTenant.SelectedValue == DBNull.Value || cbTenant.SelectedValue == null)
-            {
-                MessageBox.Show("Tenant must be selected.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                HighlightControl(cbTenant);
-                isValid = false;
-            }
-            // Validation 2: Property Selected
-            else if (cbProperty.SelectedValue == DBNull.Value || cbProperty.SelectedValue == null)
-            {
-                MessageBox.Show("Property must be selected.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                HighlightControl(cbProperty);
-                isValid = false;
-            }
-            // Validation 3: Unit Selected
-            else if (cbUnit.SelectedValue == DBNull.Value || cbUnit.SelectedValue == null)
-            {
-                MessageBox.Show("Unit must be selected.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                HighlightControl(cbUnit);
-                isValid = false;
-            }
-            // Validation 4: Dates are logical
-            else if (dtpStartDate.Value.Date >= dtpEndDate.Value.Date)
-            {
-                MessageBox.Show("End Date must be *after* Start Date.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                HighlightControl(dtpStartDate);
-                HighlightControl(dtpEndDate);
-                isValid = false;
-            }
-            // Validation 5: Deposit amount is valid
-            else if (string.IsNullOrWhiteSpace(tbDepositAmount.Text) ||
-                !decimal.TryParse(tbDepositAmount.Text.Replace("₱", "").Replace(",", "").Trim(), out depositAmount) ||
-                depositAmount < 0) // Allowing 0 deposit, but typically must be > 0. Adjusted from <= 0 to < 0 to allow exactly 0.
-            {
-                MessageBox.Show("Deposit Amount is required and must be a non-negative numeric value.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                HighlightControl(tbDepositAmount);
-                isValid = false;
-            }
-            // Validation 6: Status Selected (Although it defaults to Active)
-            else if (string.IsNullOrWhiteSpace(cbStatus.Text))
-            {
-                MessageBox.Show("Contract Status is required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                HighlightControl(cbStatus);
-                isValid = false;
-            }
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@SD", dtpStartDate.Value.Date);
+                cmd.Parameters.AddWithValue("@ED", dtpEndDate.Value.Date);
+                cmd.Parameters.AddWithValue("@ST", cbStatus.Text);
+                cmd.Parameters.AddWithValue("@ID", editContractID);
 
-            return isValid;
+                con.Open();
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Contract Updated!");
+            }
         }
 
         private void SaveContractToDatabase()
         {
             int tenantID = Convert.ToInt32(cbTenant.SelectedValue);
             int unitID = Convert.ToInt32(cbUnit.SelectedValue);
+            int propertyID = Convert.ToInt32(cbProperty.SelectedValue);
 
-            DateTime startDate = dtpStartDate.Value.Date;
-            DateTime endDate = dtpEndDate.Value.Date;
-
-            string depositText = tbDepositAmount.Text.Replace("₱", "").Replace(",", "").Trim();
-            decimal depositAmount = decimal.Parse(depositText);
-
-            string status = cbStatus.Text;
-
-            // Retrieve MonthlyRent from the Unit ComboBox DataRow
-            decimal monthlyRent = 0.00M;
-            if (cbUnit.SelectedItem is DataRowView rowView)
+            if (cbStatus.Text == STATUS_ACTIVE && dtpStartDate.Value.Date > DateTime.Today)
             {
-                DataRow row = rowView.Row;
-                if (row != null && row["MonthlyRent"] != DBNull.Value)
-                {
-                    monthlyRent = Convert.ToDecimal(row["MonthlyRent"]);
-                }
+                MessageBox.Show("Active contracts cannot start in the future.");
+                return;
             }
 
-            // Multi-step Transaction Query for Atomicity
-            string insertQuery = @" 
-                BEGIN TRANSACTION; 
-                
-                -- 1. Insert New Contract Record
-                INSERT INTO Contract ( 
-                    TenantID, 
-                    UnitID, 
-                    StartDate, 
-                    EndDate, 
-                    contractStatus,
-                    DepositAmount,
-                    MonthlyRent -- Assuming your Contract table includes MonthlyRent
-                )
-                VALUES ( 
-                    @TenantID, 
-                    @UnitID, 
-                    @StartDate, 
-                    @EndDate, 
-                    @Status,
-                    @DepositAmount,
-                    @MonthlyRent
-                );
-                
-                -- 2. Update Unit Status to Occupied
-                UPDATE Unit SET Status = 'Occupied' WHERE UnitID = @UnitID; 
+            string insertQuery = @"
+                BEGIN TRY
+                    BEGIN TRANSACTION;
 
-                -- 3. Update Tenant Status to Active
-                UPDATE Tenant SET tenantStatus = 'Active' WHERE tenantID = @TenantID;
-                
-                COMMIT TRANSACTION 
-            ";
+                    INSERT INTO Contract (TenantID, UnitID, PropertyID, StartDate, EndDate, contractStatus)
+                    VALUES (@TenantID, @UnitID, @PropertyID, @StartDate, @EndDate, @Status);
+
+                    UPDATE Unit SET Status = @Occupied WHERE UnitID = @UnitID;
+
+                    UPDATE Tenant 
+                    SET tenantStatus = @Active, UnitID = @UnitID 
+                    WHERE tenantID = @TenantID;
+
+                    COMMIT TRANSACTION;
+                END TRY
+                BEGIN CATCH
+                    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+                    THROW;
+                END CATCH";
 
             using (SqlConnection con = new SqlConnection(DataConnection))
             {
-                using (SqlCommand cmd = new SqlCommand(insertQuery, con))
-                {
-                    // Add all necessary parameters
-                    cmd.Parameters.AddWithValue("@TenantID", tenantID);
-                    cmd.Parameters.AddWithValue("@UnitID", unitID);
-                    cmd.Parameters.AddWithValue("@StartDate", startDate);
-                    cmd.Parameters.AddWithValue("@EndDate", endDate);
-                    cmd.Parameters.AddWithValue("@Status", status);
-                    cmd.Parameters.AddWithValue("@DepositAmount", depositAmount);
-                    cmd.Parameters.AddWithValue("@MonthlyRent", monthlyRent);
+                SqlCommand cmd = new SqlCommand(insertQuery, con);
+                cmd.Parameters.AddWithValue("@TenantID", tenantID);
+                cmd.Parameters.AddWithValue("@UnitID", unitID);
+                cmd.Parameters.AddWithValue("@PropertyID", propertyID);
+                cmd.Parameters.AddWithValue("@StartDate", dtpStartDate.Value.Date);
+                cmd.Parameters.AddWithValue("@EndDate", dtpEndDate.Value.Date);
+                cmd.Parameters.AddWithValue("@Status", cbStatus.Text);
+                cmd.Parameters.AddWithValue("@Occupied", UNIT_OCCUPIED);
+                cmd.Parameters.AddWithValue("@Active", STATUS_ACTIVE);
 
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                }
+                con.Open();
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("New contract saved successfully!");
             }
         }
 
-        // Helper methods for UI feedback
-        private void HighlightControl(Control control)
+        private bool ValidateInput()
         {
-            if (control is TextBox)
+            if (cbTenant.SelectedValue == DBNull.Value || cbUnit.SelectedValue == DBNull.Value)
             {
-                ((TextBox)control).BackColor = Color.LightCoral;
+                MessageBox.Show("Please fill all required fields.");
+                return false;
             }
-            else if (control is ComboBox)
+
+            if (dtpEndDate.Value <= dtpStartDate.Value)
             {
-                ((ComboBox)control).BackColor = Color.LightCoral;
+                MessageBox.Show("End Date must be later than Start Date.");
+                return false;
             }
-            else if (control is DateTimePicker)
-            {
-                // DateTimePicker highlighting is tricky. For simplicity, just set the border/background if possible.
-                // Note: CalendarMonthBackground usually only shows when the dropdown calendar is open.
-                ((DateTimePicker)control).CalendarTitleBackColor = SystemColors.Control;
-                ((DateTimePicker)control).CalendarMonthBackground = Color.LightCoral;
-            }
+
+            return true;
         }
 
-        private void ClearErrorHighlights()
-        {
-            if (tbDepositAmount != null) tbDepositAmount.BackColor = SystemColors.Window;
-            if (cbTenant != null) cbTenant.BackColor = SystemColors.Window;
-            if (cbUnit != null) cbUnit.BackColor = SystemColors.Window;
-            if (cbProperty != null) cbProperty.BackColor = SystemColors.Window;
-            if (cbStatus != null) cbStatus.BackColor = SystemColors.Window;
-
-            if (dtpStartDate != null)
-            {
-                dtpStartDate.CalendarTitleBackColor = SystemColors.Control;
-                dtpStartDate.CalendarMonthBackground = SystemColors.Window;
-            }
-            if (dtpEndDate != null)
-            {
-                dtpEndDate.CalendarTitleBackColor = SystemColors.Control;
-                dtpEndDate.CalendarMonthBackground = SystemColors.Window;
-            }
-        }
+        private void ClearErrorHighlights() { }
 
         private void btnCancel_Click_1(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            Close();
         }
     }
 }

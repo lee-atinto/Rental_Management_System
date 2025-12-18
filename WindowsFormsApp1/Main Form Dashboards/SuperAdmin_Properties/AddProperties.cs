@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Drawing;
 
 namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 {
@@ -42,19 +43,56 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             tbMonthlyRent.TextChanged += tbMonthlyRent_TextChanged;
         }
 
-        private void AddProperties_Load(object sender, EventArgs e)
+        // Constructor for Edit Mode
+        public AddProperties(int propertyID, string firstName, string lastName, string middleName, string contactNumber,
+              string email, string street, string barangay, string city, string province, string postalCode,
+              string propertyName, string unitNumber, decimal rentAmount, int unitID, string unitType, string status)
         {
+            InitializeComponent();
+            this.propertyID = propertyID;
+            this.unitID = unitID;
+
+            // Load ComboBox items first before setting values
             PopulateComboBoxes();
 
             if (propertyID > 0)
             {
-                btnSave.Text = "Update Property";
-                this.Text = "Edit Property";
+                tbFirstName.Text = firstName;
+                tbLastName.Text = lastName;
+                tbMiddleName.Text = middleName;
+                tbContactNumber.Text = contactNumber;
+                tbEmail.Text = email;
+                tbStreet.Text = street;
+                tbBarangay.Text = barangay;
+                tbCity.Text = city;
+                tbProvince.Text = province;
+                tbPostalCode.Text = postalCode;
+                tbPropertyName.Text = propertyName;
+                tbUnitNumber.Text = unitNumber;
+                tbMonthlyRent.Text = rentAmount.ToString();
+
+                // Set ComboBox values based on existing data
+                cbUnitType.Text = unitType;
+                cbUnitStatus.Text = status;
+
+                panel1.AutoScroll = true;
+                tbMonthlyRent.TextChanged += tbMonthlyRent_TextChanged;
+            }
+        }
+
+        private void AddProperties_Load(object sender, EventArgs e)
+        {
+            // If Add Mode (propertyID == 0), populate and set defaults
+            if (!IsEditMode)
+            {
+                PopulateComboBoxes();
+                btnSave.Text = "Add Property";
+                this.Text = "Add New Property";
             }
             else
             {
-                btnSave.Text = "Add Property";
-                this.Text = "Add New Property";
+                btnSave.Text = "Update Property";
+                this.Text = "Edit Property";
             }
         }
 
@@ -76,36 +114,6 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
             }
         }
 
-        public AddProperties(int propertyID, string firstName, string lastName, string middleName, string contactNumber,
-              string email, string street, string barangay, string city, string province, string postalCode,
-              string propertyName, string unitNumber, decimal rentAmount, int unitID, string unitType, string status)
-        {
-            InitializeComponent();
-            this.propertyID = propertyID;
-            this.unitID = unitID;
-
-            if (propertyID > 0)
-            {
-                tbFirstName.Text = firstName;
-                tbLastName.Text = lastName;
-                tbMiddleName.Text = middleName;
-                tbContactNumber.Text = contactNumber;
-                tbEmail.Text = email;
-                tbStreet.Text = street;
-                tbBarangay.Text = barangay;
-                tbCity.Text = city;
-                tbProvince.Text = province;
-                tbPostalCode.Text = postalCode;
-                tbPropertyName.Text = propertyName;
-                tbUnitNumber.Text = unitNumber;
-                tbMonthlyRent.Text = rentAmount.ToString();
-                cbUnitType.Text = unitType;
-                cbUnitStatus.Text = status;
-                panel1.AutoScroll = true;
-                tbMonthlyRent.TextChanged += tbMonthlyRent_TextChanged;
-            }
-        }
-
         private void tbMonthlyRent_TextChanged(object sender, EventArgs e)
         {
             if (System.Text.RegularExpressions.Regex.IsMatch(tbMonthlyRent.Text, "[^0-9.]"))
@@ -117,6 +125,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
 
         private void btnSave_Click_1(object sender, EventArgs e)
         {
+            // UPDATED VALIDATION: Added cbUnitType and cbUnitStatus check
             if (string.IsNullOrWhiteSpace(tbFirstName.Text) ||
                 string.IsNullOrWhiteSpace(tbLastName.Text) ||
                 string.IsNullOrWhiteSpace(tbContactNumber.Text) ||
@@ -127,15 +136,17 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                 string.IsNullOrWhiteSpace(tbPostalCode.Text) ||
                 string.IsNullOrWhiteSpace(tbPropertyName.Text) ||
                 string.IsNullOrWhiteSpace(tbUnitNumber.Text) ||
-                string.IsNullOrWhiteSpace(tbMonthlyRent.Text))
+                string.IsNullOrWhiteSpace(tbMonthlyRent.Text) ||
+                cbUnitType.SelectedIndex == -1 || // Checks if no item is selected
+                cbUnitStatus.SelectedIndex == -1) // Checks if no item is selected
             {
-                MessageBox.Show("Please fill in all required fields.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please fill in all required fields, including Unit Type and Status.", "Missing Information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (!decimal.TryParse(tbMonthlyRent.Text, out decimal rentAmount))
             {
-                MessageBox.Show("Invalid Monthly Rent. Numbers only.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Invalid Monthly Rent. Please enter numbers only.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -154,8 +165,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                 PropertyName = tbPropertyName.Text.Trim(),
                 UnitNumber = tbUnitNumber.Text.Trim(),
                 RentAmount = rentAmount,
-                UnitType = cbUnitType.Text,
-                Status = cbUnitStatus.Text
+                UnitType = cbUnitType.SelectedItem.ToString(), // Better than .Text to avoid typos
+                Status = cbUnitStatus.SelectedItem.ToString()    // Better than .Text to avoid typos
             };
 
             if (IsEditMode)
@@ -213,13 +224,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                     cmdUnit.ExecuteNonQuery();
 
                     transaction.Commit();
-                    MessageBox.Show("Property successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("The property has been successfully added to the database.", "System Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Close();
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("A system error occurred while saving: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -266,13 +277,13 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_Properties
                     cmdUnit.ExecuteNonQuery();
 
                     transaction.Commit();
-                    MessageBox.Show("Property successfully updated!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Property records have been successfully updated.", "Update Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Close();
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    MessageBox.Show("Error updating database: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("An error occurred while updating the records: " + ex.Message, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Data;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
+using System.IO.Compression;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using WindowsFormsApp1.Helpers;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_AdminAccount;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_PaymentRecords;
 using WindowsFormsApp1.DashBoard1.SuperAdmin_Properties;
@@ -15,11 +19,9 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp
 {
     public partial class BackUp : Form
     {
-        private readonly string DataConnection = @"Data Source=LEEANTHONYDATIN\SQLEXPRESS; Initial Catalog=RentalManagementSystem;Integrated Security=True";
-
+        private readonly string DataConnection = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
         private string UserName;
         private string UserRole;
-
         private readonly Color activeColor = Color.FromArgb(56, 55, 83);
         private readonly Color defaultBackColor = Color.FromArgb(240, 240, 240);
 
@@ -41,8 +43,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp
             InitializeButtonStyle(btnContracts);
             InitializeButtonStyle(btnMaintenance);
 
-            LoadData();
             ApplyRoleRestrictions();
+            SubscribeToCrashMonitor();
 
             panelHeader.BackColor = Color.White;
             lbName.BackColor = Color.FromArgb(46, 51, 73);
@@ -61,14 +63,8 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp
             btnContracts.Padding = new Padding(padding, 0, 0, 0);
             btnMaintenance.Padding = new Padding(padding, 0, 0, 0);
 
-            btnDashBoard.ForeColor = Color.Black;
-            btnAdminAcc.ForeColor = Color.Black;
-            btnTenant.ForeColor = Color.Black;
-            btnProperties.ForeColor = Color.Black;
-            btnViewReport.ForeColor = Color.Black;
-            btnPaymentRec.ForeColor = Color.Black;
-            btnContracts.ForeColor = Color.Black;
-            btnMaintenance.ForeColor = Color.Black;
+            progressRestore.Visible = false;
+            lblRestoreStatus.Visible = false;
 
             tbBackupPath.TextChanged += (s, e) => UpdateButtonStates();
             tbRestoreFile.TextChanged += (s, e) => UpdateButtonStates();
@@ -100,8 +96,7 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp
                 button.FlatAppearance.BorderSize = 1;
                 button.FlatAppearance.BorderColor = Color.FromArgb(46, 51, 73);
                 button.BackColor = defaultBackColor;
-                button.FlatAppearance.MouseDownBackColor = defaultBackColor;
-                button.FlatAppearance.MouseOverBackColor = defaultBackColor;
+                button.ForeColor = Color.Black;
                 button.TextAlign = ContentAlignment.MiddleLeft;
                 button.ImageAlign = ContentAlignment.MiddleLeft;
             }
@@ -117,140 +112,118 @@ namespace WindowsFormsApp1.DashBoard1.SuperAdmin_BackUp
             }
         }
 
+        private void SubscribeToCrashMonitor()
+        {
+            GlobalCrashMonitor.Instance.OnCriticalDataMissing += ShowCriticalAlert;
+        }
+
+        private void ShowCriticalAlert(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => ShowCriticalAlert(message)));
+                return;
+            }
+
+            MessageBox.Show(
+                $"System Alert: {message}",
+                "Critical Data Missing / Crash Detected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+        }
         private void BackUp_Load(object sender, EventArgs e)
         {
             SetButtonActiveStyle(btnBackUp, activeColor);
+
+            CheckCriticalTablesDirectly();
+
+            var recoveryManager = new Helpers.CrashRecoveryManager(
+                ConfigurationManager.ConnectionStrings["DB"].ConnectionString,
+                @"C:\RentalSystem_Backups",
+                new string[] {
+            "Account", "Address", "Contract", "LoginLogs",
+            "MaintenanceRequest", "PasswordHistory", "Payment",
+            "PaymentMethod", "PaymentType", "PersonalInformation",
+            "Property", "PropertyOwner", "Rent", "RequestType",
+            "Requirements", "Tenant", "Unit"
+                }
+            );
+            _ = recoveryManager.CheckAndRecoverCriticalTablesAsync();
         }
 
-        private void LoadData()
-        {
-            DataTable dt = new DataTable();
 
-            string query = @"
-SELECT 
-    t.name AS [Table Name],
-    ISNULL(SUM(p.rows),0) AS [Records],
-    CASE 
-        WHEN ISNULL(SUM(a.total_pages),0) * 8.0 >= 1048576 THEN CAST(ROUND((SUM(a.total_pages) * 8.0)/1048576,2) AS VARCHAR)+' GB'
-        WHEN ISNULL(SUM(a.total_pages),0) * 8.0 >= 1024 THEN CAST(ROUND((SUM(a.total_pages) * 8.0)/1024,2) AS VARCHAR)+' MB'
-        ELSE CAST(ROUND(ISNULL(SUM(a.total_pages),0) * 8.0,2) AS VARCHAR)+' KB'
-    END AS [Size],
-    'N/A' AS [Last Updated]
-FROM sys.tables t
-LEFT JOIN sys.indexes i ON t.object_id = i.object_id AND i.index_id IN (0,1)
-LEFT JOIN sys.partitions p ON i.object_id = p.object_id AND i.index_id = p.index_id
-LEFT JOIN sys.allocation_units a ON p.partition_id = a.container_id
-WHERE t.is_ms_shipped = 0
-GROUP BY t.name
-ORDER BY t.name;
-";
+        private void CheckCriticalTablesDirectly()
+        {
+            string[] criticalTables = {
+        "Account", "Address", "Contract", "LoginLogs",
+        "MaintenanceRequest", "PasswordHistory", "Payment",
+        "PaymentMethod", "PaymentType", "PersonalInformation",
+        "Property", "PropertyOwner", "Rent", "RequestType",
+        "Requirements", "Tenant", "Unit"
+    };
 
             try
             {
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                using (SqlDataAdapter da = new SqlDataAdapter(query, con))
+                using (SqlConnection conn = new SqlConnection(DataConnection))
                 {
-                    da.SelectCommand.CommandTimeout = 300;
-                    da.Fill(dt);
+                    conn.Open();
+                    foreach (string table in criticalTables)
+                    {
+                        string query = $"IF OBJECT_ID('{table}', 'U') IS NULL SELECT 0 ELSE SELECT 1";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            int exists = (int)cmd.ExecuteScalar();
+                            if (exists == 0)
+                            {
+                                MessageBox.Show(
+                                    $"Critical table missing: {table}. The system may not function correctly.",
+                                    "Missing Data Alert",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning
+                                );
+                            }
+                        }
+                    }
                 }
-
-                dtDatabase.DataSource = dt;
-
-                dtDatabase.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dtDatabase.ReadOnly = true;
-                dtDatabase.AllowUserToAddRows = false;
-                dtDatabase.RowHeadersVisible = false;
-
-                dtDatabase.Columns["Table Name"].HeaderText = "Table Name";
-                dtDatabase.Columns["Records"].HeaderText = "Records";
-                dtDatabase.Columns["Size"].HeaderText = "Size";
-                dtDatabase.Columns["Last Updated"].HeaderText = "Last Updated";
-
-                dtDatabase.Columns["Records"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                dtDatabase.Columns["Size"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                dtDatabase.Columns["Last Updated"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Database error detected!\n" + ex.Message, "System Crash", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "An error occurred while loading database data:\n" + ex.Message,
-                    "Database Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("Unexpected error detected!\n" + ex.Message, "System Crash", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void OptimizeDatabase()
+        private void LogError(Exception ex)
         {
-            string optimizeQuery = @"EXEC sp_MSforeachtable @command1='ALTER INDEX ALL ON ? REORGANIZE;'; EXEC sp_updatestats;";
-
             try
             {
-                using (SqlConnection connection = new SqlConnection(DataConnection))
-                using (SqlCommand command = new SqlCommand(optimizeQuery, connection))
-                {
-                    connection.Open();
-                    command.CommandTimeout = 300;
-                    command.ExecuteNonQuery();
-                }
-
-                MessageBox.Show("Database optimization complete! Reorganized indexes and updated statistics.", "Optimization Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
+                string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BackupErrors.log");
+                File.AppendAllText(logPath, $"{DateTime.Now}: {ex}\n\n");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error during database optimization: " + ex.Message, "Optimization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void btnSystemOverview_Click(object sender, EventArgs e)
-        {
-            plSystemOverView.Visible = true;
-
-            plDataBase.Visible = false;
-            plBackupRecovery.Visible = false;
-        }
-
-        private void btnDatabse_Click(object sender, EventArgs e)
-        {
-            LoadData();
-            plDataBase.Visible = true;
-
-            plSystemOverView.Visible = false;
-            plBackupRecovery.Visible = false;
+            catch { }
         }
 
         private void btnBackupRecovery_Click(object sender, EventArgs e)
         {
             plBackupRecovery.Visible = true;
-
-            plDataBase.Visible = false;
-            plSystemOverView.Visible = false;
         }
+
         private void btnOptimizeData_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
-                "Optimization can take a few minutes and temporarily increase CPU usage. Do you want to continue?",
-                "Confirm Optimization",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                OptimizeDatabase();
-            }
+            MessageBox.Show("Optimization feature is currently disabled.", "Information");
         }
 
         private void btnBrowseBackup_Click_1(object sender, EventArgs e)
         {
             using (FolderBrowserDialog folderDlg = new FolderBrowserDialog())
             {
-                folderDlg.Description = "Select folder to save database backup";
+                folderDlg.Description = "Select folder to save backup files";
                 if (folderDlg.ShowDialog() == DialogResult.OK)
-                {
                     tbBackupPath.Text = folderDlg.SelectedPath;
-                }
             }
         }
 
@@ -258,134 +231,142 @@ ORDER BY t.name;
         {
             using (OpenFileDialog fileDlg = new OpenFileDialog())
             {
-                fileDlg.Title = "Select database backup file to restore";
-                fileDlg.Filter = "Backup Files (*.bak)|*.bak|All Files (*.*)|*.*";
+                fileDlg.Title = "Select Backup File";
+                fileDlg.Filter = "System Backup (*.zip)|*.zip|Database Backup (*.bak)|*.bak|All Files (*.*)|*.*";
                 if (fileDlg.ShowDialog() == DialogResult.OK)
-                {
                     tbRestoreFile.Text = fileDlg.FileName;
-                }
             }
         }
 
         private void UpdateButtonStates()
         {
-            if (!string.IsNullOrWhiteSpace(tbBackupPath.Text))
-            {
-                btnBackups.Enabled = true;
-                btnBrowseBackup.Enabled = true;
-                btnRestore.Enabled = false;
-                btnBrowseRestore.Enabled = false;
-            }
-            else if (!string.IsNullOrWhiteSpace(tbRestoreFile.Text))
-            {
-                btnRestore.Enabled = true;
-                btnBrowseRestore.Enabled = true;
-                btnBackups.Enabled = false;
-                btnBrowseBackup.Enabled = false;
-            }
-            else
-            {
-                btnBackups.Enabled = true;
-                btnBrowseBackup.Enabled = true;
-                btnRestore.Enabled = true;
-                btnBrowseRestore.Enabled = true;
-            }
+            btnBackups.Enabled = !string.IsNullOrWhiteSpace(tbBackupPath.Text);
+            btnRestore.Enabled = !string.IsNullOrWhiteSpace(tbRestoreFile.Text) && File.Exists(tbRestoreFile.Text);
         }
 
-        private void SetBackupMode(bool enableBackup)
+        private async void btnBackups_Click(object sender, EventArgs e)
         {
-            btnBackups.Enabled = enableBackup;
-            btnBrowseBackup.Enabled = enableBackup;
-            btnRestore.Enabled = !enableBackup;
-            btnBrowseRestore.Enabled = !enableBackup;
-        }
+            string backupDir = string.IsNullOrWhiteSpace(tbBackupPath.Text)
+                ? @"C:\RentalSystem_Backups"
+                : tbBackupPath.Text.Trim();
 
-        private void btnBackups_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(tbBackupPath.Text))
-            {
-                MessageBox.Show("Please select a folder to save the backup.", "Backup Path Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            if (!Directory.Exists(backupDir)) Directory.CreateDirectory(backupDir);
 
-            SetBackupMode(false);
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            string bakFileName = $"Database_{timestamp}.bak";
+            string tempBakPath = Path.Combine(backupDir, bakFileName);
+            string finalZipPath = Path.Combine(backupDir, $"RentalSystem_FullBackup_{timestamp}.zip");
 
             try
             {
-                string backupFile = System.IO.Path.Combine(tbBackupPath.Text,
-                    $"RentalManagementSystem_Backup_{DateTime.Now:yyyyMMdd_HHmmss}.bak");
+                lblRestoreStatus.Visible = true;
+                lblRestoreStatus.Text = "Step 1: Backing up Database...";
 
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                using (SqlCommand cmd = new SqlCommand())
+                using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DB"].ConnectionString))
                 {
-                    cmd.Connection = con;
-                    cmd.CommandText = $"BACKUP DATABASE [RentalManagementSystem] TO DISK = '{backupFile}' WITH INIT, NAME = 'RentalManagementSystem-Full Backup'";
-                    cmd.CommandTimeout = 600;
-
-                    con.Open();
-                    cmd.ExecuteNonQuery();
+                    string query = "BACKUP DATABASE [RentalManagementSystem] TO DISK = @path WITH INIT";
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@path", tempBakPath);
+                        await con.OpenAsync();
+                        await cmd.ExecuteNonQueryAsync();
+                    }
                 }
 
-                MessageBox.Show($"Database backup completed successfully!\nSaved at: {backupFile}", "Backup Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                lblRestoreStatus.Text = "Step 2: Preparing Files for ZIP...";
+                string tempZipFolder = Path.Combine(Path.GetTempPath(), "CombineBackup_" + timestamp);
+                Directory.CreateDirectory(tempZipFolder);
+
+                string appFiles = AppDomain.CurrentDomain.BaseDirectory;
+                foreach (string file in Directory.GetFiles(appFiles, "*.*", SearchOption.TopDirectoryOnly))
+                {
+                    File.Copy(file, Path.Combine(tempZipFolder, Path.GetFileName(file)), true);
+                }
+
+                File.Move(tempBakPath, Path.Combine(tempZipFolder, bakFileName));
+
+                lblRestoreStatus.Text = "Step 3: Creating Final Zip File...";
+                await Task.Run(() => ZipFile.CreateFromDirectory(tempZipFolder, finalZipPath));
+
+                Directory.Delete(tempZipFolder, true);
+
+                MessageBox.Show($"Full Backup Successful!\nSaved at: {finalZipPath}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                tbBackupPath.Text = string.Empty;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error during backup: " + ex.Message, "Backup Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogError(ex);
+                MessageBox.Show("Backup failed: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                SetBackupMode(true);
-                UpdateButtonStates();
+                lblRestoreStatus.Visible = false;
             }
         }
 
-        private void btnRestore_Click(object sender, EventArgs e)
+        private async void btnRestore_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(tbRestoreFile.Text) || !System.IO.File.Exists(tbRestoreFile.Text))
-            {
-                MessageBox.Show("Please select a valid backup file to restore.", "Restore File Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(tbRestoreFile.Text) || !File.Exists(tbRestoreFile.Text)) return;
 
-            SetBackupMode(false);
+            DialogResult confirm = MessageBox.Show("BABALA: Mapapalitan ang lahat ng data. Ituloy?", "Confirm Restore", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirm != DialogResult.Yes) return;
+
+            string extractPath = @"C:\RentalSystem_RestoreTemp";
+
+            SqlConnectionStringBuilder scb = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings["DB"].ConnectionString);
+            string dbName = scb.InitialCatalog;
+            scb.InitialCatalog = "master";
+            string masterConn = scb.ConnectionString;
 
             try
             {
-                using (SqlConnection con = new SqlConnection(DataConnection))
-                using (SqlCommand cmd = new SqlCommand())
+                lblRestoreStatus.Visible = true;
+                lblRestoreStatus.Text = "Extracting Backup Package...";
+
+                if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true);
+                Directory.CreateDirectory(extractPath);
+
+                await Task.Run(() => ZipFile.ExtractToDirectory(tbRestoreFile.Text, extractPath));
+
+                string[] bakFiles = Directory.GetFiles(extractPath, "*.bak", SearchOption.AllDirectories);
+                if (bakFiles.Length == 0) throw new Exception("Walang .bak file na nahanap sa loob ng ZIP.");
+                string bakFileToRestore = bakFiles[0];
+
+                lblRestoreStatus.Text = "Restoring Database (Closing connections)...";
+                using (SqlConnection con = new SqlConnection(masterConn))
                 {
-                    cmd.Connection = con;
-                    cmd.CommandTimeout = 600;
-                    con.Open();
+                    await con.OpenAsync();
 
-                    cmd.CommandText = @"ALTER DATABASE [RentalManagementSystem] SET SINGLE_USER WITH ROLLBACK IMMEDIATE";
-                    cmd.ExecuteNonQuery();
+                    string sql = $@"
+                        ALTER DATABASE [{dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                        RESTORE DATABASE [{dbName}] FROM DISK = @path WITH REPLACE;
+                        ALTER DATABASE [{dbName}] SET MULTI_USER;";
 
-                    cmd.CommandText = $"RESTORE DATABASE [RentalManagementSystem] FROM DISK = '{tbRestoreFile.Text}' WITH REPLACE";
-                    cmd.ExecuteNonQuery();
-
-                    cmd.CommandText = @"ALTER DATABASE [RentalManagementSystem] SET MULTI_USER";
-                    cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@path", bakFileToRestore);
+                        cmd.CommandTimeout = 0;
+                        await cmd.ExecuteNonQueryAsync();
+                    }
                 }
 
-                MessageBox.Show("Database restored successfully!", "Restore Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
+                MessageBox.Show("Restore successful! Mag-re-restart ang application.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                tbRestoreFile.Text = string.Empty;
+                Application.Restart();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error during restore: " + ex.Message, "Restore Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogError(ex);
+                MessageBox.Show("Restore failed: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
-                SetBackupMode(true);
-                UpdateButtonStates();
+                lblRestoreStatus.Visible = false;
+                try { if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true); } catch { }
             }
         }
 
-
-        // -------------------- Button Side Bar -------------------- //
-
-        // --------------- Dashboard Button --------------- //
         private void btnDashBoard_Click(object sender, EventArgs e)
         {
             DashBoard dashboard = new DashBoard(UserName, UserRole);
@@ -393,7 +374,6 @@ ORDER BY t.name;
             this.Hide();
         }
 
-        // --------------- Tenant Button --------------- //
         private void btnTenant_Click(object sender, EventArgs e)
         {
             Tenants tenants = new Tenants(UserName, UserRole);
@@ -401,7 +381,6 @@ ORDER BY t.name;
             this.Hide();
         }
 
-        // --------------- Properties Button --------------- //
         private void btnProperties_Click(object sender, EventArgs e)
         {
             ProperTies properties = new ProperTies(UserName, UserRole);
@@ -409,7 +388,6 @@ ORDER BY t.name;
             this.Hide();
         }
 
-        // --------------- Payment Records Button --------------- //
         private void btnPaymentRec_Click(object sender, EventArgs e)
         {
             Payment_Records paymentRec = new Payment_Records(UserName, UserRole);
@@ -417,7 +395,6 @@ ORDER BY t.name;
             this.Hide();
         }
 
-        // --------------- Contracts Button --------------- //
         private void btnContracts_Click(object sender, EventArgs e)
         {
             Contracts contract = new Contracts(UserName, UserRole);
@@ -425,7 +402,6 @@ ORDER BY t.name;
             this.Hide();
         }
 
-        // --------------- Maintenance Button --------------- //
         private void btnMaintenance_Click(object sender, EventArgs e)
         {
             Maintenance maintenance = new Maintenance(UserName, UserRole);
@@ -433,7 +409,6 @@ ORDER BY t.name;
             this.Hide();
         }
 
-        // --------------- Admin Accounts Button --------------- //
         private void btnAdminAcc_Click(object sender, EventArgs e)
         {
             SuperAdmin_AdminAccounts adminAcc = new SuperAdmin_AdminAccounts(UserName, UserRole);
@@ -441,7 +416,6 @@ ORDER BY t.name;
             this.Hide();
         }
 
-        // --------------- View Reports Button --------------- //
         private void btnViewReport_Click(object sender, EventArgs e)
         {
             if (UserRole == "SuperAdmin")
@@ -452,22 +426,19 @@ ORDER BY t.name;
             }
             else
             {
-                MessageBox.Show("Access Denied: Admin cannot view full reports.");
+                MessageBox.Show("Access Denied.");
             }
         }
 
-        // --------------- Logout Button --------------- //
         private void btnlogout_Click(object sender, EventArgs e)
         {
             using (SqlConnection conn = new SqlConnection(DataConnection))
             {
-                string query = "UPDATE Account SET active = 0 WHERE username=@u";
-                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand("UPDATE Account SET active = 0 WHERE username=@u", conn);
                 cmd.Parameters.AddWithValue("@u", this.UserName);
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
-
             this.Hide();
             new LoginPage().Show();
         }

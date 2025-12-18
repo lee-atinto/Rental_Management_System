@@ -54,7 +54,7 @@
             this.cbTenantName.Location = new System.Drawing.Point(55, 97);
             this.cbTenantName.Name = "cbTenantName";
             this.cbTenantName.Size = new System.Drawing.Size(286, 31);
-            this.cbTenantName.TabIndex = 0;
+            this.cbTenantName.TabIndex = 1;
             this.cbTenantName.SelectedIndexChanged += new System.EventHandler(this.cbTenantName_SelectedIndexChanged_1);
             // 
             // tbUnitNumber
@@ -63,7 +63,7 @@
             this.tbUnitNumber.Location = new System.Drawing.Point(360, 97);
             this.tbUnitNumber.Name = "tbUnitNumber";
             this.tbUnitNumber.Size = new System.Drawing.Size(226, 31);
-            this.tbUnitNumber.TabIndex = 1;
+            this.tbUnitNumber.TabIndex = 2;
             // 
             // dtpPaymentDate
             // 
@@ -71,7 +71,7 @@
             this.dtpPaymentDate.Location = new System.Drawing.Point(399, 253);
             this.dtpPaymentDate.Name = "dtpPaymentDate";
             this.dtpPaymentDate.Size = new System.Drawing.Size(187, 31);
-            this.dtpPaymentDate.TabIndex = 2;
+            this.dtpPaymentDate.TabIndex = 7;
             // 
             // cbPaymentType
             // 
@@ -81,7 +81,7 @@
             this.cbPaymentType.Location = new System.Drawing.Point(332, 179);
             this.cbPaymentType.Name = "cbPaymentType";
             this.cbPaymentType.Size = new System.Drawing.Size(254, 31);
-            this.cbPaymentType.TabIndex = 3;
+            this.cbPaymentType.TabIndex = 4;
             // 
             // cbPaymentMethod
             // 
@@ -91,7 +91,7 @@
             this.cbPaymentMethod.Location = new System.Drawing.Point(55, 179);
             this.cbPaymentMethod.Name = "cbPaymentMethod";
             this.cbPaymentMethod.Size = new System.Drawing.Size(249, 31);
-            this.cbPaymentMethod.TabIndex = 4;
+            this.cbPaymentMethod.TabIndex = 3;
             // 
             // tbAmountPaid
             // 
@@ -137,9 +137,9 @@
             this.lbPaymentMethod.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbPaymentMethod.Location = new System.Drawing.Point(51, 157);
             this.lbPaymentMethod.Name = "lbPaymentMethod";
-            this.lbPaymentMethod.Size = new System.Drawing.Size(171, 19);
+            this.lbPaymentMethod.Size = new System.Drawing.Size(151, 19);
             this.lbPaymentMethod.TabIndex = 9;
-            this.lbPaymentMethod.Text = "Choose Payment Method";
+            this.lbPaymentMethod.Text = "Choose Payment Type";
             // 
             // lbPaymentType
             // 
@@ -147,9 +147,9 @@
             this.lbPaymentType.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbPaymentType.Location = new System.Drawing.Point(328, 157);
             this.lbPaymentType.Name = "lbPaymentType";
-            this.lbPaymentType.Size = new System.Drawing.Size(151, 19);
+            this.lbPaymentType.Size = new System.Drawing.Size(171, 19);
             this.lbPaymentType.TabIndex = 10;
-            this.lbPaymentType.Text = "Choose Payment Type";
+            this.lbPaymentType.Text = "Choose Payment Method";
             // 
             // lbAmountPaid
             // 
@@ -177,7 +177,7 @@
             this.btnSave.Location = new System.Drawing.Point(228, 330);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(141, 35);
-            this.btnSave.TabIndex = 13;
+            this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -198,7 +198,7 @@
             this.tbReferenceID.Location = new System.Drawing.Point(215, 253);
             this.tbReferenceID.Name = "tbReferenceID";
             this.tbReferenceID.Size = new System.Drawing.Size(154, 31);
-            this.tbReferenceID.TabIndex = 14;
+            this.tbReferenceID.TabIndex = 6;
             // 
             // AddPayment
             // 
